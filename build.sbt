@@ -1,3 +1,4 @@
+import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings.integrationTestSettings
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 
@@ -6,6 +7,15 @@ lazy val microservice = Project("pillar2-stubs", file("."))
   .settings(
     majorVersion        := 0,
     scalaVersion        := "2.13.8",
+    ScoverageKeys.coverageExcludedFiles :=
+      "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;" +
+        "app.*;.*BuildInfo.*;.*Routes.*;.*repositories.*;.*controllers.test.*;.*services.test.*;.*metrics.*",
+    ScoverageKeys.coverageMinimum := 80,
+    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageHighlighting := true,
+    PlayKeys.playDefaultPort         := 10052,
+    Compile / scalafmtOnCompile      := true,
+    Test / scalafmtOnCompile         := true,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
     // suppress warnings in generated routes files
