@@ -1,0 +1,11 @@
+{
+  "createSubscriptionForCBCResponse": {
+    "responseCommon": {
+      "status": "OK",
+      "processingDate": "1000-01-01T00:00:00Z"
+    },
+    "responseDetail": {
+      "subscriptionID": "[subscriptionId]"
+    }
+  }
+}

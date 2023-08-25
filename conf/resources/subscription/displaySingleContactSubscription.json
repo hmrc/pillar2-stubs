@@ -1,0 +1,21 @@
+{
+  "displaySubscriptionForCBCResponse": {
+    "responseCommon": {
+      "status": "OK",
+      "processingDate": "2020-08-09T11:23:45Z"
+    },
+    "responseDetail": {
+      "subscriptionID": "[subscriptionId]",
+      "tradingName": "Kit Katze Ltd",
+      "isGBUser": false,
+      "primaryContact": [
+        {
+          "email": "kitkatze@chocolate.com",
+          "organisation": {
+            "organisationName": "name"
+          }
+        }
+      ]
+    }
+  }
+}
