@@ -51,7 +51,8 @@ class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilte
         }
         resourceAsString(s"/resources/register/withoutIdResponse.json") match {
           case Some(response) => Ok(response.replace("[safeId]", safeId))
-          case _              => NotFound
+
+          case _ => NotFound
         }
       case _ => BadRequest
     }
