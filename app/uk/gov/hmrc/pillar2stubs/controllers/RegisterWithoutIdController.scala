@@ -32,7 +32,7 @@ class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilte
     println("****************************************************")
     logger.info(s"Request recieved \n ${request.body} \n")
     println("****************************************************")
-    val regimeName = "PIL2"
+    val regimeName = "PILLAR2"
     val register   = request.body.as[Registration]
     val orgName    = register.organisation.organisationName
 

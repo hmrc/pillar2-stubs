@@ -55,7 +55,7 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
                                      |{
                                      |  "registerWithoutIDRequest": {
                                      |  "requestCommon":{
-                                     |      "regime": "PIL2"
+                                     |      "regime": "PILLAR2"
                                      |   },
                                      |    "requestDetail": {
                                      |       "organisation": {
@@ -77,7 +77,7 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
                                    |{
                                    |  "registerWithoutIDRequest": {
                                    |    "requestCommon":{
-                                   |      "regime": "PIL2"
+                                   |      "regime": "PILLAR2"
                                    |   },
                                    |    "requestDetail": {
                                    |       "organisation": {

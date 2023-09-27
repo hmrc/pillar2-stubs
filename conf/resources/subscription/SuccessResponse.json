@@ -1,7 +1,7 @@
 {
-    "successResponse": {
+    "success": {
       "plrReference": "[pillar2Reference]",
-      "processingDate": "1000-01-01T00:00:00Z",
+      "processingDate": "2010-12-12",
       "formBundleNumber": "119000004320"
     }
 }

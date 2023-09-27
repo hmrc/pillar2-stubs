@@ -44,19 +44,19 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case (`regime`, "server", _)    => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
           case (`regime`, "notFound", _)  => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
           case (`regime`, _, "XE0000123456789") =>
-            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replaceSubscriptionId(_, "XMPLR0012345671")).get)
+            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
           case (`regime`, _, "XE0000123456788") =>
-            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replaceSubscriptionId(_, "XMPLR0012345672")).get)
+            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345672")).get)
           case (`regime`, _, "XE0000123456787") =>
-            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replaceSubscriptionId(_, "XMPLR0012345673")).get)
+            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345673")).get)
           case (`regime`, _, _) =>
-            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replaceSubscriptionId(_, "XMPLR0012345674")).get)
+            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
           case _ => BadRequest
         }
       case _ => BadRequest
     }
   }
 
-  private def replaceSubscriptionId(response: String, pillar2Reference: String): String =
+  private def replacePillar2Id(response: String, pillar2Reference: String): String =
     response.replace("[pillar2Reference]", pillar2Reference)
 }
