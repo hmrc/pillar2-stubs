@@ -24,16 +24,15 @@ object Organisation {
   implicit val reads: Reads[Organisation] = Json.reads[Organisation]
 }*/
 
-case class Subscription(regime: String, safeId: String, organisationName: String)
+case class Subscription(safeId: String, organisationName: String)
 
 object Subscription {
 
   implicit lazy val reads: Reads[Subscription] = {
     import play.api.libs.functional.syntax._
     (
-      (__ \ "createSubscriptionRequest" \ "requestCommon" \ "regime").read[String] and
-        (__ \ "createSubscriptionRequest" \ "requestDetail" \ "upeDetails" \ "safeId").read[String] and
-        (__ \ "createSubscriptionRequest" \ "requestDetail" \ "upeDetails" \ "organisationName").read[String]
+      (__ \ "createSubscriptionRequest" \ "requestBody" \ "upeDetails" \ "safeId").read[String] and
+        (__ \ "createSubscriptionRequest" \ "requestBody" \ "upeDetails" \ "organisationName").read[String]
     )(Subscription.apply _)
   }
 }

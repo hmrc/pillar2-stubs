@@ -29,9 +29,8 @@ import javax.inject.Inject
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
   def createSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
-    val regime = "PIL2"
     println("****************************************************")
-    logger.info(s"Request recieved \n ${request.body} \n")
+    logger.info(s"Subscription Request recieved \n ${request.body} \n")
     println("****************************************************")
 
     request.body.asOpt[Subscription] match {
@@ -39,17 +38,13 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         val organisationName = input.organisationName
         val safeId           = input.safeId
 
-        (input.regime, organisationName, safeId) match {
-          case (`regime`, "duplicate", _) => Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").get)
-          case (`regime`, "server", _)    => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
-          case (`regime`, "notFound", _)  => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
-          case (`regime`, _, "XE0000123456789") =>
+        (organisationName, safeId) match {
+          case ("duplicate", _) => Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").get)
+          case ("server", _)    => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
+          case ("notFound", _)  => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
+          case (_, "XE0000123456789") =>
             Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
-          case (`regime`, _, "XE0000123456788") =>
-            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345672")).get)
-          case (`regime`, _, "XE0000123456787") =>
-            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345673")).get)
-          case (`regime`, _, _) =>
+          case (_, _) =>
             Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
           case _ => BadRequest
         }

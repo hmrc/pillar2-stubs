@@ -31,8 +31,8 @@ object Registration {
   implicit lazy val reads: Reads[Registration] = {
     import play.api.libs.functional.syntax._
     (
-      (__ \ "registerWithoutIDRequest" \ "requestCommon" \ "regime").read[String] and
-        (__ \ "registerWithoutIDRequest" \ "requestDetail" \ "organisation").read[NoIdOrganisation]
+      (__ \ "regime").read[String] and
+        (__ \ "organisation").read[NoIdOrganisation]
     )(Registration.apply _)
   }
 }

@@ -53,16 +53,11 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
       s"must return $errorStatus for invalid registerWithoutIDRequest with organisation name as $name" in {
         val jsonPayload: String = s"""
                                      |{
-                                     |  "registerWithoutIDRequest": {
-                                     |  "requestCommon":{
-                                     |      "regime": "PILLAR2"
-                                     |   },
-                                     |    "requestDetail": {
+                                     |    "regime": "PLR",
                                      |       "organisation": {
                                      |          "organisationName": "$name"
                                      |       }
-                                     |    }
-                                     |  }
+                                     |
                                      |}""".stripMargin
         val json: JsValue = Json.parse(jsonPayload)
 
@@ -75,16 +70,11 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
     "must return Ok response and valid registerWithoutIDRequest for an Organisation" in {
       val jsonPayload: String = s"""
                                    |{
-                                   |  "registerWithoutIDRequest": {
-                                   |    "requestCommon":{
-                                   |      "regime": "PILLAR2"
-                                   |   },
-                                   |    "requestDetail": {
+                                   |    "regime": "PLR",
                                    |       "organisation": {
-                                   |          "organisationName": "ABC LTD"
+                                   |          "organisationName": "ABC Corp"
                                    |       }
-                                   |    }
-                                   |  }
+                                   |
                                    |}""".stripMargin
       val json: JsValue = Json.parse(jsonPayload)
 
@@ -97,16 +87,11 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
     "must return BadRequest for an invalid input (invalid regime)" in {
       val jsonPayload: String = s"""
                                    |{
-                                   |  "registerWithoutIDRequest": {
-                                   |    "requestCommon":{
-                                   |      "regime": "ABC"
-                                   |   },
-                                   |    "requestDetail": {
-                                   |"organisation": {
-                                   |          "organisationName": "ABC LTD"
+                                   |    "regime": "PLR3223",
+                                   |       "organisation": {
+                                   |          "organisationName": "ABC Corp"
                                    |       }
-                                   |    }
-                                   |  }
+                                   |
                                    |}""".stripMargin
       val json: JsValue = Json.parse(jsonPayload)
 
