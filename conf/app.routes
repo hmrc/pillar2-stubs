@@ -1,4 +1,6 @@
 # microservice specific routes
 
-POST        /dac6/dct50a/v1                                uk.gov.hmrc.pillar2stubs.controllers.RegisterWithoutIdController.registerWithoutId
-POST        /pillar2/subscription                          uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.createSubscription
+POST        /dac6/dct50a/v1                                                                     uk.gov.hmrc.pillar2stubs.controllers.RegisterWithoutIdController.registerWithoutId
+POST        /pillar2/subscription                                                               uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.createSubscription
+
+GET         /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups               uk.gov.hmrc.pillar2stubs.controllers.EnrolmentStoreProxyController.status(serviceName)
