@@ -40,7 +40,7 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
 
     "must return Ok response with groupid" in {
 
-      val plrService = "HMRC-PILLAR2-ORG~PLRID~XACBC0000123777"
+      val plrService = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
       val request    = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
       val result     = route(app, request).value
 

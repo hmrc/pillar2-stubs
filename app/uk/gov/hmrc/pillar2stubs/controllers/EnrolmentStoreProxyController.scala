@@ -24,15 +24,16 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.Inject
 
 class EnrolmentStoreProxyController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
-  val mdrService      = "HMRC-PILLAR2-ORG~PLRID~XACBC0000123777"
-  val mdrServiceEmpty = "HMRC-PILLAR2-ORG~PLRID~XACBC0000123888"
+  val plrService      = "HMRC-PILLAR2-ORG~PLRID~XACBC0000123888"
+  val plrServiceEmpty = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
 
   def status(serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
+    println(s"what is service name ---------------------------$serviceName")
     serviceName match {
-      case `mdrService` =>
+      case `plrService` =>
         val path = "/resources/groupsES1/enrolment-response-with-groupid.json"
         Ok(resourceAsString(path).get)
-      case `mdrServiceEmpty` =>
+      case `plrServiceEmpty` =>
         val path = "/resources/groupsES1/enrolment-response-with-no-groupid.json"
         Ok(resourceAsString(path).get)
       case _ => NoContent
