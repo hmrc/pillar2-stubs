@@ -28,7 +28,6 @@ class EnrolmentStoreProxyController @Inject() (cc: ControllerComponents, authFil
   val plrServiceEmpty = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
 
   def status(serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
-    println(s"what is service name ---------------------------$serviceName")
     serviceName match {
       case `plrService` =>
         val path = "/resources/groupsES1/enrolment-response-with-groupid.json"
