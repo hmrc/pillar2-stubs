@@ -1,3 +1,6 @@
 # microservice specific routes
 
-GET        /hello-world             uk.gov.hmrc.pillar2stubs.controllers.MicroserviceHelloWorldController.hello
+POST        /registration/02.00.00/organisation                                                                     uk.gov.hmrc.pillar2stubs.controllers.RegisterWithoutIdController.registerWithoutId
+POST        /pillar2/subscription                                                               uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.createSubscription
+
+GET         /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups               uk.gov.hmrc.pillar2stubs.controllers.EnrolmentStoreProxyController.status(serviceName)

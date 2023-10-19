@@ -1,0 +1,14 @@
+{
+  "errorDetail": {
+    "source": "Back End",
+    "timestamp": "2020-11-23T13:19:52.307Z",
+    "errorMessage": "Record not found",
+    "errorCode": "404",
+    "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
+    "sourceFaultDetail": {
+      "detail": [
+        "Detail cannot be found"
+      ]
+    }
+  }
+}

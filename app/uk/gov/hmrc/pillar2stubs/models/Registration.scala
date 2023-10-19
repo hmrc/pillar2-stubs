@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2stubs.config
+package uk.gov.hmrc.pillar2stubs.models
 
-import com.google.inject.AbstractModule
+import play.api.libs.json._
 
-class Module extends AbstractModule {
+case class NoIdOrganisation(organisationName: String)
 
-  override def configure(): Unit =
-    bind(classOf[AppConfig]).asEagerSingleton()
+object NoIdOrganisation {
+  implicit val reads: Reads[NoIdOrganisation] = Json.reads[NoIdOrganisation]
+}
+
+case class Registration(regime: String, organisation: NoIdOrganisation)
+
+object Registration {
+
+  implicit lazy val reads: Reads[Registration] = {
+    import play.api.libs.functional.syntax._
+    (
+      (__ \ "regime").read[String] and
+        (__ \ "organisation").read[NoIdOrganisation]
+    )(Registration.apply _)
+  }
 }

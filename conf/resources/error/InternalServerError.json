@@ -1,0 +1,9 @@
+{
+  "errorDetail": {
+    "timestamp": "2016-08-23T18:15:41Z",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "errorCode": "500",
+    "errorMessage": "Internal error",
+    "source": "Internal Server error"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "errorDetail": {
+    "timestamp" : "2023-03-11T08:20:44Z",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "errorCode": "409",
+    "errorMessage": "Duplicate submission",
+    "source": "Back End",
+    "sourceFaultDetail": {
+      "detail": [
+        "Duplicate submission"
+      ]
+    }
+  }
+}
