@@ -17,10 +17,10 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.Logging
-import play.api.libs.json.JsValue
-import play.api.mvc.{Action, ControllerComponents}
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.Subscription
+import uk.gov.hmrc.pillar2stubs.models.{ReadSubscription, Subscription}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -29,9 +29,7 @@ import javax.inject.Inject
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
   def createSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
-    println("****************************************************")
     logger.info(s"Subscription Request recieved \n ${request.body} \n")
-    println("****************************************************")
 
     request.body.asOpt[Subscription] match {
       case Some(input) =>
@@ -52,6 +50,30 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     }
   }
 
+// Read subscription readSubscription will return an object of whatever etmp is going to return
+  def retrieveSubscription(plrReference: String): Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
+    request.body.asOpt[ReadSubscription] match {
+      case Some(body) =>
+        plrReference match {
+          case "server" =>
+            ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
+          case "notFound" =>
+            NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
+          case _ =>
+            resourceAsString("/resources/subscription/SuccessResponse.json") match {
+              case Some(responseTemplate) =>
+                val responseBody = replacePillar2Id(responseTemplate, plrReference)
+                Ok(responseBody)
+              case None =>
+                InternalServerError("Unable to read SuccessResponse.json")
+            }
+        }
+      case None =>
+        BadRequest("Invalid or missing request body.")
+    }
+  }
+
   private def replacePillar2Id(response: String, pillar2Reference: String): String =
     response.replace("[pillar2Reference]", pillar2Reference)
+
 }
