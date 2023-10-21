@@ -271,4 +271,46 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
     }
 
   }
+
+  "GET" - {
+    "retrieveSubscription" - {
+      "must return FORBIDDEN response when 'Authorization' header is missing" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("someId").url)
+        val result  = route(app, request).value
+
+        status(result) shouldBe FORBIDDEN
+      }
+
+      "must return OK response with valid data when subscription exists" in {
+        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("validId").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe OK
+      }
+
+      "must return NOT_FOUND response when subscription does not exist" in {
+        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("notFound").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe NOT_FOUND
+      }
+
+      "must return FORBIDDEN response when 'Authorization' header is missing for GET request" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("someId").url)
+        val result  = route(app, request).value
+
+        status(result) shouldBe FORBIDDEN
+      }
+
+      "must return SERVICE_UNAVAILABLE response when the service is down" in {
+        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("server").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe SERVICE_UNAVAILABLE
+      }
+    }
+  }
 }
