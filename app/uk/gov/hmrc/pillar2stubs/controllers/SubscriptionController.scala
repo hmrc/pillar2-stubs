@@ -52,12 +52,18 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
   }
 
   def retrieveSubscription(plrReference: String): Action[AnyContent] =
-    (Action andThen authFilter).async { implicit request =>
+    (Action andThen authFilter).async {
       plrReference match {
-        case "server" =>
-          Future.successful(ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get))
-        case "notFound" =>
+        case "400" =>
+          Future.successful(BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get))
+        case "404" =>
           Future.successful(NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get))
+        case "422" =>
+          Future.successful(UnprocessableEntity(resourceAsString(s"/resources/error/RequestCouldNotBeProcessed.json").get))
+        case "500" =>
+          Future.successful(InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get))
+        case "503" =>
+          Future.successful(ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get))
         case _ =>
           resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
             case Some(responseTemplate) =>
