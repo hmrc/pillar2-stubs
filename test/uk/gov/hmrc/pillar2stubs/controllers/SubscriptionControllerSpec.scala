@@ -42,7 +42,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
             | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": "XE6666666666666",
@@ -72,7 +71,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 			}
             | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
@@ -88,7 +86,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
             | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": "XE0000123456789",
@@ -118,7 +115,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 			}
             | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
@@ -134,7 +130,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
             | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": "XE6666666666666",
@@ -164,7 +159,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 			}
             | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
@@ -180,7 +174,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
             | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": "XE6666666666666",
@@ -210,7 +203,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 			}
             | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
@@ -226,7 +218,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
             | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": 2,
@@ -256,7 +247,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 			}
             | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
