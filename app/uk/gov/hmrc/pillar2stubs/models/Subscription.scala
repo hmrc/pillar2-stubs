@@ -31,8 +31,8 @@ object Subscription {
   implicit lazy val reads: Reads[Subscription] = {
     import play.api.libs.functional.syntax._
     (
-      (__ \ "requestBody" \ "upeDetails" \ "safeId").read[String] and
-        (__ \ "requestBody" \ "upeDetails" \ "organisationName").read[String]
+      (__ \ "upeDetails" \ "safeId").read[String] and
+        (__ \ "upeDetails" \ "organisationName").read[String]
     )(Subscription.apply _)
   }
 }
