@@ -18,12 +18,6 @@ package uk.gov.hmrc.pillar2stubs.models
 
 import play.api.libs.json.{Json, Reads, __}
 
-/*case class Organisation(organisationName: String)
-
-object Organisation {
-  implicit val reads: Reads[Organisation] = Json.reads[Organisation]
-}*/
-
 case class Subscription(safeId: String, organisationName: String)
 
 object Subscription {

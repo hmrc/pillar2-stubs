@@ -16,8 +16,35 @@
 
 package uk.gov.hmrc.pillar2stubs.models
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json._
+
 import java.time.LocalDate
+
+object LocalDateImplicits {
+  implicit val localDateReads: Reads[LocalDate] = Reads.localDateReads("yyyy-MM-dd")
+  implicit val localDateWrites: Writes[LocalDate] = Writes.temporalWrites[LocalDate, java.time.format.DateTimeFormatter](
+    java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
+  )
+}
+
+case class SubscriptionResponse(success: SubscriptionSuccess)
+
+object SubscriptionResponse {
+  implicit val format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
+}
+
+case class SubscriptionSuccess(
+  plrReference:             Option[String],
+  processingDate:           Option[LocalDate],
+  formBundleNumber:         Option[String],
+  upeDetails:               UpeDetails,
+  upeCorrespAddressDetails: UpeCorrespAddressDetails,
+  primaryContactDetails:    PrimaryContactDetails,
+  secondaryContactDetails:  SecondaryContactDetails,
+  filingMemberDetails:      FilingMemberDetails,
+  accountingPeriod:         AccountingPeriod,
+  accountStatus:            AccountStatus
+)
 
 case class UpeDetails(
   plrReference:            String,
@@ -29,63 +56,85 @@ case class UpeDetails(
   filingMember:            Boolean
 )
 
-case class AccountingPeriod(
-  startDate: LocalDate,
-  endDate:   LocalDate
-)
+object UpeDetails {
+  implicit val format: OFormat[UpeDetails] = Json.format[UpeDetails]
+}
 
-case class AddressDetails(
+final case class UpeCorrespAddressDetails(
   addressLine1: String,
-  addressLine2: String,
-  addressLine3: String,
-  addressLine4: String,
-  postCode:     String,
+  addressLine2: Option[String],
+  addressLine3: Option[String],
+  addressLine4: Option[String],
+  postCode:     Option[String],
   countryCode:  String
 )
 
-case class ContactDetails(
+object UpeCorrespAddressDetails {
+  implicit val format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
+}
+
+object SubscriptionSuccess {
+  implicit val format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
+}
+
+case class PrimaryContactDetails(
   name:         String,
-  telephone:    String,
+  telepphone:   Option[String],
   emailAddress: String
 )
 
-case class FilingMemberDetails(
-  addNewFilingMember:      Boolean,
+object PrimaryContactDetails {
+  implicit val format: OFormat[PrimaryContactDetails] = Json.format[PrimaryContactDetails]
+}
+
+case class SecondaryContactDetails(
+  name:         String,
+  telepphone:   Option[String],
+  emailAddress: String
+)
+
+object SecondaryContactDetails {
+  implicit val format: OFormat[SecondaryContactDetails] = Json.format[SecondaryContactDetails]
+}
+
+final case class FilingMemberDetails(
+  addNewFilingMember:      Option[Boolean],
   safeId:                  String,
-  customerIdentification1: String,
-  customerIdentification2: String,
+  customerIdentification1: Option[String],
+  customerIdentification2: Option[String],
   organisationName:        String
 )
 
-case class SubscriptionRequest(
-  upeDetails:               UpeDetails,
-  accountingPeriod:         AccountingPeriod,
-  upeCorrespAddressDetails: AddressDetails,
-  primaryContactDetails:    ContactDetails,
-  secondaryContactDetails:  ContactDetails,
-  filingMemberDetails:      FilingMemberDetails
+object FilingMemberDetails {
+  implicit val format: OFormat[FilingMemberDetails] = Json.format[FilingMemberDetails]
+}
+
+final case class AccountingPeriod(
+  startDate: LocalDate,
+  endDate:   LocalDate,
+  duetDate:  Option[LocalDate] = None
 )
 
-object UpeDetails {
-  implicit val format: Format[UpeDetails] = Json.format[UpeDetails]
-}
-
 object AccountingPeriod {
-  implicit val format: Format[AccountingPeriod] = Json.format[AccountingPeriod]
+  implicit val format: OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
 }
 
-object AddressDetails {
-  implicit val format: Format[AddressDetails] = Json.format[AddressDetails]
-}
+final case class AccountStatus(
+  inactive: Boolean
+)
 
-object ContactDetails {
-  implicit val format: Format[ContactDetails] = Json.format[ContactDetails]
-}
+object AccountStatus {
+  implicit val format: OFormat[AccountStatus] = Json.format[AccountStatus]
 
-object FilingMemberDetails {
-  implicit val format: Format[FilingMemberDetails] = Json.format[FilingMemberDetails]
-}
+  implicit val optionWrites: Writes[Option[AccountStatus]] = new Writes[Option[AccountStatus]] {
+    def writes(option: Option[AccountStatus]): JsValue = option match {
+      case Some(accountStatus) => Json.toJson(accountStatus)(format)
+      case None                => JsNull
+    }
+  }
+  implicit val writes: Writes[AccountStatus] = Json.writes[AccountStatus]
 
-object SubscriptionRequest {
-  implicit val format: Format[SubscriptionRequest] = Json.format[SubscriptionRequest]
+  type AccountStatusOpt = Option[AccountStatus]
+  implicit val accountStatusOptWrites: Writes[AccountStatusOpt] = optionWrites
+
 }
