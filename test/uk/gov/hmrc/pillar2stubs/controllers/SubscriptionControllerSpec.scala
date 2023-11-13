@@ -47,7 +47,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"organisationName": "Dave Smith",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
@@ -77,7 +77,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
         val result  = route(app, request).value
 
-        status(result) shouldBe OK
+        status(result) shouldBe CREATED
       }
 
       "must return Conflict response" in {
@@ -89,7 +89,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"organisationName": "duplicate",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
@@ -131,7 +131,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"organisationName": "server",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
@@ -173,7 +173,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"organisationName": "notFound",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
@@ -215,7 +215,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"organisationName": "Dave Smith",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
