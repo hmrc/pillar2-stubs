@@ -251,4 +251,61 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
     }
 
   }
+
+  "GET" - {
+    "retrieveSubscription" - {
+
+      val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+
+      "must return FORBIDDEN response when 'Authorization' header is missing" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("someId").url)
+        val result  = route(app, request).value
+
+        status(result) shouldBe FORBIDDEN
+      }
+
+      "must return OK response with valid data when subscription exists" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("validId").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe OK
+      }
+
+      "must return BAD_REQUEST response for invalid requests" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("400").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe BAD_REQUEST
+      }
+
+      "must return NOT_FOUND response when subscription does not exist" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("404").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe NOT_FOUND
+      }
+
+      "must return UNPROCESSABLE_ENTITY response for unprocessable requests" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("422").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe UNPROCESSABLE_ENTITY
+      }
+
+      "must return INTERNAL_SERVER_ERROR response when an unexpected error occurs" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("500").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe INTERNAL_SERVER_ERROR
+      }
+
+      "must return SERVICE_UNAVAILABLE response when the service is down" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("503").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe SERVICE_UNAVAILABLE
+      }
+    }
+
+  }
 }
