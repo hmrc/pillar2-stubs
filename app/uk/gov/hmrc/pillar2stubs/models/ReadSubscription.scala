@@ -18,21 +18,17 @@ package uk.gov.hmrc.pillar2stubs.models
 
 import play.api.libs.json.{Json, Reads, __}
 
-/*case class Organisation(organisationName: String)
+case class ReadSubscription(safeId: String, organisationName: String, plrReference: String)
 
-object Organisation {
-  implicit val reads: Reads[Organisation] = Json.reads[Organisation]
-}*/
+object ReadSubscription {
 
-case class Subscription(safeId: String, organisationName: String)
-
-object Subscription {
-
-  implicit lazy val reads: Reads[Subscription] = {
+  implicit lazy val reads: Reads[ReadSubscription] = {
     import play.api.libs.functional.syntax._
     (
-      (__ \ "upeDetails" \ "safeId").read[String] and
-        (__ \ "upeDetails" \ "organisationName").read[String]
-    )(Subscription.apply _)
+      (__ \ "success" \ "filingMemberDetails" \ "safeId").read[String] and
+        (__ \ "success" \ "upeDetails" \ "organisationName").read[String] and
+        (__ \ "success" \ "plrReference").read[String]
+    )(ReadSubscription.apply _)
   }
+
 }

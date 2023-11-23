@@ -1,0 +1,46 @@
+{
+  "success": {
+      "plrReference": "[pillar2Reference]",
+      "processingDate": "2010-12-12",
+      "formBundleNumber": "119000004320",
+      "upeDetails": {
+          "domesticOnly": false,
+          "organisationName": "International Organisation Inc.",
+          "customerIdentification1": "12345678",
+          "customerIdentification2": "12345678",
+          "registrationDate": "2022-01-31",
+          "filingMember": false
+      },
+      "upeCorrespAddressDetails": {
+          "addressLine1": "1 High Street",
+          "addressLine2": "Egham",
+          "addressLine3": "Surrey",
+          "postCode": "HP13 6TT",
+          "countryCode": "GB"
+      },
+      "primaryContactDetails": {
+          "name": "Fred Flintstone",
+          "telepphone": "0115 9700 700",
+          "emailAddress": "fred.flintstone@aol.com"
+      },
+      "secondaryContactDetails": {
+          "name": "Donald Trump",
+          "telepphone": "0115 9700 700",
+          "emailAddress": "fred.flintstone@potus.com"
+      },
+      "filingMemberDetails": {
+          "safeId": "XL6967739016188",
+          "organisationName": "Domestic Operations Ltd",
+          "customerIdentification1": "1234Z678",
+          "customerIdentification2": "1234567Y"
+      },
+      "accountingPeriod": {
+          "startDate": "2024-01-06",
+          "endDate": "2025-04-06",
+          "duetDate": "2024-04-06"
+      },
+      "accountStatus": {
+          "inactive": true
+      }
+  }
+}
