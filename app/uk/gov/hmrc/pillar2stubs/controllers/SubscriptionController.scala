@@ -29,9 +29,8 @@ import javax.inject.Inject
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
   def createSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
-    println("****************************************************")
     logger.info(s"Subscription Request recieved \n ${request.body} \n")
-    println("****************************************************")
+
 
     request.body.asOpt[Subscription] match {
       case Some(input) =>
