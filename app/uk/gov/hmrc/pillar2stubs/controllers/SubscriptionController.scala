@@ -37,7 +37,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       case Some(input) =>
         val organisationName = input.organisationName
         val safeId           = input.safeId
-
         (organisationName, safeId) match {
           case ("duplicate", _) => Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").get)
           case ("server", _)    => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
