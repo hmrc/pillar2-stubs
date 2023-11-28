@@ -46,6 +46,25 @@ case class SubscriptionSuccess(
   accountStatus:            AccountStatus
 )
 
+case class AmendSubscriptionSuccess(
+  upeDetails:               UpeDetails,
+  accountingPeriod:         AccountingPeriod,
+  upeCorrespAddressDetails: UpeCorrespAddressDetails,
+  primaryContactDetails:    PrimaryContactDetails,
+  secondaryContactDetails:  SecondaryContactDetails,
+  filingMemberDetails:      FilingMemberDetails
+)
+
+object AmendSubscriptionSuccess {
+  implicit val format: OFormat[AmendSubscriptionSuccess] = Json.format[AmendSubscriptionSuccess]
+}
+
+case class AmendSubscriptionResponse(value: AmendSubscriptionSuccess)
+
+object AmendSubscriptionResponse {
+  implicit val format: OFormat[AmendSubscriptionResponse] = Json.format[AmendSubscriptionResponse]
+}
+
 case class UpeDetails(
   plrReference:            String,
   customerIdentification1: String,

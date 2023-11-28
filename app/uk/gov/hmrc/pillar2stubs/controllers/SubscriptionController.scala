@@ -20,7 +20,7 @@ import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.{Subscription, SubscriptionResponse}
+import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionResponse, Subscription, SubscriptionResponse}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
@@ -76,37 +76,99 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       }
     }
 
-  def amendSubscription: Action[AnyContent] = Action.async { implicit request =>
-    request.body.asJson match {
-      case Some(json) =>
-        Json.fromJson[SubscriptionResponse](json) match {
-          case JsSuccess(subscriptionResponse, _) =>
-            if (subscriptionResponse.success.upeDetails.organisationName.equals("400")) {
-              Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
-            } else if (subscriptionResponse.success.upeDetails.organisationName.equals("409")) {
-              Future.successful(Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").getOrElse("Conflict error")))
-            } else if (subscriptionResponse.success.upeDetails.organisationName.equals("422")) {
-              Future.successful(
-                UnprocessableEntity(resourceAsString("/resources/error/RequestCouldNotBeProcessed.json").getOrElse("Unprocessable entity error"))
-              )
-            } else if (subscriptionResponse.success.upeDetails.organisationName.equals("500")) {
-              Future.successful(InternalServerError(resourceAsString("/resources/error/InternalServerError.json").getOrElse("Internal server error")))
-            } else if (subscriptionResponse.success.upeDetails.organisationName.equals("503")) {
-              Future.successful(
-                ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error"))
-              )
-            } else {
-              Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
-            }
+  def amendSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
+    Json.fromJson[AmendSubscriptionResponse](request.body) match {
+      case JsSuccess(subscriptionResponse, _) =>
+        subscriptionResponse.value.upeDetails.organisationName match {
+          case "400" =>
+            Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
 
-          case JsError(errors) =>
-            Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Invalid JSON format"))))
+          case "409" =>
+            Future.successful(Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").getOrElse("Conflict error")))
+
+          case "422" =>
+            Future.successful(
+              UnprocessableEntity(resourceAsString("/resources/error/RequestCouldNotBeProcessed.json").getOrElse("Unprocessable entity error"))
+            )
+
+          case "500" =>
+            Future.successful(InternalServerError(resourceAsString("/resources/error/InternalServerError.json").getOrElse("Internal server error")))
+
+          case "503" =>
+            Future.successful(ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error")))
+
+          case _ =>
+            Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
         }
 
-      case None =>
-        Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Missing JSON request body"))))
+      case JsError(errors) =>
+        Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Invalid JSON format"))))
     }
   }
+
+//  def amendSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
+//    Json.fromJson[AmendSubscriptionResponse](request.body) match {
+//      case JsSuccess(subscriptionResponse, _) =>
+//            if (subscriptionResponse.value.upeDetails.organisationName.equals("400")) {
+//              Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
+//            } else if (subscriptionResponse.value.upeDetails.organisationName.equals("409")) {
+//              Future.successful(Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").getOrElse("Conflict error")))
+//            } else if (subscriptionResponse.value.upeDetails.organisationName.equals("422")) {
+//              Future.successful(
+//                UnprocessableEntity(resourceAsString("/resources/error/RequestCouldNotBeProcessed.json").getOrElse("Unprocessable entity error"))
+//              )
+//            } else if (subscriptionResponse.value.upeDetails.organisationName.equals("500")) {
+//              Future.successful(InternalServerError(resourceAsString("/resources/error/InternalServerError.json").getOrElse("Internal server error")))
+//            } else if (subscriptionResponse.value.upeDetails.organisationName.equals("503")) {
+//              Future.successful(
+//                ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error"))
+//              )
+//            } else {
+//              Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
+//            }
+//
+//          case JsError(errors) =>
+//            Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Invalid JSON format"))))
+//        }
+//
+//      case None =>
+//        Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Missing JSON request body"))))
+//    }
+//  }
+
+  ////  def amendSubscription: Action[AnyContent] = Action.async { implicit request =>
+//def amendSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
+//  Json.fromJson[AmendSubscriptionResponse](request.body) match {
+////    request.body.asJson match {
+//      case Some(json) =>
+//        Json.fromJson[AmendSubscriptionResponse](json) match {
+//          case JsSuccess(subscriptionResponse, _) =>
+//            if (subscriptionResponse.value.upeDetails.organisationName.equals("400")) {
+//              Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
+//            } else if (subscriptionResponse.value.upeDetails.organisationName.equals("409")) {
+//              Future.successful(Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").getOrElse("Conflict error")))
+//            } else if (subscriptionResponse.value.upeDetails.organisationName.equals("422")) {
+//              Future.successful(
+//                UnprocessableEntity(resourceAsString("/resources/error/RequestCouldNotBeProcessed.json").getOrElse("Unprocessable entity error"))
+//              )
+//            } else if (subscriptionResponse.value.upeDetails.organisationName.equals("500")) {
+//              Future.successful(InternalServerError(resourceAsString("/resources/error/InternalServerError.json").getOrElse("Internal server error")))
+//            } else if (subscriptionResponse.value.upeDetails.organisationName.equals("503")) {
+//              Future.successful(
+//                ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error"))
+//              )
+//            } else {
+//              Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
+//            }
+//
+//          case JsError(errors) =>
+//            Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Invalid JSON format"))))
+//        }
+//
+//      case None =>
+//        Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Missing JSON request body"))))
+//    }
+//  }
 
   private def replacePillar2Id(response: String, pillar2Reference: String): String =
     response.replace("[pillar2Reference]", pillar2Reference)
