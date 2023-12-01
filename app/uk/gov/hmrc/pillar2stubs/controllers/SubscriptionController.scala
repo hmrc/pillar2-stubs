@@ -54,6 +54,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
   def retrieveSubscription(plrReference: String): Action[AnyContent] =
     (Action andThen authFilter).async {
+      logger.info(s"retrieveSubscription Request recieved \n ${plrReference} \n")
       plrReference match {
         case "400" =>
           Future.successful(BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get))
@@ -77,6 +78,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     }
 
   def amendSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
+    logger.info(s"amendSubscription Request recieved")
     Json.fromJson[AmendSubscriptionResponse](request.body) match {
       case JsSuccess(subscriptionResponse, _) =>
         subscriptionResponse.value.upeDetails.organisationName match {
