@@ -14,7 +14,8 @@
       "upeCorrespAddressDetails": {
           "addressLine1": "1 High Street",
           "addressLine2": "Egham",
-          "addressLine3": "Surrey",
+          "addressLine3": "Wycombe",
+          "addressLine4": "Surrey",
           "postCode": "HP13 6TT",
           "countryCode": "GB"
       },
@@ -25,8 +26,8 @@
       },
       "secondaryContactDetails": {
           "name": "Donald Trump",
-          "telepphone": "0115 9700 700",
-          "emailAddress": "fred.flintstone@potus.com"
+          "telepphone": "0115 9700 701",
+          "emailAddress": "donald.trump@potus.com"
       },
       "filingMemberDetails": {
           "safeId": "XL6967739016188",
