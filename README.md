@@ -244,7 +244,7 @@ To trigger the happy path, ensure you provide a valid request body
 > Response body: N/A
 
 #### Unhappy Path:
-To trigger the unhappy paths, ensure you provide a valid request body.
+To trigger the unhappy paths, ensure you provide a valid request body.<br>
 The below error responses can be expected:
 
 HTTP 409 Duplicate Submission Error
