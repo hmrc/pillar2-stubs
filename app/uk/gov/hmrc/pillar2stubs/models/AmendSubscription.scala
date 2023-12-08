@@ -105,7 +105,7 @@ object UpeDetailsAmend {
 }
 
 final case class FilingMemberAmendDetails(
-  addNewFilingMember:      Boolean = false,
+  addNewFilingMember:      Boolean = true,
   safeId:                  String,
   customerIdentification1: Option[String],
   customerIdentification2: Option[String],
