@@ -34,25 +34,23 @@ object SubscriptionResponse {
 }
 
 case class SubscriptionSuccess(
-  plrReference:             Option[String],
-  processingDate:           Option[LocalDate],
   formBundleNumber:         Option[String],
   upeDetails:               UpeDetails,
   upeCorrespAddressDetails: UpeCorrespAddressDetails,
-  primaryContactDetails:    PrimaryContactDetails,
-  secondaryContactDetails:  SecondaryContactDetails,
-  filingMemberDetails:      FilingMemberDetails,
+  primaryContactDetails:    ContactDetailsType,
+  secondaryContactDetails:  Option[ContactDetailsType],
+  filingMemberDetails:      Option[FilingMemberDetails],
   accountingPeriod:         AccountingPeriod,
-  accountStatus:            AccountStatus
+  accountStatus:            Option[AccountStatus]
 )
 
 case class AmendSubscriptionSuccess(
-  upeDetails:               UpeDetails,
+  upeDetails:               UpeDetailsAmend,
   accountingPeriod:         AccountingPeriod,
   upeCorrespAddressDetails: UpeCorrespAddressDetails,
-  primaryContactDetails:    PrimaryContactDetails,
-  secondaryContactDetails:  SecondaryContactDetails,
-  filingMemberDetails:      FilingMemberDetails
+  primaryContactDetails:    ContactDetailsType,
+  secondaryContactDetails:  Option[ContactDetailsType],
+  filingMemberDetails:      Option[FilingMemberAmendDetails]
 )
 
 object AmendSubscriptionSuccess {
@@ -92,32 +90,47 @@ object UpeCorrespAddressDetails {
   implicit val format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
 }
 
+final case class UpeDetailsAmend(
+  plrReference:            String,
+  customerIdentification1: Option[String],
+  customerIdentification2: Option[String],
+  organisationName:        String,
+  registrationDate:        LocalDate,
+  domesticOnly:            Boolean,
+  filingMember:            Boolean
+)
+
+object UpeDetailsAmend {
+  implicit val format: OFormat[UpeDetailsAmend] = Json.format[UpeDetailsAmend]
+}
+
+final case class FilingMemberAmendDetails(
+  addNewFilingMember:      Boolean = false,
+  safeId:                  String,
+  customerIdentification1: Option[String],
+  customerIdentification2: Option[String],
+  organisationName:        String
+)
+
+object FilingMemberAmendDetails {
+  implicit val format: OFormat[FilingMemberAmendDetails] = Json.format[FilingMemberAmendDetails]
+}
+
 object SubscriptionSuccess {
   implicit val format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
 }
 
-case class PrimaryContactDetails(
+final case class ContactDetailsType(
   name:         String,
-  telepphone:   Option[String],
+  telephone:    Option[String],
   emailAddress: String
 )
 
-object PrimaryContactDetails {
-  implicit val format: OFormat[PrimaryContactDetails] = Json.format[PrimaryContactDetails]
-}
-
-case class SecondaryContactDetails(
-  name:         String,
-  telepphone:   Option[String],
-  emailAddress: String
-)
-
-object SecondaryContactDetails {
-  implicit val format: OFormat[SecondaryContactDetails] = Json.format[SecondaryContactDetails]
+object ContactDetailsType {
+  implicit val format: OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
 }
 
 final case class FilingMemberDetails(
-  addNewFilingMember:      Option[Boolean],
   safeId:                  String,
   customerIdentification1: Option[String],
   customerIdentification2: Option[String],

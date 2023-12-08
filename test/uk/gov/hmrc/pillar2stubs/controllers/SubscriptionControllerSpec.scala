@@ -336,7 +336,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
       "must return OK response with valid data when subscription exists" in {
         val json: JsValue = Json.parse((""" {
-                                                       |        "success": {
+                                                       |        "value": {
                                                        |          "upeDetails": {
                                                        |            "plrReference": "XMPLR0012345678",
                                                        |            "customerIdentification1": "SA7743248",
@@ -374,9 +374,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                                        |          "accountingPeriod": {
                                                        |            "startDate": "2022-04-06",
                                                        |            "endDate": "2023-04-05"
-                                                       |          },
-                                                       |          "accountStatus": {
-                                                       |            "inactive": true
                                                        |          }
                                                        |        }
                                                        |      }
@@ -389,7 +386,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
       "must return BAD_REQUEST response for invalid requests" in {
         val json: JsValue = Json.parse((""" {
-                                          |        "success": {
+                                          |        "value": {
                                           |          "upeDetails": {
                                           |            "plrReference": "XMPLR0012345678",
                                           |            "customerIdentification1": "SA7743248",
@@ -427,9 +424,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |          "accountingPeriod": {
                                           |            "startDate": "2022-04-06",
                                           |            "endDate": "2023-04-05"
-                                          |          },
-                                          |          "accountStatus": {
-                                          |            "inactive": true
                                           |          }
                                           |        }
                                           |      }
@@ -442,50 +436,47 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
       "must return CONFLICT response when subscription does not exist" in {
         val json: JsValue = Json.parse((""" {
-                                            |        "success": {
-                                            |          "upeDetails": {
-                                            |            "plrReference": "XMPLR0012345678",
-                                            |            "customerIdentification1": "SA7743248",
-                                            |            "customerIdentification2": "1234567890",
-                                            |            "organisationName": "409",
-                                            |            "registrationDate": "1994-12-05",
-                                            |            "domesticOnly": true,
-                                            |            "filingMember": false
-                                            |          },
-                                            |          "upeCorrespAddressDetails": {
-                                            |            "addressLine1": "10 High Street",
-                                            |            "addressLine2": "Egham",
-                                            |            "addressLine3": "Surrey",
-                                            |            "addressLine4": "Wembley",
-                                            |            "postCode": "SU10 6HH",
-                                            |            "countryCode": "GB"
-                                            |          },
-                                            |          "primaryContactDetails": {
-                                            |            "name": "Fred Jones",
-                                            |            "telephone": "01159700700",
-                                            |            "emailAddress": "fred.jones@acme.com"
-                                            |          },
-                                            |          "secondaryContactDetails": {
-                                            |            "name": "Jill Jones",
-                                            |            "telephone": "01159788799",
-                                            |            "emailAddress": "jill.jones@acme.com"
-                                            |          },
-                                            |          "filingMemberDetails": {
-                                            |            "addNewFilingMember": true,
-                                            |            "safeId": "XV5277988337712",
-                                            |            "customerIdentification1": "DD17743248",
-                                            |            "customerIdentification2": "431234567890",
-                                            |            "organisationName": "Acme Upe Ltd"
-                                            |          },
-                                            |          "accountingPeriod": {
-                                            |            "startDate": "2022-04-06",
-                                            |            "endDate": "2023-04-05"
-                                            |          },
-                                            |          "accountStatus": {
-                                            |            "inactive": true
-                                            |          }
-                                            |        }
-                                            |      }
+                                          |        "value": {
+                                          |          "upeDetails": {
+                                          |            "plrReference": "XMPLR0012345678",
+                                          |            "customerIdentification1": "SA7743248",
+                                          |            "customerIdentification2": "1234567890",
+                                          |            "organisationName": "409",
+                                          |            "registrationDate": "1994-12-05",
+                                          |            "domesticOnly": true,
+                                          |            "filingMember": false
+                                          |          },
+                                          |          "upeCorrespAddressDetails": {
+                                          |            "addressLine1": "10 High Street",
+                                          |            "addressLine2": "Egham",
+                                          |            "addressLine3": "Surrey",
+                                          |            "addressLine4": "Wembley",
+                                          |            "postCode": "SU10 6HH",
+                                          |            "countryCode": "GB"
+                                          |          },
+                                          |          "primaryContactDetails": {
+                                          |            "name": "Fred Jones",
+                                          |            "telephone": "01159700700",
+                                          |            "emailAddress": "fred.jones@acme.com"
+                                          |          },
+                                          |          "secondaryContactDetails": {
+                                          |            "name": "Jill Jones",
+                                          |            "telephone": "01159788799",
+                                          |            "emailAddress": "jill.jones@acme.com"
+                                          |          },
+                                          |          "filingMemberDetails": {
+                                          |            "addNewFilingMember": true,
+                                          |            "safeId": "XV5277988337712",
+                                          |            "customerIdentification1": "DD17743248",
+                                          |            "customerIdentification2": "431234567890",
+                                          |            "organisationName": "Acme Upe Ltd"
+                                          |          },
+                                          |          "accountingPeriod": {
+                                          |            "startDate": "2022-04-06",
+                                          |            "endDate": "2023-04-05"
+                                          |          }
+                                          |        }
+                                          |      }
                                             |""".stripMargin))
         val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
         val result  = route(app, request).value
@@ -495,7 +486,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
       "must return UNPROCESSABLE_ENTITY response for unprocessable requests" in {
         val json: JsValue = Json.parse((""" {
-                                          |        "success": {
+                                          |        "value": {
                                           |          "upeDetails": {
                                           |            "plrReference": "XMPLR0012345678",
                                           |            "customerIdentification1": "SA7743248",
@@ -533,9 +524,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |          "accountingPeriod": {
                                           |            "startDate": "2022-04-06",
                                           |            "endDate": "2023-04-05"
-                                          |          },
-                                          |          "accountStatus": {
-                                          |            "inactive": true
                                           |          }
                                           |        }
                                           |      }
@@ -548,7 +536,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
       "must return INTERNAL_SERVER_ERROR response when an unexpected error occurs" in {
         val json: JsValue = Json.parse((""" {
-                                          |        "success": {
+                                          |        "value": {
                                           |          "upeDetails": {
                                           |            "plrReference": "XMPLR0012345678",
                                           |            "customerIdentification1": "SA7743248",
@@ -586,9 +574,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |          "accountingPeriod": {
                                           |            "startDate": "2022-04-06",
                                           |            "endDate": "2023-04-05"
-                                          |          },
-                                          |          "accountStatus": {
-                                          |            "inactive": true
                                           |          }
                                           |        }
                                           |      }
@@ -603,7 +588,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       "must return SERVICE_UNAVAILABLE response when the service is down" in {
 
         val json: JsValue = Json.parse((""" {
-                                          |        "success": {
+                                          |        "value": {
                                           |          "upeDetails": {
                                           |            "plrReference": "XMPLR0012345678",
                                           |            "customerIdentification1": "SA7743248",
@@ -641,9 +626,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |          "accountingPeriod": {
                                           |            "startDate": "2022-04-06",
                                           |            "endDate": "2023-04-05"
-                                          |          },
-                                          |          "accountStatus": {
-                                          |            "inactive": true
                                           |          }
                                           |        }
                                           |      }
