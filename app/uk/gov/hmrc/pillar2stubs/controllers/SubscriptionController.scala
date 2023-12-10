@@ -43,9 +43,9 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case ("server", _)    => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
           case ("notFound", _)  => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
           case (_, "XE0000123456789") =>
-            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
           case (_, _) =>
-            Ok(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
           case _ => BadRequest
         }
       case _ => BadRequest

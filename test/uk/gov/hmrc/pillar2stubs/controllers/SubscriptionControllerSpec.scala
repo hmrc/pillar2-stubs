@@ -42,14 +42,12 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
-            | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": "XE6666666666666",
             | 				"organisationName": "Dave Smith",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
@@ -70,9 +68,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"safeId": "XE6666666666666",
             | 				"organisationName": "Test"
             | 			}
-            | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
@@ -81,21 +77,19 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
         val result  = route(app, request).value
 
-        status(result) shouldBe OK
+        status(result) shouldBe CREATED
       }
 
       "must return Conflict response" in {
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
-            | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": "XE0000123456789",
             | 				"organisationName": "duplicate",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
@@ -116,9 +110,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"safeId": "XE6666666666666",
             | 				"organisationName": "Test"
             | 			}
-            | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
@@ -134,14 +126,12 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
-            | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": "XE6666666666666",
             | 				"organisationName": "server",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
@@ -162,9 +152,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"safeId": "XE6666666666666",
             | 				"organisationName": "Test"
             | 			}
-            | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
@@ -180,14 +168,12 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
-            | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": "XE6666666666666",
             | 				"organisationName": "notFound",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
@@ -208,9 +194,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"safeId": "XE6666666666666",
             | 				"organisationName": "Test"
             | 			}
-            | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
@@ -226,14 +210,12 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         val input: String =
           """{
-            | 	"createSubscriptionRequest": {
-            | 		"requestBody": {
             | 			"upeDetails": {
             | 				"safeId": 2,
             | 				"organisationName": "Dave Smith",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
-            | 				"filingMember": true
+            | 				"filingMember": false
             | 			},
             | 			"accountingPeriod": {
             | 				"startDate": "2024-12-31",
@@ -254,9 +236,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
             | 				"safeId": "XE6666666666666",
             | 				"organisationName": "Test"
             | 			}
-            | 		}
             | 	}
-            | }
             |
             |""".stripMargin
 
@@ -639,4 +619,5 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
     }
 
   }
+
 }

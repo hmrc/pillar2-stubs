@@ -29,9 +29,7 @@ import javax.inject.Inject
 class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
 
   def registerWithoutId: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
-    println("****************************************************")
     logger.info(s"Registration Request recieved \n ${request.body} \n")
-    println("****************************************************")
     val regimeName = "PLR"
     val register   = request.body.as[Registration]
     val orgName    = register.organisation.organisationName
