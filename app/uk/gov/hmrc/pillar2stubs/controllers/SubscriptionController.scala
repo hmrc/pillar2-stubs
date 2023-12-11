@@ -81,7 +81,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     logger.info(s"amendSubscription Request recieved")
     Json.fromJson[AmendSubscriptionResponse](request.body) match {
       case JsSuccess(subscriptionResponse, _) =>
-        subscriptionResponse.value.upeDetails.organisationName match {
+        subscriptionResponse.value.primaryContactDetails.name match {
           case "400" =>
             Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
 

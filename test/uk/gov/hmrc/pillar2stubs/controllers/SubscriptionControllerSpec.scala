@@ -385,7 +385,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "countryCode": "GB"
                                           |          },
                                           |          "primaryContactDetails": {
-                                          |            "name": "Fred Jones",
+                                          |            "name": "400",
                                           |            "telephone": "01159700700",
                                           |            "emailAddress": "fred.jones@acme.com"
                                           |          },
@@ -435,7 +435,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "countryCode": "GB"
                                           |          },
                                           |          "primaryContactDetails": {
-                                          |            "name": "Fred Jones",
+                                          |            "name": "409",
                                           |            "telephone": "01159700700",
                                           |            "emailAddress": "fred.jones@acme.com"
                                           |          },
@@ -485,7 +485,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "countryCode": "GB"
                                           |          },
                                           |          "primaryContactDetails": {
-                                          |            "name": "Fred Jones",
+                                          |            "name": "422",
                                           |            "telephone": "01159700700",
                                           |            "emailAddress": "fred.jones@acme.com"
                                           |          },
@@ -535,7 +535,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "countryCode": "GB"
                                           |          },
                                           |          "primaryContactDetails": {
-                                          |            "name": "Fred Jones",
+                                          |            "name": "500",
                                           |            "telephone": "01159700700",
                                           |            "emailAddress": "fred.jones@acme.com"
                                           |          },
@@ -587,7 +587,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "countryCode": "GB"
                                           |          },
                                           |          "primaryContactDetails": {
-                                          |            "name": "Fred Jones",
+                                          |            "name": "503",
                                           |            "telephone": "01159700700",
                                           |            "emailAddress": "fred.jones@acme.com"
                                           |          },
