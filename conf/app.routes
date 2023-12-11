@@ -3,5 +3,7 @@
 POST        /registration/02.00.00/organisation                                                 uk.gov.hmrc.pillar2stubs.controllers.RegisterWithoutIdController.registerWithoutId
 POST        /pillar2/subscription                                                               uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.createSubscription
 GET         /pillar2/subscription/:plrReference                                                 uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscription(plrReference: String)
+PUT         /pillar2/subscription                                                               uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.amendSubscription
+
 
 GET         /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups               uk.gov.hmrc.pillar2stubs.controllers.EnrolmentStoreProxyController.status(serviceName)

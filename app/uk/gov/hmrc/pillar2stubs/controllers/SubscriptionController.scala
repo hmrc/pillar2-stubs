@@ -20,9 +20,10 @@ import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.{ReadSubscription, Subscription}
+import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionResponse, Subscription, SubscriptionResponse}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
 
 import javax.inject.Inject
 import scala.concurrent.Future
@@ -53,6 +54,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
   def retrieveSubscription(plrReference: String): Action[AnyContent] =
     (Action andThen authFilter).async {
+      logger.info(s"retrieveSubscription Request recieved \n $plrReference \n")
       plrReference match {
         case "400" =>
           Future.successful(BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get))
@@ -74,6 +76,37 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           }
       }
     }
+
+  def amendSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
+    logger.info(s"amendSubscription Request recieved")
+    Json.fromJson[AmendSubscriptionResponse](request.body) match {
+      case JsSuccess(subscriptionResponse, _) =>
+        subscriptionResponse.value.primaryContactDetails.name match {
+          case "400" =>
+            Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
+
+          case "409" =>
+            Future.successful(Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").getOrElse("Conflict error")))
+
+          case "422" =>
+            Future.successful(
+              UnprocessableEntity(resourceAsString("/resources/error/RequestCouldNotBeProcessed.json").getOrElse("Unprocessable entity error"))
+            )
+
+          case "500" =>
+            Future.successful(InternalServerError(resourceAsString("/resources/error/InternalServerError.json").getOrElse("Internal server error")))
+
+          case "503" =>
+            Future.successful(ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error")))
+
+          case _ =>
+            Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
+        }
+
+      case JsError(errors) =>
+        Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Invalid JSON format"))))
+    }
+  }
 
   private def replacePillar2Id(response: String, pillar2Reference: String): String =
     response.replace("[pillar2Reference]", pillar2Reference)
