@@ -20,7 +20,7 @@ import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionResponse, Subscription, SubscriptionResponse}
+import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionResponse, AmendSubscriptionSuccess, Subscription, SubscriptionResponse}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
@@ -79,9 +79,9 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
   def amendSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
     logger.info(s"amendSubscription Request recieved")
-    Json.fromJson[AmendSubscriptionResponse](request.body) match {
+    Json.fromJson[AmendSubscriptionSuccess](request.body) match {
       case JsSuccess(subscriptionResponse, _) =>
-        subscriptionResponse.value.primaryContactDetails.name match {
+        subscriptionResponse.primaryContactDetails.name match {
           case "400" =>
             Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
 
