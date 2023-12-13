@@ -42,6 +42,17 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case ("duplicate", _) => Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").get)
           case ("server", _)    => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
           case ("notFound", _)  => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
+
+          case ("XE0000123456400", "XE0000123456789") =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456400")).get)
+          case ("XE0000123456404", "XE0000123456789") =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456404")).get)
+          case ("XE0000123456422", "XE0000123456789") =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456422")).get)
+          case ("XE0000123456500", "XE0000123456789") =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456500")).get)
+          case ("XE0000123456503", "XE0000123456789") =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456503")).get)
           case (_, "XE0000123456789") =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
           case (_, _) =>
@@ -56,15 +67,15 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     (Action andThen authFilter).async {
       logger.info(s"retrieveSubscription Request recieved \n $plrReference \n")
       plrReference match {
-        case "400" =>
+        case "XE0000123456400" =>
           Future.successful(BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get))
-        case "404" =>
+        case "XE0000123456404" =>
           Future.successful(NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get))
-        case "422" =>
+        case "XE0000123456422" =>
           Future.successful(UnprocessableEntity(resourceAsString(s"/resources/error/RequestCouldNotBeProcessed.json").get))
-        case "500" =>
+        case "XE0000123456500" =>
           Future.successful(InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get))
-        case "503" =>
+        case "XE0000123456503" =>
           Future.successful(ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get))
         case _ =>
           resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
