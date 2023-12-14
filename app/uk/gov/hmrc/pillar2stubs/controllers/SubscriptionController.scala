@@ -43,15 +43,15 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case ("server", _)    => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
           case ("notFound", _)  => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
 
-          case ("XE0000123456400", "XE0000123456789") =>
+          case ("XE0000123456400", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456400")).get)
-          case ("XE0000123456404", "XE0000123456789") =>
+          case ("XE0000123456404", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456404")).get)
-          case ("XE0000123456422", "XE0000123456789") =>
+          case ("XE0000123456422", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456422")).get)
-          case ("XE0000123456500", "XE0000123456789") =>
+          case ("XE0000123456500", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456500")).get)
-          case ("XE0000123456503", "XE0000123456789") =>
+          case ("XE0000123456503", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456503")).get)
           case (_, "XE0000123456789") =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
