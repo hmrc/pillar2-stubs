@@ -72,5 +72,13 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
       val result     = route(app, request).value
       status(result) shouldBe NO_CONTENT
     }
+
+    "must return Conflict response" in {
+
+      val plrService = "HMRC-PILLAR2-ORG~PLRID~XMPLR0009999999"
+      val request    = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
+      val result     = route(app, request).value
+      status(result) shouldBe CONFLICT
+    }
   }
 }
