@@ -56,7 +56,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case (_, "XE0000123456789") =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
           case ("XMPLR0009999999", _) =>
-            Conflict(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0009999999")).get)
+            Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").map(replacePillar2Id(_, "XMPLR0009999999")).get)
           case (_, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
           case _ => BadRequest
