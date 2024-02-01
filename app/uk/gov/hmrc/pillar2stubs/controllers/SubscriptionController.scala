@@ -39,9 +39,10 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         val safeId           = input.safeId
 
         (organisationName, safeId) match {
-          case ("duplicate", _) => Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").get)
-          case ("server", _)    => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
-          case ("notFound", _)  => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
+          case ("duplicate", _)     => Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").get)
+          case ("server", _)        => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
+          case ("notFound", _)      => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
+          case ("unprocessable", _) => UnprocessableEntity(resourceAsString(s"/resources/error/UnprocessableEntity.json").get)
 
           case ("XE0000123456400", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456400")).get)

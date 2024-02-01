@@ -1,0 +1,11 @@
+{"errorDetail": {
+  "timestamp" : "2023-02-14T12:58:44Z",
+  "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+  "errorCode": "422",
+  "errorMessage": "Request Not Processed",
+  "source": "Back End",
+  "sourceFaultDetail":{
+    "detail":[
+      "001 - Request Not Processed"
+    ]}
+}}

@@ -40,6 +40,7 @@ class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilte
       case (`regimeName`, "server")       => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
       case (`regimeName`, "notProcessed") => ServiceUnavailable(resourceAsString(s"/resources/error/RequestCouldNotBeProcessed.json").get)
       case (`regimeName`, "notFound")     => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
+      case (`regimeName`, "forbidden")    => Forbidden(resourceAsString(s"/resources/error/Forbidden.json").get)
       case (`regimeName`, data) =>
         val safeId = data match {
           case "duplicate"    => "XD3333333333333"
