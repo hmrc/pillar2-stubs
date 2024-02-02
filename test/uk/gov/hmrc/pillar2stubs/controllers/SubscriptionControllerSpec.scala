@@ -86,7 +86,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
           """{
             | 			"upeDetails": {
             | 				"safeId": "XE0000123456789",
-            | 				"organisationName": "duplicate",
+            | 				"organisationName": "duplicateSub",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
             | 				"filingMember": false
@@ -128,7 +128,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
           """{
             | 			"upeDetails": {
             | 				"safeId": "XE6666666666666",
-            | 				"organisationName": "server",
+            | 				"organisationName": "subServerError",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
             | 				"filingMember": false
@@ -170,7 +170,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
           """{
             | 			"upeDetails": {
             | 				"safeId": "XE6666666666666",
-            | 				"organisationName": "notFound",
+            | 				"organisationName": "subRecordNotFound",
             | 				"registrationDate": "2023-09-28",
             | 				"domesticOnly": false,
             | 				"filingMember": false

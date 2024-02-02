@@ -35,11 +35,12 @@ class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilte
     val orgName    = register.organisation.organisationName
 
     (register.regime, orgName) match {
-      case (`regimeName`, "error")        => InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get)
-      case (`regimeName`, "invalid")      => BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get)
-      case (`regimeName`, "server")       => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
-      case (`regimeName`, "notProcessed") => ServiceUnavailable(resourceAsString(s"/resources/error/RequestCouldNotBeProcessed.json").get)
-      case (`regimeName`, "notFound")     => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
+      case (`regimeName`, "regNoIDInternalError")     => InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get)
+      case (`regimeName`, "regNoIDInvalidRequest")    => BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get)
+      case (`regimeName`, "regNoIDServerError")       => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
+      case (`regimeName`, "regNoIDNotProcessed")      => ServiceUnavailable(resourceAsString(s"/resources/error/RequestCouldNotBeProcessed.json").get)
+      case (`regimeName`, "regNoIDRecordNotFound")    => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
+      case (`regimeName`, "regNoIDInvalidSubmission") => Forbidden(resourceAsString(s"/resources/error/Forbidden.json").get)
       case (`regimeName`, data) =>
         val safeId = data match {
           case "duplicate"    => "XD3333333333333"
