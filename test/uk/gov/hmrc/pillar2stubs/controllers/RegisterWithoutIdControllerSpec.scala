@@ -31,11 +31,11 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
   private val authHeader: (String, String) = HeaderNames.authorisation -> "token"
 
   private val nameAndErrorStatus: Seq[(String, Int)] = Seq(
-    ("error", INTERNAL_SERVER_ERROR),
-    ("invalid", BAD_REQUEST),
-    ("server", SERVICE_UNAVAILABLE),
-    ("notProcessed", SERVICE_UNAVAILABLE),
-    ("notFound", NOT_FOUND)
+    ("regNoIDInternalError", INTERNAL_SERVER_ERROR),
+    ("regNoIDInvalidRequest", BAD_REQUEST),
+    ("regNoIDServerError", SERVICE_UNAVAILABLE),
+    ("regNoIDNotProcessed", SERVICE_UNAVAILABLE),
+    ("regNoIDRecordNotFound", NOT_FOUND)
   )
 
   "RegisterWithoutIdController" - {
