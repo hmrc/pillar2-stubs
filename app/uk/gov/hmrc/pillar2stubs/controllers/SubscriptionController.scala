@@ -76,7 +76,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         case "XE0000123456404" =>
           Future.successful(NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get))
         case "XE0000123456422" =>
-          Future.successful(UnprocessableEntity(resourceAsString(s"/resources/error/RequestCouldNotBeProcessed.json").get))
+          Future.successful(UnprocessableEntity(resourceAsString(s"/resources/error/UnprocessableEntity.json").get))
         case "XE0000123456500" =>
           Future.successful(InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get))
         case "XE0000123456503" =>
@@ -105,7 +105,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
           case "422" =>
             Future.successful(
-              UnprocessableEntity(resourceAsString("/resources/error/RequestCouldNotBeProcessed.json").getOrElse("Unprocessable entity error"))
+              UnprocessableEntity(resourceAsString("/resources/error/UnprocessableEntity.json").getOrElse("Unprocessable entity error"))
             )
 
           case "500" =>
