@@ -71,15 +71,15 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     (Action andThen authFilter).async {
       logger.info(s"retrieveSubscription Request recieved \n $plrReference \n")
       plrReference match {
-        case "XE0000123456400" =>
+        case "XEPLR0123456400" =>
           Future.successful(BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get))
-        case "XE0000123456404" =>
+        case "XEPLR0123456404" =>
           Future.successful(NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get))
-        case "XE0000123456422" =>
+        case "XEPLR0123456422" =>
           Future.successful(UnprocessableEntity(resourceAsString(s"/resources/error/UnprocessableEntity.json").get))
-        case "XE0000123456500" =>
+        case "XEPLR0123456500" =>
           Future.successful(InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get))
-        case "XE0000123456503" =>
+        case "XEPLR0123456503" =>
           Future.successful(ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get))
         case _ =>
           resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
