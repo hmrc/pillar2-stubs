@@ -272,35 +272,35 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       }
 
       "must return BAD_REQUEST response for invalid requests" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XE0000123456400").url).withHeaders(authHeader)
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456400").url).withHeaders(authHeader)
         val result  = route(app, request).value
 
         status(result) shouldBe BAD_REQUEST
       }
 
       "must return NOT_FOUND response when subscription does not exist" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XE0000123456404").url).withHeaders(authHeader)
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456404").url).withHeaders(authHeader)
         val result  = route(app, request).value
 
         status(result) shouldBe NOT_FOUND
       }
 
       "must return UNPROCESSABLE_ENTITY response for unprocessable requests" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XE0000123456422").url).withHeaders(authHeader)
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456422").url).withHeaders(authHeader)
         val result  = route(app, request).value
 
         status(result) shouldBe UNPROCESSABLE_ENTITY
       }
 
       "must return INTERNAL_SERVER_ERROR response when an unexpected error occurs" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XE0000123456500").url).withHeaders(authHeader)
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456500").url).withHeaders(authHeader)
         val result  = route(app, request).value
 
         status(result) shouldBe INTERNAL_SERVER_ERROR
       }
 
       "must return SERVICE_UNAVAILABLE response when the service is down" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XE0000123456503").url).withHeaders(authHeader)
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456503").url).withHeaders(authHeader)
         val result  = route(app, request).value
 
         status(result) shouldBe SERVICE_UNAVAILABLE
