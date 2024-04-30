@@ -7,3 +7,7 @@ PUT         /pillar2/subscription                                               
 
 
 GET         /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups               uk.gov.hmrc.pillar2stubs.controllers.EnrolmentStoreProxyController.status(serviceName)
+POST         /tax-enrolments/groups/:groupId/enrolments/:serviceName               uk.gov.hmrc.pillar2stubs.controllers.TaxEnrolmentController.allocate(groupId:String, serviceName: String)
+DELETE         /tax-enrolments/groups/:groupId/enrolments/:serviceName               uk.gov.hmrc.pillar2stubs.controllers.TaxEnrolmentController.revoke(groupId:String, serviceName: String)
+
+

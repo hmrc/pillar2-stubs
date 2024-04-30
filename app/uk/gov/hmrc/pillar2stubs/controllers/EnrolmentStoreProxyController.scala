@@ -19,24 +19,19 @@ package uk.gov.hmrc.pillar2stubs.controllers
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
+import uk.gov.hmrc.pillar2stubs.models.GroupIds
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
 
 class EnrolmentStoreProxyController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
-  val plrService      = "HMRC-PILLAR2-ORG~PLRID~XACBC0000123888"
-  val plrServiceEmpty = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
-
+  val badService = "HMRC-PILLAR2-ORG~PLRID~XEPLR0123456400"
+  val groupId    = GroupIds(principalGroupIds = "123456", delegatedGroupIds = Seq.empty)
   def status(serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     serviceName match {
-      case `plrService` =>
-        val path = "/resources/groupsES1/enrolment-response-with-groupid.json"
-        Ok(resourceAsString(path).get)
-      case `plrServiceEmpty` =>
-        val path = "/resources/groupsES1/enrolment-response-with-no-groupid.json"
-        Ok(resourceAsString(path).get)
-      case _ => NoContent
+      case `badService` => NoContent
+      case _ =>
+        Ok(Json.toJson(groupId))
     }
   }
 }
