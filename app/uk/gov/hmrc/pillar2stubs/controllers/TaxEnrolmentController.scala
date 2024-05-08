@@ -31,16 +31,17 @@ class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: Au
   def allocate(groupID: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     groupID match {
       case `badGroupID` =>
-        val path = "/resources/taxEnrolmentES8/allocate-enrolment-failure.json"
+        val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"
         Ok(resourceAsString(path).get)
-      case _ => Created
+      case _ =>
+        Created
     }
   }
 
   def revoke(groupID: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     groupID match {
       case `badGroupID` =>
-        val path = "/resources/taxEnrolmentES8/allocate-enrolment-failure.json"
+        val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"
         Ok(resourceAsString(path).get)
       case _ => NoContent
     }

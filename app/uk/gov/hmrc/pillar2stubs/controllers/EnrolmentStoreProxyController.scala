@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 class EnrolmentStoreProxyController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
   val badService = "HMRC-PILLAR2-ORG~PLRID~XEPLR0123456400"
-  val groupId    = GroupIds(principalGroupIds = "123456", delegatedGroupIds = Seq.empty)
+  val groupId    = GroupIds(principalGroupIds = "GHIJKLMIN1234567", delegatedGroupIds = Seq.empty)
   def status(serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     serviceName match {
       case `badService` => NoContent
@@ -34,4 +34,5 @@ class EnrolmentStoreProxyController @Inject() (cc: ControllerComponents, authFil
         Ok(Json.toJson(groupId))
     }
   }
+
 }
