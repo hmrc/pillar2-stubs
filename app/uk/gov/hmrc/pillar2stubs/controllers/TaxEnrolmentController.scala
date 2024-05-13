@@ -26,11 +26,11 @@ import javax.inject.Inject
 
 class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
-  private val badGroupID = "0000"
+  private val badGroupId = "0000"
 
-  def allocate(groupID: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
-    groupID match {
-      case `badGroupID` =>
+  def allocate(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
+    groupId match {
+      case `badGroupId` =>
         val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"
         Ok(resourceAsString(path).get)
       case _ =>
@@ -38,9 +38,9 @@ class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: Au
     }
   }
 
-  def revoke(groupID: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
-    groupID match {
-      case `badGroupID` =>
+  def revoke(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
+    groupId match {
+      case `badGroupId` =>
         val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"
         Ok(resourceAsString(path).get)
       case _ => NoContent
