@@ -53,6 +53,16 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
 
     }
 
+    "must return Ok response with no groupid" in {
+      val plrService = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
+      val request    = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
+      val result     = route(app, request).value
+      val expectedJson =
+        Json.parse("""{}""".stripMargin)
+      status(result)        shouldBe OK
+      contentAsJson(result) shouldBe expectedJson
+    }
+
     "must return NoContent response" in {
 
       val plrService = "HMRC-PILLAR2-ORG~PLRID~XEPLR0123456400"
