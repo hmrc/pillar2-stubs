@@ -24,6 +24,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.pillar2stubs.models.GroupIds
 
 class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 
@@ -45,9 +46,7 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
       val result     = route(app, request).value
 
       val expectedJson =
-        Json.parse(
-          """{"principalGroupIds":["GHIJKLMIN1234567","GHIJKLMIN1234568"],"delegatedGroupIds":["GHIJKLMIN1234567","GHIJKLMIN1234568"]}""".stripMargin
-        )
+        Json.toJson(GroupIds(principalGroupIds = "GHIJKLMIN1234567", delegatedGroupIds = Seq.empty))
 
       status(result)        shouldBe OK
       contentAsJson(result) shouldBe expectedJson
@@ -55,7 +54,6 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
     }
 
     "must return Ok response with no groupid" in {
-
       val plrService = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
       val request    = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
       val result     = route(app, request).value
@@ -67,7 +65,7 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
 
     "must return NoContent response" in {
 
-      val plrService = "HMRC-PILLAR2-ORG~PPPID~XAMDR0000123456"
+      val plrService = "HMRC-PILLAR2-ORG~PLRID~XEPLR0123456400"
       val request    = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
       val result     = route(app, request).value
       status(result) shouldBe NO_CONTENT

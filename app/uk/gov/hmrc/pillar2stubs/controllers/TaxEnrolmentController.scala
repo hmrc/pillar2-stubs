@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,27 +16,34 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
-import play.api.libs.json.Json
+import play.api.Logging
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.GroupIds
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
 
-class EnrolmentStoreProxyController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
-  private val badService      = "HMRC-PILLAR2-ORG~PLRID~XEPLR0123456400"
-  private val plrServiceEmpty = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
-  private val groupId         = GroupIds(principalGroupIds = "GHIJKLMIN1234567", delegatedGroupIds = Seq.empty)
-  def status(serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
-    serviceName match {
-      case `badService` => NoContent
-      case `plrServiceEmpty` =>
-        val path = "/resources/groupsES1/enrolment-response-with-no-groupid.json"
+class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
+
+  private val badGroupId = "0000"
+
+  def allocate(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
+    groupId match {
+      case `badGroupId` =>
+        val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"
         Ok(resourceAsString(path).get)
       case _ =>
-        Ok(Json.toJson(groupId))
+        Created
+    }
+  }
+
+  def revoke(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
+    groupId match {
+      case `badGroupId` =>
+        val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"
+        Ok(resourceAsString(path).get)
+      case _ => NoContent
     }
   }
 
