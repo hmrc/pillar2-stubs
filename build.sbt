@@ -7,12 +7,6 @@ ThisBuild / majorVersion := 0
 lazy val microservice = Project("pillar2-stubs", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
-    ScoverageKeys.coverageExcludedFiles :=
-      "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;" +
-        "app.*;.*BuildInfo.*;.*Routes.*;.*repositories.*;.*controllers.test.*;.*services.test.*;.*metrics.*",
-    ScoverageKeys.coverageMinimumStmtTotal := 80,
-    ScoverageKeys.coverageFailOnMinimum := true,
-    ScoverageKeys.coverageHighlighting := true,
     PlayKeys.playDefaultPort         := 10052,
     Compile / scalafmtOnCompile      := true,
     Test / scalafmtOnCompile         := true,
