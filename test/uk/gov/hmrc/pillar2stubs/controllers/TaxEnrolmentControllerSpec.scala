@@ -26,8 +26,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 
-
-
 class TaxEnrolmentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 
   private val authHeader: (String, String) = HeaderNames.authorisation -> "token"
@@ -44,7 +42,7 @@ class TaxEnrolmentControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         val badGroupId = "0000"
         val json: JsValue = Json.obj()
         val request = FakeRequest(POST, routes.TaxEnrolmentController.allocate(badGroupId, "somePlr2Id").url).withBody(json).withHeaders(authHeader)
-        val result = route(app, request).value
+        val result  = route(app, request).value
         status(result) shouldBe OK
         contentAsString(result) mustEqual jsonResponse
       }
@@ -53,7 +51,7 @@ class TaxEnrolmentControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         val goodGroupId = "1111"
         val json: JsValue = Json.obj()
         val request = FakeRequest(POST, routes.TaxEnrolmentController.allocate(goodGroupId, "somePlr2Id").url).withBody(json).withHeaders(authHeader)
-        val result = route(app, request).value
+        val result  = route(app, request).value
         status(result) shouldBe CREATED
       }
     }
@@ -68,7 +66,7 @@ class TaxEnrolmentControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         val badGroupId = "0000"
         val json: JsValue = Json.obj()
         val request = FakeRequest(DELETE, routes.TaxEnrolmentController.revoke(badGroupId, "somePlr2Id").url).withBody(json).withHeaders(authHeader)
-        val result = route(app, request).value
+        val result  = route(app, request).value
         status(result) shouldBe OK
         contentAsString(result) mustEqual jsonResponse
       }
@@ -77,7 +75,7 @@ class TaxEnrolmentControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         val goodGroupId = "1111"
         val json: JsValue = Json.obj()
         val request = FakeRequest(DELETE, routes.TaxEnrolmentController.revoke(goodGroupId, "somePlr2Id").url).withBody(json).withHeaders(authHeader)
-        val result = route(app, request).value
+        val result  = route(app, request).value
         status(result) shouldBe NO_CONTENT
       }
     }
