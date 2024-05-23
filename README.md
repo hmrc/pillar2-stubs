@@ -10,7 +10,7 @@ The Pillar2 stubbs service provides stubbs for the GRS systems to mock the respo
 
 #### To check code coverage:
 
-`sbt scalafmt test:scalafmt it:test::scalafmt coverage test it:test coverageReport`
+`sbt scalafmt test:scalafmt it:test::scalafmt coverage test it/test coverageReport`
 
 #### Integration and unit tests
 

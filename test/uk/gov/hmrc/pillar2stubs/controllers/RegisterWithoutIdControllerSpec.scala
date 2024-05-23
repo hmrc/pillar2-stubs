@@ -22,9 +22,12 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{POST, defaultAwaitTimeout, route, status}
+import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, route, status}
 import uk.gov.hmrc.http.HeaderNames
+
+import scala.concurrent.Future
 
 class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 
@@ -35,7 +38,15 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
     ("regNoIDInvalidRequest", BAD_REQUEST),
     ("regNoIDServerError", SERVICE_UNAVAILABLE),
     ("regNoIDNotProcessed", SERVICE_UNAVAILABLE),
-    ("regNoIDRecordNotFound", NOT_FOUND)
+    ("regNoIDRecordNotFound", NOT_FOUND),
+    ("regNoIDInvalidSubmission", FORBIDDEN)
+  )
+
+  private val nameSafeId: Seq[(String, String)] = Seq(
+    ("duplicate", "XD3333333333333"),
+    ("enrolment", "XE4444444444444"),
+    ("organisation", "XE5555555555555"),
+    ("anythingElse", "XE6666666666666")
   )
 
   "RegisterWithoutIdController" - {
@@ -67,22 +78,24 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
         status(result) shouldBe errorStatus
       }
 
-    "must return Ok response and valid registerWithoutIDRequest for an Organisation" in {
-      val jsonPayload: String = s"""
+    for ((name, safeId) <- nameSafeId)
+      s"must return Ok response and valid registerWithoutIDRequest for an $name" in {
+        val jsonPayload: String = s"""
                                    |{
                                    |    "regime": "PLR",
                                    |       "organisation": {
-                                   |          "organisationName": "ABC Corp"
+                                   |          "organisationName": "$name"
                                    |       }
                                    |
                                    |}""".stripMargin
-      val json: JsValue = Json.parse(jsonPayload)
+        val json: JsValue = Json.parse(jsonPayload)
 
-      val request = FakeRequest(POST, routes.RegisterWithoutIdController.registerWithoutId.url).withBody(json).withHeaders(authHeader)
-      val result  = route(app, request).value
+        val request = FakeRequest(POST, routes.RegisterWithoutIdController.registerWithoutId.url).withBody(json).withHeaders(authHeader)
+        val result: Future[Result] = route(app, request).value
 
-      status(result) shouldBe OK
-    }
+        status(result)        shouldBe OK
+        contentAsString(result) should include(safeId)
+      }
 
     "must return BadRequest for an invalid input (invalid regime)" in {
       val jsonPayload: String = s"""
