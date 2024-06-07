@@ -28,7 +28,7 @@ import javax.inject.Inject
 class EnrolmentStoreProxyController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
   private val badService      = "HMRC-PILLAR2-ORG~PLRID~XEPLR0123456400"
   private val plrServiceEmpty = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
-  private val groupId         = GroupIds(principalGroupIds = "GHIJKLMIN1234567", delegatedGroupIds = Seq.empty)
+  private val groupId         = GroupIds(principalGroupIds = Seq("GHIJKLMIN1234567"), delegatedGroupIds = Seq.empty)
   def status(serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     serviceName match {
       case `badService` => NoContent
