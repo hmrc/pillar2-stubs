@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2stubs.models
 
 import play.api.libs.json.{Json, OFormat}
 
-case class GroupIds(principalGroupIds: String, delegatedGroupIds: Seq[String])
+case class GroupIds(principalGroupIds: Seq[String], delegatedGroupIds: Seq[String])
 
 object GroupIds {
   implicit val format: OFormat[GroupIds] = Json.format[GroupIds]
