@@ -63,27 +63,28 @@ POST /registration/02.00.00/organisation
 Creates a Registration request without passing ID
 
 #### Happy Path:
+
 To trigger the happy path, ensure you provide a valid request body
 
 ```dtd
 {
-  "regime": "PLR",
-  "acknowledgementReference": "d31186c7412e4823897ecc7ee339545c",
-  "isAnAgent": false,
-  "isAGroup": true,
-  "organisation": {
-    "organisationName": "Stark Corp"
-  },
-  "address": {
-    "addressLine1": "100",
-    "addressLine3": "Newyork",
-    "postalCode": "10052",
-    "countryCode": "US"
-  },
-  "contactDetails": {
-    "emailAddress": "stark.tony@starkind.com"
-  }
-}
+        "regime": "PLR",
+        "acknowledgementReference": "d31186c7412e4823897ecc7ee339545c",
+        "isAnAgent": false,
+        "isAGroup": true,
+        "organisation": {
+        "organisationName": "Stark Corp"
+        },
+        "address": {
+        "addressLine1": "100",
+        "addressLine3": "Newyork",
+        "postalCode": "10052",
+        "countryCode": "US"
+        },
+        "contactDetails": {
+        "emailAddress": "stark.tony@starkind.com"
+        }
+        }
 ```
 
 > Response status: 200
@@ -91,6 +92,7 @@ To trigger the happy path, ensure you provide a valid request body
 > Response body: N/A
 
 #### Unhappy Path:
+
 To trigger the unhappy paths, ensure you provide a valid request body.<br>
 The below error responses can be expected:
 
@@ -98,14 +100,14 @@ HTTP 500 Internal Server Error
 
 ```dtd
 {
-  "errorDetail": {
-    "timestamp": "2016-08-23T18:15:41Z",
-    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-    "errorCode": "500",
-    "errorMessage": "Internal error",
-    "source": "Internal Server error"
-  }
-}
+        "errorDetail": {
+        "timestamp": "2016-08-23T18:15:41Z",
+        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+        "errorCode": "500",
+        "errorMessage": "Internal error",
+        "source": "Internal Server error"
+        }
+        }
 ```
 
 > Response status: 500
@@ -116,19 +118,19 @@ HTTP 400 Bad Request Error
 
 ```dtd
 {
-  "errorDetail": {
-    "timestamp" : "2023-02-14T12:58:44Z",
-      "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-      "errorCode": "400",
-      "errorMessage": "Invalid ID",
-      "source": "Back End",
-      "sourceFaultDetail":{
+        "errorDetail": {
+        "timestamp" : "2023-02-14T12:58:44Z",
+        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+        "errorCode": "400",
+        "errorMessage": "Invalid ID",
+        "source": "Back End",
+        "sourceFaultDetail":{
         "detail":[
-          "001 - Invalid Regime"
+        "001 - Invalid Regime"
         ]
-      }
-  }
-}
+        }
+        }
+        }
 ```
 
 > Response status: 400
@@ -139,17 +141,17 @@ HTTP 503 Service Unavailable Error
 
 ```dtd
 {
-  "errorDetail": {
-    "timestamp": "2016-08-23T18:15:41Z",
-    "correlationId": "",
-    "errorCode": "503",
-    "errorMessage": "Send timeout",
-    "source": "Back End",
-    "sourceFaultDetail": {
-      "detail": ["101504 - Timeout "]
-    }
-  }
-}
+        "errorDetail": {
+        "timestamp": "2016-08-23T18:15:41Z",
+        "correlationId": "",
+        "errorCode": "503",
+        "errorMessage": "Send timeout",
+        "source": "Back End",
+        "sourceFaultDetail": {
+        "detail": ["101504 - Timeout "]
+        }
+        }
+        }
 ```
 
 > Response status: 503
@@ -160,19 +162,19 @@ HTTP 503 Request Could not be processed Error
 
 ```dtd
 {
-  "errorDetail": {
-    "source": "Back End",
-    "timestamp": "2020-11-11T13:19:52.307Z",
-    "errorMessage": "Request could not be processed",
-    "errorCode": "503",
-    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-    "sourceFaultDetail": {
-      "detail": [
+        "errorDetail": {
+        "source": "Back End",
+        "timestamp": "2020-11-11T13:19:52.307Z",
+        "errorMessage": "Request could not be processed",
+        "errorCode": "503",
+        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+        "sourceFaultDetail": {
+        "detail": [
         "001 - Request Cannot be processed"
-      ]
-    }
-  }
-}
+        ]
+        }
+        }
+        }
 
 ```
 
@@ -184,19 +186,19 @@ HTTP 404 Record Not Found Error
 
 ```dtd
 {
-  "errorDetail": {
-    "source": "Back End",
-    "timestamp": "2020-11-23T13:19:52.307Z",
-    "errorMessage": "Record not found",
-    "errorCode": "404",
-    "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
-    "sourceFaultDetail": {
-      "detail": [
+        "errorDetail": {
+        "source": "Back End",
+        "timestamp": "2020-11-23T13:19:52.307Z",
+        "errorMessage": "Record not found",
+        "errorCode": "404",
+        "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
+        "sourceFaultDetail": {
+        "detail": [
         "Detail cannot be found"
-      ]
-    }
-  }
-}
+        ]
+        }
+        }
+        }
 ```
 
 > Response status: 404
@@ -211,32 +213,33 @@ POST /pillar2/subscription
 Creates a Subscription request
 
 #### Happy Path:
+
 To trigger the happy path, ensure you provide a valid request body
 
 ```dtd
 {
-  "upeDetails": {
-    "safeId": "XE6666666666666",
-    "organisationName": "Stark Corp",
-    "registrationDate": "2023-12-08",
-    "domesticOnly": false,
-    "filingMember": true
-  },
-  "accountingPeriod": {
-    "startDate": "2024-01-01",
-    "endDate": "2025-01-01"
-  },
-  "upeCorrespAddressDetails": {
-    "addressLine1": "100",
-    "addressLine3": "Newyork",
-    "postCode": "10052",
-    "countryCode": "US"
-  },
-  "primaryContactDetails": {
-    "name": "Tony Stark",
-    "emailAddress": "stark.tony@starkind.com"
-  }
-}
+        "upeDetails": {
+        "safeId": "XE6666666666666",
+        "organisationName": "Stark Corp",
+        "registrationDate": "2023-12-08",
+        "domesticOnly": false,
+        "filingMember": true
+        },
+        "accountingPeriod": {
+        "startDate": "2024-01-01",
+        "endDate": "2025-01-01"
+        },
+        "upeCorrespAddressDetails": {
+        "addressLine1": "100",
+        "addressLine3": "Newyork",
+        "postCode": "10052",
+        "countryCode": "US"
+        },
+        "primaryContactDetails": {
+        "name": "Tony Stark",
+        "emailAddress": "stark.tony@starkind.com"
+        }
+        }
 ```
 
 > Response status: 200
@@ -244,6 +247,7 @@ To trigger the happy path, ensure you provide a valid request body
 > Response body: N/A
 
 #### Unhappy Path:
+
 To trigger the unhappy paths, ensure you provide a valid request body.<br>
 The below error responses can be expected:
 
@@ -251,19 +255,19 @@ HTTP 409 Duplicate Submission Error
 
 ```dtd
 {
-  "errorDetail": {
-    "timestamp" : "2023-03-11T08:20:44Z",
-    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-    "errorCode": "409",
-    "errorMessage": "Duplicate submission",
-    "source": "Back End",
-    "sourceFaultDetail": {
-      "detail": [
+        "errorDetail": {
+        "timestamp" : "2023-03-11T08:20:44Z",
+        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+        "errorCode": "409",
+        "errorMessage": "Duplicate submission",
+        "source": "Back End",
+        "sourceFaultDetail": {
+        "detail": [
         "Duplicate submission"
-      ]
-    }
-  }
-}
+        ]
+        }
+        }
+        }
 ```
 
 > Response status: 409
@@ -274,17 +278,17 @@ HTTP 503 Service Unavailable Error
 
 ```dtd
 {
-  "errorDetail": {
-    "timestamp": "2016-08-23T18:15:41Z",
-    "correlationId": "",
-    "errorCode": "503",
-    "errorMessage": "Send timeout",
-    "source": "Back End",
-    "sourceFaultDetail": {
-      "detail": ["101504 - Timeout "]
-    }
-  }
-}
+        "errorDetail": {
+        "timestamp": "2016-08-23T18:15:41Z",
+        "correlationId": "",
+        "errorCode": "503",
+        "errorMessage": "Send timeout",
+        "source": "Back End",
+        "sourceFaultDetail": {
+        "detail": ["101504 - Timeout "]
+        }
+        }
+        }
 ```
 
 > Response status: 503
@@ -295,19 +299,19 @@ HTTP 404 Record Not Found Error
 
 ```dtd
 {
-  "errorDetail": {
-    "source": "Back End",
-    "timestamp": "2020-11-23T13:19:52.307Z",
-    "errorMessage": "Record not found",
-    "errorCode": "404",
-    "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
-    "sourceFaultDetail": {
-      "detail": [
+        "errorDetail": {
+        "source": "Back End",
+        "timestamp": "2020-11-23T13:19:52.307Z",
+        "errorMessage": "Record not found",
+        "errorCode": "404",
+        "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
+        "sourceFaultDetail": {
+        "detail": [
         "Detail cannot be found"
-      ]
-    }
-  }
-}
+        ]
+        }
+        }
+        }
 ```
 
 > Response status: 404
@@ -323,6 +327,7 @@ GET /pillar2/subscription/:plrReference
 Retrieves the Subscription details for the specific plrReference
 
 #### Happy Path:
+
 To trigger the happy path, ensure you provide a valid plrReference
 
 The below is the expected success response:
@@ -333,54 +338,55 @@ The below is the expected success response:
 
 ```dtd
 {
-  "success": {
-      "plrReference": "[pillar2Reference]",
-      "processingDate": "2010-12-12",
-      "formBundleNumber": "119000004320",
-      "upeDetails": {
-          "domesticOnly": false,
-          "organisationName": "International Organisation Inc.",
-          "customerIdentification1": "12345678",
-          "customerIdentification2": "12345678",
-          "registrationDate": "2022-01-31",
-          "filingMember": false
-      },
-      "upeCorrespAddressDetails": {
-          "addressLine1": "1 High Street",
-          "addressLine2": "Egham",
-          "addressLine3": "Surrey",
-          "postCode": "HP13 6TT",
-          "countryCode": "GB"
-      },
-      "primaryContactDetails": {
-          "name": "Fred Flintstone",
-          "telepphone": "0115 9700 700",
-          "emailAddress": "fred.flintstone@aol.com"
-      },
-      "secondaryContactDetails": {
-          "name": "Donald Trump",
-          "telepphone": "0115 9700 700",
-          "emailAddress": "fred.flintstone@potus.com"
-      },
-      "filingMemberDetails": {
-          "safeId": "XL6967739016188",
-          "organisationName": "Domestic Operations Ltd",
-          "customerIdentification1": "1234Z678",
-          "customerIdentification2": "1234567Y"
-      },
-      "accountingPeriod": {
-          "startDate": "2024-01-06",
-          "endDate": "2025-04-06",
-          "duetDate": "2024-04-06"
-      },
-      "accountStatus": {
-          "inactive": true
-      }
-  }
-}
+        "success": {
+        "plrReference": "[pillar2Reference]",
+        "processingDate": "2010-12-12",
+        "formBundleNumber": "119000004320",
+        "upeDetails": {
+        "domesticOnly": false,
+        "organisationName": "International Organisation Inc.",
+        "customerIdentification1": "12345678",
+        "customerIdentification2": "12345678",
+        "registrationDate": "2022-01-31",
+        "filingMember": false
+        },
+        "upeCorrespAddressDetails": {
+        "addressLine1": "1 High Street",
+        "addressLine2": "Egham",
+        "addressLine3": "Surrey",
+        "postCode": "HP13 6TT",
+        "countryCode": "GB"
+        },
+        "primaryContactDetails": {
+        "name": "Fred Flintstone",
+        "telepphone": "0115 9700 700",
+        "emailAddress": "fred.flintstone@aol.com"
+        },
+        "secondaryContactDetails": {
+        "name": "Donald Trump",
+        "telepphone": "0115 9700 700",
+        "emailAddress": "fred.flintstone@potus.com"
+        },
+        "filingMemberDetails": {
+        "safeId": "XL6967739016188",
+        "organisationName": "Domestic Operations Ltd",
+        "customerIdentification1": "1234Z678",
+        "customerIdentification2": "1234567Y"
+        },
+        "accountingPeriod": {
+        "startDate": "2024-01-06",
+        "endDate": "2025-04-06",
+        "duetDate": "2024-04-06"
+        },
+        "accountStatus": {
+        "inactive": true
+        }
+        }
+        }
 ```
 
 #### Unhappy Path:
+
 To trigger the unhappy paths, ensure you provide a valid request body.
 The below error responses can be expected:
 
@@ -388,14 +394,14 @@ HTTP 500 Internal Server Error
 
 ```dtd
 {
-  "errorDetail": {
-    "timestamp": "2016-08-23T18:15:41Z",
-    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-    "errorCode": "500",
-    "errorMessage": "Internal error",
-    "source": "Internal Server error"
-  }
-}
+        "errorDetail": {
+        "timestamp": "2016-08-23T18:15:41Z",
+        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+        "errorCode": "500",
+        "errorMessage": "Internal error",
+        "source": "Internal Server error"
+        }
+        }
 ```
 
 > Response status: 500
@@ -406,19 +412,19 @@ HTTP 400 Bad Request Error
 
 ```dtd
 {
-  "errorDetail": {
-    "timestamp" : "2023-02-14T12:58:44Z",
-      "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-      "errorCode": "400",
-      "errorMessage": "Invalid ID",
-      "source": "Back End",
-      "sourceFaultDetail":{
+        "errorDetail": {
+        "timestamp" : "2023-02-14T12:58:44Z",
+        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+        "errorCode": "400",
+        "errorMessage": "Invalid ID",
+        "source": "Back End",
+        "sourceFaultDetail":{
         "detail":[
-          "001 - Invalid Regime"
+        "001 - Invalid Regime"
         ]
-      }
-  }
-}
+        }
+        }
+        }
 ```
 
 > Response status: 400
@@ -429,17 +435,17 @@ HTTP 503 Service Unavailable Error
 
 ```dtd
 {
-  "errorDetail": {
-    "timestamp": "2016-08-23T18:15:41Z",
-    "correlationId": "",
-    "errorCode": "503",
-    "errorMessage": "Send timeout",
-    "source": "Back End",
-    "sourceFaultDetail": {
-      "detail": ["101504 - Timeout "]
-    }
-  }
-}
+        "errorDetail": {
+        "timestamp": "2016-08-23T18:15:41Z",
+        "correlationId": "",
+        "errorCode": "503",
+        "errorMessage": "Send timeout",
+        "source": "Back End",
+        "sourceFaultDetail": {
+        "detail": ["101504 - Timeout "]
+        }
+        }
+        }
 ```
 
 > Response status: 503
@@ -450,19 +456,19 @@ HTTP 503 Request Could not be processed Error
 
 ```dtd
 {
-  "errorDetail": {
-    "source": "Back End",
-    "timestamp": "2020-11-11T13:19:52.307Z",
-    "errorMessage": "Request could not be processed",
-    "errorCode": "503",
-    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-    "sourceFaultDetail": {
-      "detail": [
+        "errorDetail": {
+        "source": "Back End",
+        "timestamp": "2020-11-11T13:19:52.307Z",
+        "errorMessage": "Request could not be processed",
+        "errorCode": "503",
+        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+        "sourceFaultDetail": {
+        "detail": [
         "001 - Request Cannot be processed"
-      ]
-    }
-  }
-}
+        ]
+        }
+        }
+        }
 ```
 
 > Response status: 503
@@ -473,19 +479,19 @@ HTTP 404 Record Not Found Error
 
 ```dtd
 {
-  "errorDetail": {
-    "source": "Back End",
-    "timestamp": "2020-11-23T13:19:52.307Z",
-    "errorMessage": "Record not found",
-    "errorCode": "404",
-    "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
-    "sourceFaultDetail": {
-      "detail": [
+        "errorDetail": {
+        "source": "Back End",
+        "timestamp": "2020-11-23T13:19:52.307Z",
+        "errorMessage": "Record not found",
+        "errorCode": "404",
+        "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
+        "sourceFaultDetail": {
+        "detail": [
         "Detail cannot be found"
-      ]
-    }
-  }
-}
+        ]
+        }
+        }
+        }
 ```
 
 > Response status: 404
@@ -500,6 +506,7 @@ GET /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups
 Retrieves the Enrolment Store Response with and without groupId
 
 #### Happy Path:
+
 To trigger the happy path, ensure you provide a valid plrReference
 
 The below is the expected success response:
@@ -511,22 +518,21 @@ Enrolment Store Response with groupID
 
 ```dtd
 {
-  "principalGroupIds": [
-    "GHIJKLMIN1234567",
-    "GHIJKLMIN1234568"
-  ],
-  "delegatedGroupIds": [
-    "GHIJKLMIN1234567",
-    "GHIJKLMIN1234568"
-  ]
-}
+        "principalGroupIds": [
+        "GHIJKLMIN1234567",
+        "GHIJKLMIN1234568"
+        ],
+        "delegatedGroupIds": [
+        "GHIJKLMIN1234567",
+        "GHIJKLMIN1234568"
+        ]
+        }
 ```
 
 Enrolment Store Response without groupID
 > Response status: 200
 >
 > Response body: {}
-
 
 #### Unhappy Path:
 
@@ -535,6 +541,30 @@ Enrolment Store Response without groupID
 > Response body: NoContent
 
 <br><br>
+
+## BARS Business account test data
+
+| Sort code | Account number | Company Name                   | Valid | Error Returned                                                                                                                                           |
+|-----------|----------------|--------------------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 206705    | 86473611       | Epic Adventure Inc             | Yes   | Successful Response <br/> "Epic Adventure Inc" returns nameMatches = Yes <br/> "Foo" returns nameMatches = No <br/> "Epic" returns nameMatches = Partial |
+| 206705    | 86563612       | Sanguine Skincare              | Yes   | accountNumberIsWellFormatted = No                                                                                                                        |
+| 206705    | 76523611       | Vortex Solar                   | Yes   | accountExists = No                                                                                                                                       |
+| 206705    | 56523611       | Innovation Arch                | Yes   | accountExists = inapplicable                                                                                                                             |
+| 206705    | 56945688       | Eco Focus                      | Yes   | accountExists = indeterminate                                                                                                                            |
+| 207102    | 86473611       | Flux Water Gear                | Yes   | accountExists = error                                                                                                                                    |
+| 207102    | 86563611       | Lambent Illumination           | Yes   | nameMatches = No                                                                                                                                         |
+| 207102    | 76523611       | Boneféte Fun                   | Yes   | nameMatches = inapplicable                                                                                                                               |
+| 207102    | 56523611       | Cogent-Data                    | Yes   | nameMatches = indeterminate                                                                                                                              |
+| 207102    | 74597611       | Cipher Publishing              | Yes   | nameMatches = error                                                                                                                                      |
+| 207106    | 86473611       | Security Engima                | Yes   | sortCodeIsPresentOnEISCD = no                                                                                                                            |
+| 207106    | 86563611       | Megacorp                       | Yes   | sortCodeIsPresentOnEISCD = error                                                                                                                         |
+| 207106    | 76523611       | Genomics Inc                   | Yes   | nonStandardAccountDetailsRequiredForBacs = Yes                                                                                                           |
+| 207106    | 56523611       | Full Force Futures             | Yes   | sortCodeSupportsDirectCredit = error                                                                                                                     |
+| 207106    | 74597611       | Resource Refresh               | Yes   | sortCodeIsPresentOnEISCD = No, nameMatches = No, accountExists = No                                                                                      |
+| 609593    | 96863604       | O'Connor Construction          | Yes   | accountNumberIsWellFormatted = indeterminate, but accountExists = Yes                                                                                    |
+| 609593    | 96113600       | Candyland Consulting           | Yes   | accountNumberIsWellFormatted = indeterminate, but accountExists = No                                                                                     |
+
 ### License
 
-This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
+This code is open source software licensed under
+the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
