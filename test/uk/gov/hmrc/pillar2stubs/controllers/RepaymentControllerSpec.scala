@@ -30,12 +30,7 @@ import uk.gov.hmrc.pillar2stubs.models.{BankDetails, RepaymentContactDetails, Re
 class RepaymentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
   private val authHeader: (String, String) = HeaderNames.authorisation -> "token"
   val validPayload: SendRepaymentDetails = SendRepaymentDetails(
-    repaymentDetails = RepaymentDetails(
-      plrReference = "plrReference",
-      name = "name",
-      utr = None,
-      reasonForRepayment = "???",
-      refundAmount = 10000.1),
+    repaymentDetails = RepaymentDetails(plrReference = "plrReference", name = "name", utr = None, reasonForRepayment = "???", refundAmount = 10000.1),
     bankDetails = BankDetails(
       nameOnBankAccount = "Paddington",
       bankName = "Bank of Bears",
@@ -43,30 +38,32 @@ class RepaymentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       accountNumber = Some("00000000"),
       iban = None,
       bic = None,
-      countryCode = None),
+      countryCode = None
+    ),
     contactDetails = RepaymentContactDetails(contactDetails = "paddington, paddington@peru.com, marmalade sandwich")
   )
 
   "RepaymentController" - {
 
     "must return CREATED for a valid json payload" in {
-      val request = FakeRequest(POST, routes.RepaymentController.submitRepaymentDetails.url).withBody(Json.toJson(validPayload)).withHeaders(authHeader)
-      val result  = route(app, request).value
+      val request =
+        FakeRequest(POST, routes.RepaymentController.submitRepaymentDetails.url).withBody(Json.toJson(validPayload)).withHeaders(authHeader)
+      val result = route(app, request).value
 
       status(result) shouldBe CREATED
     }
 
     "must return NoContent for a valid json payload with a bad actor" in {
-      val badJson= Json.toJson(validPayload.copy(bankDetails =validPayload.bankDetails.copy(nameOnBankAccount = "bad person") ))
-      val request = FakeRequest(POST,  routes.RepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
+      val badJson = Json.toJson(validPayload.copy(bankDetails = validPayload.bankDetails.copy(nameOnBankAccount = "bad person")))
+      val request = FakeRequest(POST, routes.RepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
       val result  = route(app, request).value
 
       status(result) shouldBe NO_CONTENT
     }
 
     "must return BAD_REQUEST for an invalid json payload" in {
-      val json: JsValue = Json.obj("invalid"-> "payload")
-      val request = FakeRequest(POST,  routes.RepaymentController.submitRepaymentDetails.url).withBody(json).withHeaders(authHeader)
+      val json: JsValue = Json.obj("invalid" -> "payload")
+      val request = FakeRequest(POST, routes.RepaymentController.submitRepaymentDetails.url).withBody(json).withHeaders(authHeader)
       val result  = route(app, request).value
 
       status(result) shouldBe BAD_REQUEST

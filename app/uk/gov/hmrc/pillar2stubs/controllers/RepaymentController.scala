@@ -26,10 +26,9 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import javax.inject.Inject
 import scala.concurrent.Future
 
-class RepaymentController @Inject()(cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
+class RepaymentController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
   def submitRepaymentDetails: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
-
     Json.fromJson[SendRepaymentDetails](request.body) match {
       case JsSuccess(repaymentSuccess, _) =>
         repaymentSuccess.bankDetails.nameOnBankAccount.toLowerCase match {
