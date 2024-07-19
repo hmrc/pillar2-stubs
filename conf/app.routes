@@ -6,6 +6,9 @@ GET         /pillar2/subscription/:plrReference                                 
 PUT         /pillar2/subscription                                                               uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.amendSubscription
 
 
+POST         /pillar2/repayment                                                               uk.gov.hmrc.pillar2stubs.controllers.RepaymentController.submitRepaymentDetails
+
+
 GET         /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups               uk.gov.hmrc.pillar2stubs.controllers.EnrolmentStoreProxyController.status(serviceName)
 
 POST        /tax-enrolments/groups/:groupId/enrolments/:serviceName                             uk.gov.hmrc.pillar2stubs.controllers.TaxEnrolmentController.allocate(groupId:String, serviceName: String)
