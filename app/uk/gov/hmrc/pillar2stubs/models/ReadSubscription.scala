@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2stubs.models
 
-import play.api.libs.json.{Json, Reads, __}
+import play.api.libs.json.{Reads, __}
 
 case class ReadSubscription(safeId: String, organisationName: String, plrReference: String)
 
