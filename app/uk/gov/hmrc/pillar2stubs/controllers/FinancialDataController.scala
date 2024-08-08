@@ -123,7 +123,7 @@ object FinancialDataController {
   }
 
   private def generateBigDecimal: BigDecimal = {
-    val start = -100000.00
+    val start = 10000.00
     val end   = 100000000000.00
 
     BigDecimal.valueOf(Random.between(start, end)).setScale(2, BigDecimal.RoundingMode.HALF_EVEN)
