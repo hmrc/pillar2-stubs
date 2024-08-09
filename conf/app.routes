@@ -15,3 +15,5 @@ POST        /tax-enrolments/groups/:groupId/enrolments/:serviceName             
 DELETE      /tax-enrolments/groups/:groupId/enrolments/:serviceName                             uk.gov.hmrc.pillar2stubs.controllers.TaxEnrolmentController.revoke(groupId:String, serviceName: String)
 
 POST        /verify/business                                                                    uk.gov.hmrc.pillar2stubs.controllers.BarsController.verify
+
+GET         /enterprise/financial-data/:idType/:idNumber/:regimeType                            uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.retrieveFinancialData(idType: String, idNumber: String, regimeType: String)
