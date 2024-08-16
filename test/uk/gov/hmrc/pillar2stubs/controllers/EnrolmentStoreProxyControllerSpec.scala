@@ -46,7 +46,7 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
       val result     = route(app, request).value
 
       val expectedJson =
-        Json.toJson(GroupIds(principalGroupIds = Seq("GHIJKLMIN1234567"), delegatedGroupIds = Seq.empty))
+        Json.toJson(GroupIds(principalGroupIds = Seq("XACBC0000123888"), delegatedGroupIds = Seq.empty))
 
       status(result)        shouldBe OK
       contentAsJson(result) shouldBe expectedJson
