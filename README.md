@@ -529,14 +529,14 @@ Enrolment Store Response with groupID
         }
 ```
 
-Enrolment Store Response without groupID - use XMPLR0012345674
+Enrolment Store Response without groupID
 > Response status: 200
 >
 > Response body: {}
 
 #### Unhappy Path:
 
-> Response status: use - XEPLR0123456400
+> Response status: use - XEPLR0444444400
 >
 > Response body: NoContent
 

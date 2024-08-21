@@ -65,9 +65,10 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
 
     "must return NoContent response" in {
 
-      val plrService = "HMRC-PILLAR2-ORG~PLRID~XEPLR0123456400"
-      val request    = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
-      val result     = route(app, request).value
+      val plrService = "HMRC-PILLAR2-ORG~PLRID~XEPLR0444444400"
+
+      val request = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
+      val result  = route(app, request).value
       status(result) shouldBe NO_CONTENT
     }
   }
