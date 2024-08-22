@@ -46,7 +46,7 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
       val result     = route(app, request).value
 
       val expectedJson =
-        Json.toJson(GroupIds(principalGroupIds = Seq("GHIJKLMIN1234567"), delegatedGroupIds = Seq.empty))
+        Json.toJson(GroupIds(principalGroupIds = Seq("XACBC0000123888"), delegatedGroupIds = Seq.empty))
 
       status(result)        shouldBe OK
       contentAsJson(result) shouldBe expectedJson
@@ -65,9 +65,10 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
 
     "must return NoContent response" in {
 
-      val plrService = "HMRC-PILLAR2-ORG~PLRID~XEPLR0123456400"
-      val request    = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
-      val result     = route(app, request).value
+      val plrService = "HMRC-PILLAR2-ORG~PLRID~XEPLR0444444400"
+
+      val request = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
+      val result  = route(app, request).value
       status(result) shouldBe NO_CONTENT
     }
   }

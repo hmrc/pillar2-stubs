@@ -536,7 +536,7 @@ Enrolment Store Response without groupID
 
 #### Unhappy Path:
 
-> Response status: _
+> Response status: use - XEPLR0444444400
 >
 > Response body: NoContent
 
