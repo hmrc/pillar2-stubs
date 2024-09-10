@@ -30,18 +30,20 @@ import scala.util.matching.Regex
 
 class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
 
-  def retrieveFinancialData(idType: String, idNumber: String, regimeType: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
-    val lastThreeDigitsPattern: Regex = "XMPLR0000000(.{3})\\s*$".r
+  def retrieveFinancialData(idType: String, idNumber: String, regimeType: String, dateFrom: String, dateTo: String): Action[AnyContent] =
+    (Action andThen authFilter) { _ =>
+      val yearsAndTransactionPattern: Regex = "XMPLR0000000(.{3})\\s*$".r
 
-    idNumber match {
-      case "XEPLR4000000000"                                => BadRequest(Json.parse(InvalidIdNumber))
-      case "XEPLR4040000000"                                => NotFound(Json.parse(FinancialDataNotFound))
-      case "XEPLR5000000000"                                => InternalServerError(Json.parse(FinancialServerError))
-      case "XEPLR5030000000"                                => ServiceUnavailable(Json.parse(FinancialServiceUnavailable))
-      case v @ lastThreeDigitsPattern(numberOfTransactions) => Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt)))
-      case _                                                => Ok(Json.parse(SuccessfulResponse(idNumber)))
+      idNumber match {
+        case "XEPLR4000000000" => BadRequest(Json.parse(InvalidIdNumber))
+        case "XEPLR4040000000" => NotFound(Json.parse(FinancialDataNotFound))
+        case "XEPLR5000000000" => InternalServerError(Json.parse(FinancialServerError))
+        case "XEPLR5030000000" => ServiceUnavailable(Json.parse(FinancialServiceUnavailable))
+        case v @ yearsAndTransactionPattern(numberOfTransactions) =>
+          Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
+        case _ => Ok(Json.parse(SuccessfulResponse(idNumber)))
+      }
     }
-  }
 }
 
 object FinancialDataController {
@@ -82,10 +84,16 @@ object FinancialDataController {
       |
       |""".stripMargin
 
-  private def generateSuccessfulResponse(idNumber: String, numberOfTransactions: Int) =
-    FinancialDataResponse("ZPLR", idNumber, "PLR", LocalDateTime.now, financialTransactions = generateFinancialTransactions(numberOfTransactions))
+  private def generateSuccessfulResponse(idNumber: String, numberOfTransactions: Int, dateFrom: LocalDate, dateTo: LocalDate) =
+    FinancialDataResponse(
+      "ZPLR",
+      idNumber,
+      "PLR",
+      LocalDateTime.now,
+      financialTransactions = generateFinancialTransactions(numberOfTransactions, dateFrom, dateTo)
+    )
 
-  private def generateFinancialTransactions(numberOfExtraTransactions: Int): Seq[FinancialTransaction] = {
+  private def generateFinancialTransactions(numberOfExtraTransactions: Int, dateFrom: LocalDate, dateTo: LocalDate): Seq[FinancialTransaction] = {
     val i = numberOfExtraTransactions / 2
 
     val payments = (0 to i).map(_ =>
@@ -93,7 +101,7 @@ object FinancialDataController {
         mainTransaction = Some("0060"),
         items = Seq(
           FinancialItem(
-            dueDate = Some(generateRandomDate),
+            dueDate = Some(generateRandomDate(dateFrom, dateTo)),
             paymentAmount = Some(generateBigDecimal)
           )
         )
@@ -105,7 +113,7 @@ object FinancialDataController {
         mainTransaction = Some("1234"),
         items = Seq(
           FinancialItem(
-            clearingDate = Some(generateRandomDate),
+            clearingDate = Some(generateRandomDate(dateFrom, dateTo)),
             clearingReason = Some("Outgoing payment - Paid"),
             amount = Some(generateBigDecimal)
           )
@@ -116,11 +124,8 @@ object FinancialDataController {
     payments ++ refunds
   }
 
-  private def generateRandomDate: LocalDate = {
-    val start = LocalDate.of(2000, 1, 1)
-    val end   = LocalDate.now()
-    LocalDate.ofEpochDay(Random.between(start.toEpochDay, end.toEpochDay + 1))
-  }
+  private def generateRandomDate(dateFrom: LocalDate, dateTo: LocalDate): LocalDate =
+    LocalDate.ofEpochDay(Random.between(dateFrom.toEpochDay, dateTo.toEpochDay + 1))
 
   private def generateBigDecimal: BigDecimal = {
     val start = 10000.00
