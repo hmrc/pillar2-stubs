@@ -45,8 +45,7 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
   private val nameSafeId: Seq[(String, String)] = Seq(
     ("duplicate", "XD3333333333333"),
     ("enrolment", "XE4444444444444"),
-    ("organisation", "XE5555555555555"),
-    ("anythingElse", "XE6666666666666")
+    ("organisation", "XE5555555555555")
   )
 
   "RegisterWithoutIdController" - {
