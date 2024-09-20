@@ -160,12 +160,16 @@ object FinancialDataController {
        |        {
        |          "subItem": "001",
        |          "dueDate": "2024-07-01",
-       |          "amount": 9999.99,
+       |          "amount": -9999.99,
+       |          "clearingDate": "2024-07-01",
+       |          "clearingReason": "Outgoing payment - Paid",
+       |          "outgoingPaymentMethod": "BACS Payment out",
        |          "paymentReference": "a",
        |          "paymentAmount": 5000,
        |          "paymentMethod": "FPS Receipts",
        |          "paymentLot": "081203010024",
-       |          "paymentLotItem": "000001"
+       |          "paymentLotItem": "000001",
+       |          "clearingSAPDocument": "000001"
        |        }
        |      ]
        |    },
@@ -187,115 +191,7 @@ object FinancialDataController {
        |        {
        |          "subItem": "001",
        |          "dueDate": "2024-07-01",
-       |          "amount": 9999.99,
-       |          "paymentReference": "a",
-       |          "paymentAmount": 5000,
-       |          "paymentMethod": "FPS Receipts",
-       |          "paymentLot": "081203010024",
-       |          "paymentLotItem": "000001"
-       |        }
-       |      ]
-       |    },
-       |    {
-       |      "chargeType": "Pillar 2 (Payment on Account)",
-       |      "mainType": "On Account",
-       |      "businessPartner": "6622334455",
-       |      "contractAccountCategory": "53",
-       |      "contractAccount": "X",
-       |      "contractObjectType": "PLR",
-       |      "contractObject": "00000003000000002757",
-       |      "sapDocumentNumber": "1040000872",
-       |      "sapDocumentNumberItem": "0001",
-       |      "mainTransaction": "0060",
-       |      "subTransaction": "0400",
-       |      "originalAmount": 9999.99,
-       |      "outstandingAmount": 9999.99,
-       |      "items": [
-       |        {
-       |          "subItem": "001",
-       |          "dueDate": "2024-07-01",
-       |          "amount": 9999.99,
-       |          "paymentReference": "a",
-       |          "paymentAmount": 5000,
-       |          "paymentMethod": "FPS Receipts",
-       |          "paymentLot": "081203010024",
-       |          "paymentLotItem": "000001"
-       |        }
-       |      ]
-       |    },
-       |    {
-       |      "chargeType": "Pillar 2 (Payment on Account)",
-       |      "mainType": "On Account",
-       |      "businessPartner": "6622334455",
-       |      "contractAccountCategory": "53",
-       |      "contractAccount": "X",
-       |      "contractObjectType": "PLR",
-       |      "contractObject": "00000003000000002757",
-       |      "sapDocumentNumber": "1040000872",
-       |      "sapDocumentNumberItem": "0001",
-       |      "mainTransaction": "0060",
-       |      "subTransaction": "0400",
-       |      "originalAmount": 9999.99,
-       |      "outstandingAmount": 9999.99,
-       |      "items": [
-       |        {
-       |          "subItem": "001",
-       |          "dueDate": "2024-07-01",
-       |          "amount": 9999.99,
-       |          "paymentReference": "a",
-       |          "paymentAmount": 5000,
-       |          "paymentMethod": "FPS Receipts",
-       |          "paymentLot": "081203010024",
-       |          "paymentLotItem": "000001"
-       |        }
-       |      ]
-       |    },
-       |    {
-       |      "chargeType": "Pillar 2 (Payment on Account)",
-       |      "mainType": "On Account",
-       |      "businessPartner": "6622334455",
-       |      "contractAccountCategory": "53",
-       |      "contractAccount": "X",
-       |      "contractObjectType": "PLR",
-       |      "contractObject": "00000003000000002757",
-       |      "sapDocumentNumber": "1040000872",
-       |      "sapDocumentNumberItem": "0001",
-       |      "mainTransaction": "0060",
-       |      "subTransaction": "0400",
-       |      "originalAmount": 9999.99,
-       |      "outstandingAmount": 9999.99,
-       |      "items": [
-       |        {
-       |          "subItem": "001",
-       |          "dueDate": "2024-07-01",
-       |          "amount": 9999.99,
-       |          "paymentReference": "a",
-       |          "paymentAmount": 5000,
-       |          "paymentMethod": "FPS Receipts",
-       |          "paymentLot": "081203010024",
-       |          "paymentLotItem": "000001"
-       |        }
-       |      ]
-       |    },
-       |    {
-       |      "chargeType": "Pillar 2 (Payment on Account)",
-       |      "mainType": "On Account",
-       |      "businessPartner": "6622334455",
-       |      "contractAccountCategory": "53",
-       |      "contractAccount": "X",
-       |      "contractObjectType": "PLR",
-       |      "contractObject": "00000003000000002757",
-       |      "sapDocumentNumber": "1040000872",
-       |      "sapDocumentNumberItem": "0001",
-       |      "mainTransaction": "0060",
-       |      "subTransaction": "0400",
-       |      "originalAmount": 9999.99,
-       |      "clearedAmount": 9999.99,
-       |      "items": [
-       |        {
-       |          "subItem": "000",
-       |          "dueDate": "1967-08-13",
-       |          "amount": 9999.99,
+       |          "amount": -9999.99,
        |          "clearingDate": "2024-07-01",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
@@ -321,12 +217,12 @@ object FinancialDataController {
        |      "mainTransaction": "0060",
        |      "subTransaction": "0400",
        |      "originalAmount": 9999.99,
-       |      "clearedAmount": 9999.99,
+       |      "outstandingAmount": 9999.99,
        |      "items": [
        |        {
-       |          "subItem": "000",
-       |          "dueDate": "1967-08-13",
-       |          "amount": 9999.99,
+       |          "subItem": "001",
+       |          "dueDate": "2024-07-01",
+       |          "amount": -9999.99,
        |          "clearingDate": "2024-07-01",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
@@ -352,12 +248,12 @@ object FinancialDataController {
        |      "mainTransaction": "0060",
        |      "subTransaction": "0400",
        |      "originalAmount": 9999.99,
-       |      "clearedAmount": 9999.99,
+       |      "outstandingAmount": 9999.99,
        |      "items": [
        |        {
-       |          "subItem": "000",
-       |          "dueDate": "1967-08-13",
-       |          "amount": 9999.99,
+       |          "subItem": "001",
+       |          "dueDate": "2024-07-01",
+       |          "amount": -9999.99,
        |          "clearingDate": "2024-07-01",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
@@ -383,43 +279,12 @@ object FinancialDataController {
        |      "mainTransaction": "0060",
        |      "subTransaction": "0400",
        |      "originalAmount": 9999.99,
-       |      "clearedAmount": 9999.99,
+       |      "outstandingAmount": 9999.99,
        |      "items": [
        |        {
-       |          "subItem": "000",
-       |          "dueDate": "1967-08-13",
-       |          "amount": 9999.99,
-       |          "clearingDate": "2024-07-01",
-       |          "clearingReason": "Outgoing payment - Paid",
-       |          "outgoingPaymentMethod": "BACS Payment out",
-       |          "paymentReference": "a",
-       |          "paymentAmount": 9999.99,
-       |          "paymentMethod": "FPS Receipts",
-       |          "paymentLot": "081203010024",
-       |          "paymentLotItem": "000001",
-       |          "clearingSAPDocument": "000001"
-       |        }
-       |      ]
-       |    },
-       |    {
-       |      "chargeType": "Pillar 2 (Payment on Account)",
-       |      "mainType": "On Account",
-       |      "businessPartner": "6622334455",
-       |      "contractAccountCategory": "53",
-       |      "contractAccount": "X",
-       |      "contractObjectType": "PLR",
-       |      "contractObject": "00000003000000002757",
-       |      "sapDocumentNumber": "1040000872",
-       |      "sapDocumentNumberItem": "0001",
-       |      "mainTransaction": "0060",
-       |      "subTransaction": "0400",
-       |      "originalAmount": 9999.99,
-       |      "clearedAmount": 9999.99,
-       |      "items": [
-       |        {
-       |          "subItem": "000",
-       |          "dueDate": "1967-08-13",
-       |          "amount": 9999.99,
+       |          "subItem": "001",
+       |          "dueDate": "2024-07-01",
+       |          "amount": -9999.99,
        |          "clearingDate": "2024-07-01",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
