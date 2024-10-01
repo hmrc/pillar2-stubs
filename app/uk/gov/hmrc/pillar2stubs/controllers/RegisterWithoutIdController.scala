@@ -25,6 +25,7 @@ import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
+import scala.util.Random
 
 class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
 
@@ -46,7 +47,7 @@ class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilte
           case "duplicate"    => "XD3333333333333"
           case "enrolment"    => "XE4444444444444"
           case "organisation" => "XE5555555555555"
-          case _              => "XE6666666666666"
+          case _              => generateSafeId
         }
         resourceAsString(s"/resources/register/withoutIdResponse.json") match {
           case Some(response) => Ok(response.replace("[safeId]", safeId))
@@ -55,6 +56,13 @@ class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilte
         }
       case _ => BadRequest
     }
+  }
+
+  private def generateSafeId: String = {
+    val random        = new Random()
+    val randomInteger = (0 to 12).map(_ => random.between(0, 9)).mkString
+
+    s"XE$randomInteger"
   }
 
 }
