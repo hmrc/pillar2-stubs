@@ -81,6 +81,15 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           Future.successful(InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get))
         case "XEPLR0123456503" =>
           Future.successful(ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get))
+        case "XEPLR5555555555" =>
+          Future.successful(
+            Ok(
+              resourceAsString(s"/resources/subscription/ReadSuccessResponse.json")
+                .map(replacePillar2Id(_, "XMPLR0012345674"))
+                .map(_.replace("\"inactive\": false", "\"inactive\": true"))
+                .get
+            )
+          )
         case _ =>
           resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
             case Some(responseTemplate) =>
