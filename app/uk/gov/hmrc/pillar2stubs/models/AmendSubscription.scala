@@ -54,7 +54,14 @@ case class AmendSubscriptionSuccess(
 )
 
 object AmendSubscriptionSuccess {
-  implicit val format: OFormat[AmendSubscriptionSuccess] = Json.format[AmendSubscriptionSuccess]
+
+  implicit val reads: Reads[AmendSubscriptionSuccess] = Reads { js =>
+    if (js.asInstanceOf[JsObject].value.contains("replaceFilingMember"))
+      JsError("AdditionalProperty")
+    else JsSuccess(js)
+  }.andThen(Json.reads[AmendSubscriptionSuccess])
+
+  implicit val format: OFormat[AmendSubscriptionSuccess] = OFormat(reads, Json.writes[AmendSubscriptionSuccess])
 }
 
 case class AmendSubscriptionResponse(value: AmendSubscriptionSuccess)
