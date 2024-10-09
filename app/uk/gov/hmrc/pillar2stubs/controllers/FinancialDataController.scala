@@ -39,6 +39,7 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         case "XEPLR4040000000" => NotFound(Json.parse(FinancialDataNotFound))
         case "XEPLR5000000000" => InternalServerError(Json.parse(FinancialServerError))
         case "XEPLR5030000000" => ServiceUnavailable(Json.parse(FinancialServiceUnavailable))
+        case "XEPLR5555551111" => Ok(Json.toJson(generateSuccessfulResponse(idNumber, 0, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
         case v @ yearsAndTransactionPattern(numberOfTransactions) =>
           Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
         case _ => Ok(Json.parse(SuccessfulResponse(idNumber)))
@@ -96,7 +97,7 @@ object FinancialDataController {
   private def generateFinancialTransactions(numberOfExtraTransactions: Int, dateFrom: LocalDate, dateTo: LocalDate): Seq[FinancialTransaction] = {
     val i = numberOfExtraTransactions / 2
 
-    val payments = (0 to i).map(_ =>
+    val payments = (0 until i).map(_ =>
       FinancialTransaction(
         mainTransaction = Some("0060"),
         items = Seq(
@@ -108,7 +109,7 @@ object FinancialDataController {
       )
     )
 
-    val refunds = (0 to i).map(_ =>
+    val refunds = (0 until i).map(_ =>
       FinancialTransaction(
         mainTransaction = Some("1234"),
         items = Seq(
