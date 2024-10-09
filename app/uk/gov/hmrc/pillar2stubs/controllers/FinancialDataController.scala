@@ -97,7 +97,7 @@ object FinancialDataController {
   private def generateFinancialTransactions(numberOfExtraTransactions: Int, dateFrom: LocalDate, dateTo: LocalDate): Seq[FinancialTransaction] = {
     val i = numberOfExtraTransactions / 2
 
-    val payments = (0 to i).map(_ =>
+    val payments = (0 until i).map(_ =>
       FinancialTransaction(
         mainTransaction = Some("0060"),
         items = Seq(
@@ -109,7 +109,7 @@ object FinancialDataController {
       )
     )
 
-    val refunds = (0 to i).map(_ =>
+    val refunds = (0 until i).map(_ =>
       FinancialTransaction(
         mainTransaction = Some("1234"),
         items = Seq(
