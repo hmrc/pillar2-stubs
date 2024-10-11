@@ -16,14 +16,13 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime}
+import java.time.LocalDate
 
 import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionResponse, AmendSubscriptionSuccess, Subscription, SubscriptionResponse}
+import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionSuccess, Subscription}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
@@ -101,6 +100,16 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Ok(
               resourceAsString(s"/resources/subscription/ReadSuccessResponse.json")
                 .map(replaceDate(_, currentDate.toString))
+                .get
+            )
+          )
+
+        case "XEPLR6666666666" =>
+          Future.successful(
+            Ok(
+              resourceAsString(s"/resources/subscription/ReadSuccessResponse.json")
+                .map(replacePillar2Id(_, "XEPLR6666666666"))
+                .map(_.replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
                 .get
             )
           )
