@@ -334,6 +334,7 @@ Retrieves the Subscription details for the specific plrReference
 | XEPLR0123456500 | 500         | INTERNAL_SERVER_ERROR | Internal Server error.                                                 |
 | XEPLR0123456503 | 503         | SERVICE_UNAVAILABLE   | Dependent systems are currently not responding.                        |
 | XEPLR5555555555 | 200         | OK                    | Returns read success response with accountStatus.inactive set to true. |
+| XEPLR6666666666 | 200         | OK                    | Returns read success response with upe registration year of 2011. |
 | XEPLR__________ | 200         | OK                    | Returns read success response .                                        |
 
 #### Happy Path:
