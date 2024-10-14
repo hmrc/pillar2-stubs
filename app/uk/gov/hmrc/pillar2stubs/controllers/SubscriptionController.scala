@@ -16,6 +16,9 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
+import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalDateTime}
+
 import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -24,8 +27,8 @@ import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionResponse, AmendSubscrip
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
-
 import javax.inject.Inject
+
 import scala.concurrent.Future
 
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
@@ -90,6 +93,18 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
                 .get
             )
           )
+
+        case "XEPLR5555551111" =>
+          val currentDate = LocalDate.now()
+
+          Future.successful(
+            Ok(
+              resourceAsString(s"/resources/subscription/ReadSuccessResponse.json")
+                .map(replaceDate(_, currentDate.toString))
+                .get
+            )
+          )
+
         case _ =>
           resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
             case Some(responseTemplate) =>
@@ -135,4 +150,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
   private def replacePillar2Id(response: String, pillar2Reference: String): String =
     response.replace("[pillar2Reference]", pillar2Reference)
 
+  private def replaceDate(response: String, registrationDate: String): String =
+    response.replace("2024-01-31", registrationDate)
 }
