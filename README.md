@@ -601,6 +601,17 @@ This will set the end date to `2044-01-31` and generate transactions from `2037-
 Worth noting this won't happen in any other environment apart unless you override the config.
 
 
+## Get Obligation - Get Obligation Test Data
+
+For now this API has not been developed by ETMP therefore we are making assumptions in order to provide test data and satisfy the requirements of the frontend.
+
+| idNumber (PLR Reference Number)                                          | Response Returned                       |
+|--------------------------------------------------------------------------|-----------------------------------------|
+| XEPLR1000000000                                                          | Obligation with Fulfilled status        |
+| XEPLR4040000000                                                          | NOT_FOUND Error Response                |
+| Any valid ID                                                             | Will return a response with Open status |
+
+
 ### License
 
 This code is open source software licensed under
