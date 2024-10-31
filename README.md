@@ -612,6 +612,61 @@ For now this API has not been developed by ETMP therefore we are making assumpti
 | Any valid ID                                                             | Will return a response with Open status |
 
 
+Retrieves the Liability detail
+
+| Status      | Description                                                |
+|-------------|------------------------------------------------------------|
+| BAD_REQUEST | Submission has not passed validation. Invalid JSON.        |
+| BAD_REQUEST | Submission has not passed validation. Expecting JSON data. |
+| OK          | Returns read success response .                            |
+
+Invalid JSON
+This example shows a request with invalid JSON syntax, which will result in a BAD_REQUEST response.
+    
+    ```json
+    {
+    "accountingPeriod": "2024-08-1",
+    "accountingPeriod": "2024-12-14"
+    }
+    ```
+Expecting JSON data
+This example shows a request with a non-JSON body, which will result in a BAD_REQUEST response.
+    
+    ```
+        This is not a JSON body
+    ```
+
+Expected Payload for POST Request
+
+    ```json
+	{
+	  "accountingPeriodFrom": "2024-08-14",
+	  "accountingPeriodTo": "2024-12-14",
+	  "qualifyingGroup": true,
+	  "obligationDTT": true,
+	  "obligationMTT": true,
+	  "liabilities": {
+	    "totalLiability": 10000.99,
+	    "totalLiabilityDTT": 5000.99,
+	    "totalLiabilityIIR": 4000,
+	    "totalLiabilityUTPR": 10000.99,
+	    "liableEntities": [
+	      {
+	        "ukChargeableEntityName": "Newco PLC",
+	        "idType": "CRN",
+	        "idValue": "12345678",
+	        "amountOwedDTT": 5000,
+	        "electedDTT": true,
+	        "amountOwedIIR": 3400,
+	        "amountOwedUTPR": 6000.5,
+	        "electedUTPR": true
+	      }
+	    ]
+	  }
+	}
+    ```
+
+
 ### License
 
 This code is open source software licensed under
