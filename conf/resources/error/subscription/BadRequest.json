@@ -1,0 +1,4 @@
+{
+  "code": "BAD_REQUEST",
+  "message": "The request could not be understood or was missing required parameters."
+}

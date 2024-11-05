@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
   def createSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
-    logger.info(s"Subscription Request recieved \n ${request.body} \n")
+    logger.info(s"Subscription Request received \n ${request.body} \n")
 
     request.body.asOpt[Subscription] match {
       case Some(input) =>
@@ -41,11 +41,16 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         val safeId           = input.safeId
 
         (organisationName, safeId) match {
-          case ("duplicateSub", _)       => Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").get)
-          case ("subServerError", _)     => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
-          case ("subRecordNotFound", _)  => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
-          case ("subReqNotProcessed", _) => UnprocessableEntity(resourceAsString(s"/resources/error/UnprocessableEntity.json").get)
-          case ("subInvalidRequest", _)  => BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get)
+          case ("duplicateSub", _) =>
+            Conflict(resourceAsString("/resources/error/subscription/Conflict.json").get)
+          case ("subServerError", _) =>
+            ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
+          case ("subRecordNotFound", _) =>
+            NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get)
+          case ("subReqNotProcessed", _) =>
+            UnprocessableEntity(resourceAsString("/resources/error/subscription/UnprocessableEntity.json").get)
+          case ("subInvalidRequest", _) =>
+            BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
 
           case ("XE0000123456400", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456400")).get)
@@ -60,33 +65,33 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case (_, "XE0000123456789") =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
           case ("XMPLR0009999999", _) =>
-            Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").map(replacePillar2Id(_, "XMPLR0009999999")).get)
+            Conflict(resourceAsString("/resources/error/subscription/Conflict.json").map(replacePillar2Id(_, "XMPLR0009999999")).get)
           case (_, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
-          case _ => BadRequest
+          case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
         }
-      case _ => BadRequest
+      case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
     }
   }
 
   def retrieveSubscription(plrReference: String): Action[AnyContent] =
     (Action andThen authFilter).async {
-      logger.info(s"retrieveSubscription Request recieved \n $plrReference \n")
+      logger.info(s"retrieveSubscription Request received \n $plrReference \n")
       plrReference match {
         case "XEPLR0123456400" =>
-          Future.successful(BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get))
+          Future.successful(BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get))
         case "XEPLR0123456404" =>
-          Future.successful(NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get))
+          Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
         case "XEPLR0123456422" =>
-          Future.successful(UnprocessableEntity(resourceAsString(s"/resources/error/UnprocessableEntity.json").get))
+          Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/UnprocessableEntity.json").get))
         case "XEPLR0123456500" =>
-          Future.successful(InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get))
+          Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
         case "XEPLR0123456503" =>
-          Future.successful(ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get))
+          Future.successful(ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get))
         case "XEPLR5555555555" =>
           Future.successful(
             Ok(
-              resourceAsString(s"/resources/subscription/ReadSuccessResponse.json")
+              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
                 .map(replacePillar2Id(_, "XMPLR0012345674"))
                 .map(_.replace("\"inactive\": false", "\"inactive\": true"))
                 .get
@@ -98,7 +103,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
           Future.successful(
             Ok(
-              resourceAsString(s"/resources/subscription/ReadSuccessResponse.json")
+              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
                 .map(replaceDate(_, currentDate.toString))
                 .get
             )
@@ -107,9 +112,19 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         case "XEPLR6666666666" =>
           Future.successful(
             Ok(
-              resourceAsString(s"/resources/subscription/ReadSuccessResponse.json")
+              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
                 .map(replacePillar2Id(_, "XEPLR6666666666"))
                 .map(_.replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
+                .get
+            )
+          )
+
+        case "XEPLR1066196600" =>
+          Future.successful(
+            Ok(
+              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
+                .map(replacePillar2Id(_, "XEPLR1066196600"))
+                .map(_.replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
                 .get
             )
           )
