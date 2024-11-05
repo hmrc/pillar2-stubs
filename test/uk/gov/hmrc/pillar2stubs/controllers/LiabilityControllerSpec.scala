@@ -21,15 +21,34 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.{JsValue, Json}
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderNames
+
+import java.time.LocalDate
 
 class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 
+  private val stubResourceLoader: String => Option[String] = {
+    case "/resources/liabilities/LiabilitySuccessResponse.json" =>
+      Some("""{"success":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}""")
+    case _ => None
+  }
+
+  override def fakeApplication() = new GuiceApplicationBuilder()
+    .overrides(
+      bind[String => Option[String]].qualifiedWith("resourceLoader").toInstance(stubResourceLoader)
+    )
+    .build()
+
+  val authHeader: (String, String) = HeaderNames.authorisation -> "Bearer valid_token"
+
   "LiabilityController POST" - {
 
-    "return CREATED with success response for valid plrReference" in {
+    "return CREATED with success response when plrReference is valid and JSON is correct" in {
       val validRequestBody = Json.obj(
         "accountingPeriodFrom" -> "2024-08-14",
         "accountingPeriodTo"   -> "2024-12-14",
@@ -57,65 +76,68 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       )
 
       val request = FakeRequest(POST, routes.LiabilityController.createLiability("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json")
+        .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withBody(validRequestBody)
+
+      val result      = route(app, request).value
+      val currentDate = LocalDate.now().toString
+      status(result) mustBe CREATED
+      contentAsJson(result) mustBe Json.parse(
+        s"""{"success":{"processingDate":"${currentDate}T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}"""
+      )
+    }
+
+    "return NOT_FOUND for valid JSON but incorrect plrReference" in {
+      val validRequestBody = Json.obj(
+        "accountingPeriodFrom" -> "2024-08-14",
+        "accountingPeriodTo"   -> "2024-12-14",
+        "qualifyingGroup"      -> true,
+        "obligationDTT"        -> true,
+        "obligationMTT"        -> true,
+        "liabilities" -> Json.obj(
+          "totalLiability" -> 10000.99,
+          "liableEntities" -> Json.arr(
+            Json.obj(
+              "ukChargeableEntityName" -> "Newco PLC",
+              "idType"                 -> "CRN",
+              "idValue"                -> "12345678",
+              "amountOwedDTT"          -> 5000,
+              "amountOwedIIR"          -> 3400,
+              "amountOwedUTPR"         -> 6000.5
+            )
+          )
+        )
+      )
+
+      val request = FakeRequest(POST, routes.LiabilityController.createLiability("INVALID_PLR_REFERENCE").url)
+        .withHeaders("Content-Type" -> "application/json", authHeader)
         .withBody(validRequestBody)
 
       val result = route(app, request).value
-
-      status(result) mustBe CREATED
-      contentType(result) mustBe Some("application/json")
-
-      val jsonResponse = contentAsJson(result)
-
-      (jsonResponse \ "success").asOpt[JsValue] match {
-        case Some(success) =>
-          (success \ "formBundleNumber").as[String] mustBe "119000004320"
-          (success \ "chargeReference").as[String] mustBe "XTC01234123412"
-        case None =>
-          fail(s"Expected 'success' key in response, but got: $jsonResponse")
-      }
-    }
-
-    "return NOT_FOUND for invalid plrReference" in {
-      val request = FakeRequest(POST, routes.LiabilityController.createLiability("INVALID_PLR_REFERENCE").url)
-        .withHeaders("Content-Type" -> "application/json")
-        .withBody(Json.obj())
-
-      val result = route(app, request).value
-
       status(result) mustBe NOT_FOUND
-      contentType(result) mustBe Some("application/json")
-
-      val jsonResponse = contentAsJson(result)
-
-      (jsonResponse \ "failures").asOpt[Seq[JsValue]].flatMap(_.headOption) match {
-        case Some(failure) =>
-          (failure \ "code").as[String] mustBe "LIABILITIES_NOT_FOUND"
-        case None =>
-          fail("Expected 'failures' array in response, but got: " + jsonResponse)
-      }
+      contentAsJson(result) mustBe Json.obj("error" -> "No liabilities found for the given reference")
     }
 
-    "return BAD_REQUEST with INVALID_REQUEST for invalid JSON structure" in {
+    "return BAD_REQUEST for invalid JSON structure" in {
       val invalidJson = Json.obj("invalidField" -> "value")
 
       val request = FakeRequest(POST, routes.LiabilityController.createLiability("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json")
+        .withHeaders("Content-Type" -> "application/json", authHeader)
         .withBody(invalidJson)
 
       val result = route(app, request).value
-
       status(result) mustBe BAD_REQUEST
-      contentType(result) mustBe Some("application/json")
+      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
+    }
 
-      val jsonResponse = contentAsJson(result)
+    "return BAD_REQUEST for non-JSON data" in {
+      val request = FakeRequest(POST, routes.LiabilityController.createLiability("XTC01234123412").url)
+        .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withBody("non-json body")
 
-      (jsonResponse \ "failures").asOpt[Seq[JsValue]].flatMap(_.headOption) match {
-        case Some(failure) =>
-          (failure \ "code").as[String] mustBe "INVALID_REQUEST"
-        case None =>
-          fail("Expected 'failures' array in response, but got: " + jsonResponse)
-      }
+      val result = route(app, request).value
+      status(result) mustBe BAD_REQUEST
+      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON data")
     }
   }
 }
