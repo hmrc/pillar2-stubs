@@ -16,36 +16,63 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
+import play.api.libs.json.{JsError, JsObject, JsSuccess, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
-import uk.gov.hmrc.pillar2stubs.models.{UKTRSubmissionRequest, UKTRSubmissionResponse, UKTRSubmissionSuccess}
+import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionRequest
+import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
+
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import play.api.libs.json.Json
-import java.time.LocalDateTime
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class LiabilityController @Inject() (val controllerComponents: ControllerComponents) extends BaseController {
+class LiabilityController @Inject() (val controllerComponents: ControllerComponents)(implicit ec: ExecutionContext) extends BaseController {
 
-  def createLiability(): Action[AnyContent] = Action { implicit request =>
-    request.body.asJson
-      .map { json =>
-        json
-          .validate[UKTRSubmissionRequest]
-          .map { submissionRequest =>
-            val response = UKTRSubmissionResponse(
-              success = UKTRSubmissionSuccess(
-                processingDate = LocalDateTime.now(),
-                formBundleNumber = "123456789012345",
-                chargeReference = Some("XTC01234123412")
-              )
-            )
-            Created(Json.toJson(response))
+  def createLiability(plrReference: String): Action[AnyContent] = Action.async { implicit request =>
+    if (request.contentType.getOrElse("") != "application/json" || request.body.asJson.isEmpty) {
+      val invalidJsonResponse = resourceAsString("/resources/liabilities/InvalidJsonResponse.json")
+        .map(Json.parse)
+        .getOrElse(Json.obj("error" -> "Invalid JSON response not found"))
+      Future.successful(BadRequest(invalidJsonResponse).as("application/json"))
+    } else {
+      plrReference match {
+        case "XTC01234123412" =>
+          request.body.asJson match {
+            case Some(json) =>
+              json.validate[UKTRSubmissionRequest] match {
+                case JsSuccess(_, _) =>
+                  val currentDate = LocalDate.now()
+                  val successResponse = resourceAsString("/resources/liabilities/LiabilitySuccessResponse.json")
+                    .map(replaceDate(_, currentDate.toString))
+                    .map(Json.parse)
+                    .getOrElse(Json.obj("error" -> "Success response not found"))
+                  Future.successful(Created(successResponse).as("application/json"))
+
+                case JsError(errors) =>
+                  val invalidRequestResponse: JsObject = resourceAsString("/resources/liabilities/InvalidRequestResponse.json")
+                    .map(Json.parse)
+                    .collect { case obj: JsObject => obj }
+                    .getOrElse(Json.obj("error" -> "Invalid Request response not found"))
+                    .++(Json.obj("details" -> JsError.toJson(errors)))
+
+                  Future.successful(BadRequest(invalidRequestResponse).as("application/json"))
+              }
+
+            case None =>
+              val invalidJsonResponse = resourceAsString("/resources/liabilities/InvalidJsonResponse.json")
+                .map(Json.parse)
+                .getOrElse(Json.obj("error" -> "Invalid JSON response not found"))
+              Future.successful(BadRequest(invalidJsonResponse).as("application/json"))
           }
-          .recoverTotal { _ =>
-            BadRequest("Invalid JSON")
-          }
+        case _ =>
+          val notFoundResponse = resourceAsString("/resources/liabilities/LiabilitiesNotFoundResponse.json")
+            .map(Json.parse)
+            .getOrElse(Json.obj("error" -> "Not Found response not found"))
+          Future.successful(NotFound(notFoundResponse).as("application/json"))
       }
-      .getOrElse {
-        BadRequest("Expecting JSON data")
-      }
+    }
   }
+
+  private def replaceDate(response: String, registrationDate: String): String =
+    response.replace("2024-01-31", registrationDate)
 }

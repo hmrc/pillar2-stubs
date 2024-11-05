@@ -1,0 +1,8 @@
+{
+  "failures": [
+    {
+      "code": "INVALID_JSON",
+      "reason": "Expecting JSON data"
+    }
+  ]
+}

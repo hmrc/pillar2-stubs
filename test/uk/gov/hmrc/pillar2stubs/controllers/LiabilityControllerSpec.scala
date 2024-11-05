@@ -16,92 +16,106 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
-import org.openqa.selenium.remote.tracing.HttpTracing.inject
+import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import org.scalatest.OptionValues
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.http.HeaderNames
 
 class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 
   "LiabilityController POST" - {
 
-    "return CREATED for valid request" in {
-      val input: String =
-        """{
-          |  "accountingPeriodFrom": "2024-08-14",
-          |  "accountingPeriodTo": "2024-12-14",
-          |  "qualifyingGroup": true,
-          |  "obligationDTT": true,
-          |  "obligationMTT": true,
-          |  "liabilities": {
-          |    "totalLiability": 10000.99,
-          |    "totalLiabilityDTT": 5000.99,
-          |    "totalLiabilityIIR": 4000,
-          |    "totalLiabilityUTPR": 10000.99,
-          |    "liableEntities": [
-          |      {
-          |        "ukChargeableEntityName": "Newco PLC",
-          |        "idType": "CRN",
-          |        "idValue": "12345678",
-          |        "amountOwedDTT": 5000,
-          |        "electedDTT": true,
-          |        "amountOwedIIR": 3400,
-          |        "amountOwedUTPR": 6000.5,
-          |        "electedUTPR": true
-          |      }
-          |    ]
-          |  }
-          |}
-    """.stripMargin
+    "return CREATED with success response for valid plrReference" in {
+      val validRequestBody = Json.obj(
+        "accountingPeriodFrom" -> "2024-08-14",
+        "accountingPeriodTo"   -> "2024-12-14",
+        "qualifyingGroup"      -> true,
+        "obligationDTT"        -> true,
+        "obligationMTT"        -> true,
+        "liabilities" -> Json.obj(
+          "totalLiability"     -> 10000.99,
+          "totalLiabilityDTT"  -> 5000.99,
+          "totalLiabilityIIR"  -> 4000,
+          "totalLiabilityUTPR" -> 10000.99,
+          "liableEntities" -> Json.arr(
+            Json.obj(
+              "ukChargeableEntityName" -> "Newco PLC",
+              "idType"                 -> "CRN",
+              "idValue"                -> "12345678",
+              "amountOwedDTT"          -> 5000,
+              "electedDTT"             -> true,
+              "amountOwedIIR"          -> 3400,
+              "amountOwedUTPR"         -> 6000.5,
+              "electedUTPR"            -> true
+            )
+          )
+        )
+      )
 
-      val json: JsValue = Json.parse(input)
-      val request = FakeRequest(POST, routes.LiabilityController.createLiability.url)
+      val request = FakeRequest(POST, routes.LiabilityController.createLiability("XTC01234123412").url)
         .withHeaders("Content-Type" -> "application/json")
-        .withBody(json)
+        .withBody(validRequestBody)
 
       val result = route(app, request).value
 
       status(result) mustBe CREATED
       contentType(result) mustBe Some("application/json")
-      (contentAsJson(result) \ "success" \ "formBundleNumber").as[String] mustBe "123456789012345"
+
+      val jsonResponse = contentAsJson(result)
+
+      (jsonResponse \ "success").asOpt[JsValue] match {
+        case Some(success) =>
+          (success \ "formBundleNumber").as[String] mustBe "119000004320"
+          (success \ "chargeReference").as[String] mustBe "XTC01234123412"
+        case None =>
+          fail(s"Expected 'success' key in response, but got: $jsonResponse")
+      }
     }
 
-    "return BAD_REQUEST for invalid JSON" in {
-      val input: String =
-        """{
-          |  "invalid": "json"
-          |}
-    """.stripMargin
-
-      val json: JsValue = Json.parse(input)
-      val request = FakeRequest(POST, routes.LiabilityController.createLiability.url)
+    "return NOT_FOUND for invalid plrReference" in {
+      val request = FakeRequest(POST, routes.LiabilityController.createLiability("INVALID_PLR_REFERENCE").url)
         .withHeaders("Content-Type" -> "application/json")
-        .withBody(json)
+        .withBody(Json.obj())
+
+      val result = route(app, request).value
+
+      status(result) mustBe NOT_FOUND
+      contentType(result) mustBe Some("application/json")
+
+      val jsonResponse = contentAsJson(result)
+
+      (jsonResponse \ "failures").asOpt[Seq[JsValue]].flatMap(_.headOption) match {
+        case Some(failure) =>
+          (failure \ "code").as[String] mustBe "LIABILITIES_NOT_FOUND"
+        case None =>
+          fail("Expected 'failures' array in response, but got: " + jsonResponse)
+      }
+    }
+
+    "return BAD_REQUEST with INVALID_REQUEST for invalid JSON structure" in {
+      val invalidJson = Json.obj("invalidField" -> "value")
+
+      val request = FakeRequest(POST, routes.LiabilityController.createLiability("XTC01234123412").url)
+        .withHeaders("Content-Type" -> "application/json")
+        .withBody(invalidJson)
 
       val result = route(app, request).value
 
       status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include("Invalid JSON")
+      contentType(result) mustBe Some("application/json")
+
+      val jsonResponse = contentAsJson(result)
+
+      (jsonResponse \ "failures").asOpt[Seq[JsValue]].flatMap(_.headOption) match {
+        case Some(failure) =>
+          (failure \ "code").as[String] mustBe "INVALID_REQUEST"
+        case None =>
+          fail("Expected 'failures' array in response, but got: " + jsonResponse)
+      }
     }
-
-    "return BAD_REQUEST for non-JSON body" in {
-      val input: String = "non-json body"
-
-      val request = FakeRequest(POST, routes.LiabilityController.createLiability.url)
-        .withHeaders("Content-Type" -> "application/json")
-        .withBody(input)
-
-      val result = route(app, request).value
-
-      status(result) mustBe BAD_REQUEST
-      contentAsString(result) must include("Invalid Json: Unrecognized token")
-    }
-
   }
 }
