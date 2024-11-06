@@ -19,13 +19,13 @@ package uk.gov.hmrc.pillar2stubs.models
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 
-case class SubmissionLiability( // Changed from `Liability` to `SubmissionLiability`
+case class SubmissionLiability(
   totalLiability:     Option[BigDecimal] = None,
   totalLiabilityDTT:  Option[BigDecimal] = None,
   totalLiabilityIIR:  Option[BigDecimal] = None,
   totalLiabilityUTPR: Option[BigDecimal] = None,
   liableEntities:     Option[Seq[LiableEntity]] = None,
-  returnType:         Option[String] = None // Optional for NIL_RETURN
+  returnType:         Option[String] = None
 )
 
 object SubmissionLiability {
@@ -48,7 +48,7 @@ case class UKTRSubmissionRequest(
   obligationDTT:        Boolean,
   obligationMTT:        Boolean,
   electionUKGAAP:       Boolean,
-  liabilities:          SubmissionLiability // Updated to `SubmissionLiability`
+  liabilities:          SubmissionLiability
 )
 
 object UKTRSubmissionRequest {
