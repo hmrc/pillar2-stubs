@@ -58,7 +58,7 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         "qualifyingGroup"      -> true,
         "obligationDTT"        -> true,
         "obligationMTT"        -> true,
-        "electionUKGAAP"       -> true, // Add this line
+        "electionUKGAAP"       -> true,
         "liabilities" -> Json.obj(
           "totalLiability"     -> 10000.99,
           "totalLiabilityDTT"  -> 5000.99,
@@ -209,7 +209,6 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
           "liableEntities" -> Json.arr(
             Json.obj(
               "ukChargeableEntityName" -> "Newco PLC",
-              // Missing "idType" field here
               "idValue"        -> "12345678",
               "amountOwedDTT"  -> 5000,
               "electedDTT"     -> true,
