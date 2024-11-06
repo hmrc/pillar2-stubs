@@ -612,16 +612,24 @@ For now this API has not been developed by ETMP therefore we are making assumpti
 | Any valid ID                                                             | Will return a response with Open status |
 
 
-Retrieves the Liability detail
+## Post Liability 
+
+Liability Detail Retrieval
+
+This endpoint retrieves liability details based on the provided idNumber (PLR Reference Number).
+
+Response Codes and Conditions
 
 | Status      | Description                                                |
 |-------------|------------------------------------------------------------|
 | BAD_REQUEST | Submission has not passed validation. Invalid JSON.        |
 | BAD_REQUEST | Submission has not passed validation. Expecting JSON data. |
-| OK          | Returns read success response .                            |
+| CREATED     | Returns success response when the idNumber is correct.     |
+| NOT_FOUND   | No liabilities found for the given idNumber.               |
 
 Invalid JSON
-This example shows a request with invalid JSON syntax, which will result in a BAD_REQUEST response.
+
+The following example shows a request with invalid JSON syntax, which will result in a BAD_REQUEST response.
     
     ```json
     {
@@ -629,7 +637,8 @@ This example shows a request with invalid JSON syntax, which will result in a BA
     "accountingPeriod": "2024-12-14"
     }
     ```
-Expecting JSON data
+Expecting JSON Data
+
 This example shows a request with a non-JSON body, which will result in a BAD_REQUEST response.
     
     ```
@@ -638,33 +647,37 @@ This example shows a request with a non-JSON body, which will result in a BAD_RE
 
 Expected Payload for POST Request
 
+The expected JSON structure for a valid POST request is as follows:
+
     ```json
-	{
-	  "accountingPeriodFrom": "2024-08-14",
-	  "accountingPeriodTo": "2024-12-14",
-	  "qualifyingGroup": true,
-	  "obligationDTT": true,
-	  "obligationMTT": true,
-	  "liabilities": {
-	    "totalLiability": 10000.99,
-	    "totalLiabilityDTT": 5000.99,
-	    "totalLiabilityIIR": 4000,
-	    "totalLiabilityUTPR": 10000.99,
-	    "liableEntities": [
-	      {
-	        "ukChargeableEntityName": "Newco PLC",
-	        "idType": "CRN",
-	        "idValue": "12345678",
-	        "amountOwedDTT": 5000,
-	        "electedDTT": true,
-	        "amountOwedIIR": 3400,
-	        "amountOwedUTPR": 6000.5,
-	        "electedUTPR": true
-	      }
-	    ]
-	  }
-	}
+        {
+        "accountingPeriodFrom": "2024-08-14",
+        "accountingPeriodTo": "2024-12-14",
+        "qualifyingGroup": true,
+        "obligationDTT": true,
+        "obligationMTT": true,
+        "liabilities": {
+        "totalLiability": 10000.99,
+        "totalLiabilityDTT": 5000.99,
+        "totalLiabilityIIR": 4000,
+        "totalLiabilityUTPR": 10000.99,
+        "liableEntities": [
+        {
+        "ukChargeableEntityName": "Newco PLC",
+        "idType": "CRN",
+        "idValue": "12345678",
+        "amountOwedDTT": 5000,
+        "electedDTT": true,
+        "amountOwedIIR": 3400,
+        "amountOwedUTPR": 6000.5,
+        "electedUTPR": true
+        }
+        ]
+        }
+        }
     ```
+	•	Valid idNumber: If the provided idNumber (PLR Reference Number) is XTC01234123412, the server returns a CREATED response with the liability success details.
+	•	Invalid idNumber: If the idNumber is anything other than XTC01234123412, the server responds with NOT_FOUND, indicating no matching liability data.
 
 
 ### License

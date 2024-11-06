@@ -17,10 +17,12 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.libs.json.{JsError, JsSuccess, Json}
-import play.api.mvc.{Action, BaseController, ControllerComponents}
+import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionRequest
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import play.api.Logging
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -29,13 +31,15 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class LiabilityController @Inject() (
-  val controllerComponents: ControllerComponents,
-  authFilter:               AuthActionFilter
-)(implicit ec:              ExecutionContext)
-    extends BaseController {
-  def createLiability(plrReference: String): Action[String] = (Action(parse.tolerantText) andThen authFilter).async { implicit request =>
+  cc:          ControllerComponents,
+  authFilter:  AuthActionFilter
+)(implicit ec: ExecutionContext)
+    extends BackendController(cc)
+    with Logging {
 
+  def createLiability(plrReference: String): Action[String] = (Action(parse.tolerantText) andThen authFilter).async { implicit request =>
     if (plrReference != "XTC01234123412") {
+      logger.warn(s"Invalid PLR Reference provided: $plrReference")
       Future.successful(NotFound(Json.obj("error" -> "No liabilities found for the given reference")))
     } else {
 
@@ -47,13 +51,17 @@ class LiabilityController @Inject() (
                 .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
                 .map(Json.parse)
                 .getOrElse(Json.obj("error" -> "Success response not found"))
+
+              logger.info("Returning success response for valid request")
               Future.successful(Created(successResponse).as("application/json"))
 
-            case JsError(_) =>
+            case JsError(errors) =>
+              logger.error(s"JSON validation failed with errors: $errors")
               Future.successful(BadRequest(Json.obj("error" -> "Invalid JSON request format")).as("application/json"))
           }
 
-        case Failure(_) =>
+        case Failure(exception) =>
+          logger.error("Failed to parse JSON request body", exception)
           Future.successful(BadRequest(Json.obj("error" -> "Invalid JSON data")).as("application/json"))
       }
     }
