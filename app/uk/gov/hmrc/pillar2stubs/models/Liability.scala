@@ -16,7 +16,8 @@
 
 package uk.gov.hmrc.pillar2stubs.models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 case class Liability(
   totalLiability:     BigDecimal,
@@ -27,5 +28,15 @@ case class Liability(
 )
 
 object Liability {
-  implicit val format: OFormat[Liability] = Json.format[Liability]
+  implicit val reads: Reads[Liability] = (
+    (JsPath \ "totalLiability").read[BigDecimal] and
+      (JsPath \ "totalLiabilityDTT").read[BigDecimal] and
+      (JsPath \ "totalLiabilityIIR").read[BigDecimal] and
+      (JsPath \ "totalLiabilityUTPR").read[BigDecimal] and
+      (JsPath \ "liableEntities")
+        .read[Seq[LiableEntity]]
+        .filter(JsonValidationError("liableEntities must not be empty"))(_.nonEmpty)
+  )(Liability.apply _)
+
+  implicit val writes: OWrites[Liability] = Json.writes[Liability]
 }

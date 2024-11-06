@@ -139,5 +139,67 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       status(result) mustBe BAD_REQUEST
       contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON data")
     }
+
+    "return BAD_REQUEST if liableEntities array is empty" in {
+      val invalidRequestBody = Json.obj(
+        "accountingPeriodFrom" -> "2024-08-14",
+        "accountingPeriodTo"   -> "2024-12-14",
+        "qualifyingGroup"      -> true,
+        "obligationDTT"        -> true,
+        "obligationMTT"        -> true,
+        "liabilities" -> Json.obj(
+          "totalLiability"     -> 10000.99,
+          "totalLiabilityDTT"  -> 5000.99,
+          "totalLiabilityIIR"  -> 4000,
+          "totalLiabilityUTPR" -> 10000.99,
+          "liableEntities"     -> Json.arr()
+        )
+      )
+
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+        .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withBody(invalidRequestBody)
+
+      val result = route(app, request).value
+      status(result) mustBe BAD_REQUEST
+      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
+    }
+
+    "return BAD_REQUEST if a required field in liableEntities is missing" in {
+      val incompleteEntityRequestBody = Json.obj(
+        "accountingPeriodFrom" -> "2024-08-14",
+        "accountingPeriodTo"   -> "2024-12-14",
+        "qualifyingGroup"      -> true,
+        "obligationDTT"        -> true,
+        "obligationMTT"        -> true,
+        "liabilities" -> Json.obj(
+          "totalLiability"     -> 10000.99,
+          "totalLiabilityDTT"  -> 5000.99,
+          "totalLiabilityIIR"  -> 4000,
+          "totalLiabilityUTPR" -> 10000.99,
+          "liableEntities" -> Json.arr(
+            Json.obj(
+              "ukChargeableEntityName" -> "Newco PLC",
+              // Missing "idType" field here
+              "idValue"        -> "12345678",
+              "amountOwedDTT"  -> 5000,
+              "electedDTT"     -> true,
+              "amountOwedIIR"  -> 3400,
+              "amountOwedUTPR" -> 6000.5,
+              "electedUTPR"    -> true
+            )
+          )
+        )
+      )
+
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+        .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withBody(incompleteEntityRequestBody)
+
+      val result = route(app, request).value
+      status(result) mustBe BAD_REQUEST
+      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
+    }
+
   }
 }
