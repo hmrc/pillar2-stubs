@@ -209,12 +209,12 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
           "liableEntities" -> Json.arr(
             Json.obj(
               "ukChargeableEntityName" -> "Newco PLC",
-              "idValue"        -> "12345678",
-              "amountOwedDTT"  -> 5000,
-              "electedDTT"     -> true,
-              "amountOwedIIR"  -> 3400,
-              "amountOwedUTPR" -> 6000.5,
-              "electedUTPR"    -> true
+              "idValue"                -> "12345678",
+              "amountOwedDTT"          -> 5000,
+              "electedDTT"             -> true,
+              "amountOwedIIR"          -> 3400,
+              "amountOwedUTPR"         -> 6000.5,
+              "electedUTPR"            -> true
             )
           )
         )
