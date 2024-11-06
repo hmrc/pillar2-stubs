@@ -1,4 +1,8 @@
 {
-  "code": "SERVICE_UNAVAILABLE",
-  "message": "The service is currently unavailable. Please try again later."
+    "failures": [
+        {
+            "code": "SERVICE_UNAVAILABLE",
+            "reason": "Dependent systems are currently not responding."
+        }
+    ]
 }

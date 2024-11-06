@@ -1,4 +1,8 @@
 {
-  "code": "BAD_REQUEST",
-  "message": "The request could not be understood or was missing required parameters."
+    "failures": [
+        {
+            "code": "INVALID_PLR_REFERENCE",
+            "reason": "Submission has not passed validation. Invalid query parameter: plrReference."
+        }
+    ]
 }
