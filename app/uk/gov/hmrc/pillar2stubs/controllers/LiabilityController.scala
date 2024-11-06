@@ -37,7 +37,7 @@ class LiabilityController @Inject() (
     extends BackendController(cc)
     with Logging {
 
-  def createLiability(plrReference: String): Action[String] = (Action(parse.tolerantText) andThen authFilter).async { implicit request =>
+  def submitUktr(plrReference: String): Action[String] = (Action(parse.tolerantText) andThen authFilter).async { implicit request =>
     if (plrReference != "XTC01234123412") {
       logger.warn(s"Invalid PLR Reference provided: $plrReference")
       Future.successful(NotFound(Json.obj("error" -> "No liabilities found for the given reference")))

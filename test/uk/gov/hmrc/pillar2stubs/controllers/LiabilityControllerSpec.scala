@@ -75,7 +75,7 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.createLiability("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
         .withBody(validRequestBody)
 
@@ -109,7 +109,7 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.createLiability("INVALID_PLR_REFERENCE").url)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("INVALID_PLR_REFERENCE").url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
         .withBody(validRequestBody)
 
@@ -121,7 +121,7 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
     "return BAD_REQUEST for invalid JSON structure" in {
       val invalidJson = Json.obj("invalidField" -> "value")
 
-      val request = FakeRequest(POST, routes.LiabilityController.createLiability("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
         .withBody(invalidJson)
 
@@ -131,7 +131,7 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
     }
 
     "return BAD_REQUEST for non-JSON data" in {
-      val request = FakeRequest(POST, routes.LiabilityController.createLiability("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
         .withBody("non-json body")
 

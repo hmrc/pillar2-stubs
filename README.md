@@ -614,9 +614,9 @@ For now this API has not been developed by ETMP therefore we are making assumpti
 
 ## Post Liability 
 
-Liability Detail Retrieval
+Liability Detail Submission
 
-This endpoint retrieves liability details based on the provided idNumber (PLR Reference Number).
+This endpoint submits liability details based on the provided idNumber (PLR Reference Number).
 
 Response Codes and Conditions
 
