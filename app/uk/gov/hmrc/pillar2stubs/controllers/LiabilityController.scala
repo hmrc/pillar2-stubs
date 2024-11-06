@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionRequest
+import uk.gov.hmrc.pillar2stubs.models.{SubmissionLiability, UKTRSubmissionRequest}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import play.api.Logging
@@ -42,18 +42,29 @@ class LiabilityController @Inject() (
       logger.warn(s"Invalid PLR Reference provided: $plrReference")
       Future.successful(NotFound(Json.obj("error" -> "No liabilities found for the given reference")))
     } else {
-
       Try(Json.parse(request.body)) match {
         case Success(json) =>
           json.validate[UKTRSubmissionRequest] match {
-            case JsSuccess(_, _) =>
-              val successResponse = resourceAsString("/resources/liabilities/LiabilitySuccessResponse.json")
-                .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
-                .map(Json.parse)
-                .getOrElse(Json.obj("error" -> "Success response not found"))
+            case JsSuccess(uktrRequest, _) =>
+              uktrRequest.liabilities.returnType match {
+                case Some("NIL_RETURN") =>
+                  val nilReturnResponse = resourceAsString("/resources/liabilities/NilReturnSuccessResponse.json")
+                    .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
+                    .map(Json.parse)
+                    .getOrElse(Json.obj("error" -> "Nil return response not found"))
 
-              logger.info("Returning success response for valid request")
-              Future.successful(Created(successResponse).as("application/json"))
+                  logger.info("Returning success response for Nil return request")
+                  Future.successful(Created(nilReturnResponse).as("application/json"))
+
+                case _ =>
+                  val liabilitySuccessResponse = resourceAsString("/resources/liabilities/LiabilitySuccessResponse.json")
+                    .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
+                    .map(Json.parse)
+                    .getOrElse(Json.obj("error" -> "Success response not found"))
+
+                  logger.info("Returning success response for liability request")
+                  Future.successful(Created(liabilitySuccessResponse).as("application/json"))
+              }
 
             case JsError(errors) =>
               logger.error(s"JSON validation failed with errors: $errors")

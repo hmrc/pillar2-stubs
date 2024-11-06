@@ -16,16 +16,39 @@
 
 package uk.gov.hmrc.pillar2stubs.models
 
-import play.api.libs.json.{Json, OFormat}
-import java.time.LocalDate
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+
+case class SubmissionLiability( // Changed from `Liability` to `SubmissionLiability`
+  totalLiability:     Option[BigDecimal] = None,
+  totalLiabilityDTT:  Option[BigDecimal] = None,
+  totalLiabilityIIR:  Option[BigDecimal] = None,
+  totalLiabilityUTPR: Option[BigDecimal] = None,
+  liableEntities:     Option[Seq[LiableEntity]] = None,
+  returnType:         Option[String] = None // Optional for NIL_RETURN
+)
+
+object SubmissionLiability {
+  implicit val reads: Reads[SubmissionLiability] = (
+    (JsPath \ "totalLiability").readNullable[BigDecimal] and
+      (JsPath \ "totalLiabilityDTT").readNullable[BigDecimal] and
+      (JsPath \ "totalLiabilityIIR").readNullable[BigDecimal] and
+      (JsPath \ "totalLiabilityUTPR").readNullable[BigDecimal] and
+      (JsPath \ "liableEntities").readNullable[Seq[LiableEntity]] and
+      (JsPath \ "returnType").readNullable[String]
+  )(SubmissionLiability.apply _)
+
+  implicit val writes: OWrites[SubmissionLiability] = Json.writes[SubmissionLiability]
+}
 
 case class UKTRSubmissionRequest(
-  accountingPeriodFrom: LocalDate,
-  accountingPeriodTo:   LocalDate,
+  accountingPeriodFrom: String,
+  accountingPeriodTo:   String,
   qualifyingGroup:      Boolean,
   obligationDTT:        Boolean,
   obligationMTT:        Boolean,
-  liabilities:          Liability
+  electionUKGAAP:       Boolean,
+  liabilities:          SubmissionLiability // Updated to `SubmissionLiability`
 )
 
 object UKTRSubmissionRequest {

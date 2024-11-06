@@ -35,6 +35,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
   private val stubResourceLoader: String => Option[String] = {
     case "/resources/liabilities/LiabilitySuccessResponse.json" =>
       Some("""{"success":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}""")
+    case "/resources/liabilities/NilReturnSuccessResponse.json" =>
+      Some("""{"success":{"processingDate":"2022-01-31T09:26:17Z","message":"Nil return received and processed successfully"}}""")
     case _ => None
   }
 
@@ -48,13 +50,15 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
 
   "LiabilityController POST" - {
 
-    "return CREATED with success response when plrReference is valid and JSON is correct" in {
-      val validRequestBody = Json.obj(
+    "return CREATED with success response for a valid liability submission" in {
+
+      val validLiabilityRequestBody = Json.obj(
         "accountingPeriodFrom" -> "2024-08-14",
         "accountingPeriodTo"   -> "2024-12-14",
         "qualifyingGroup"      -> true,
         "obligationDTT"        -> true,
         "obligationMTT"        -> true,
+        "electionUKGAAP"       -> true, // Add this line
         "liabilities" -> Json.obj(
           "totalLiability"     -> 10000.99,
           "totalLiabilityDTT"  -> 5000.99,
@@ -77,13 +81,38 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
 
       val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
-        .withBody(validRequestBody)
+        .withBody(validLiabilityRequestBody)
 
       val result      = route(app, request).value
       val currentDate = LocalDate.now().toString
       status(result) mustBe CREATED
       contentAsJson(result) mustBe Json.parse(
         s"""{"success":{"processingDate":"${currentDate}T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}"""
+      )
+    }
+
+    "return CREATED with success response for a valid NIL_RETURN submission" in {
+      val validNilReturnRequestBody = Json.obj(
+        "accountingPeriodFrom" -> "2024-08-14",
+        "accountingPeriodTo"   -> "2024-09-14",
+        "qualifyingGroup"      -> true,
+        "obligationDTT"        -> true,
+        "obligationMTT"        -> true,
+        "electionUKGAAP"       -> true,
+        "liabilities" -> Json.obj(
+          "returnType" -> "NIL_RETURN"
+        )
+      )
+
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+        .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withBody(validNilReturnRequestBody)
+
+      val result      = route(app, request).value
+      val currentDate = LocalDate.now().toString
+      status(result) mustBe CREATED
+      contentAsJson(result) mustBe Json.parse(
+        s"""{"success":{"processingDate":"${currentDate}T09:26:17Z","message":"Nil return received and processed successfully"}}"""
       )
     }
 
@@ -200,6 +229,5 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       status(result) mustBe BAD_REQUEST
       contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
     }
-
   }
 }
