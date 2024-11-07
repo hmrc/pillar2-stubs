@@ -18,30 +18,9 @@ package uk.gov.hmrc.pillar2stubs.models
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-
-case class SubmissionLiability(
-  totalLiability:     Option[BigDecimal] = None,
-  totalLiabilityDTT:  Option[BigDecimal] = None,
-  totalLiabilityIIR:  Option[BigDecimal] = None,
-  totalLiabilityUTPR: Option[BigDecimal] = None,
-  liableEntities:     Option[Seq[LiableEntity]] = None,
-  returnType:         Option[String] = None
-)
-
-object SubmissionLiability {
-  implicit val reads: Reads[SubmissionLiability] = (
-    (JsPath \ "totalLiability").readNullable[BigDecimal] and
-      (JsPath \ "totalLiabilityDTT").readNullable[BigDecimal] and
-      (JsPath \ "totalLiabilityIIR").readNullable[BigDecimal] and
-      (JsPath \ "totalLiabilityUTPR").readNullable[BigDecimal] and
-      (JsPath \ "liableEntities")
-        .readNullable[Seq[LiableEntity]]
-        .filter(JsonValidationError("liableEntities must not be empty"))(_.forall(_.nonEmpty)) and
-      (JsPath \ "returnType").readNullable[String]
-  )(SubmissionLiability.apply _)
-
-  implicit val writes: OWrites[SubmissionLiability] = Json.writes[SubmissionLiability]
-}
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import scala.util.Try
 
 case class UKTRSubmissionRequest(
   accountingPeriodFrom: String,
@@ -50,9 +29,29 @@ case class UKTRSubmissionRequest(
   obligationDTT:        Boolean,
   obligationMTT:        Boolean,
   electionUKGAAP:       Boolean,
-  liabilities:          SubmissionLiability
-)
+  liabilities:          Liability
+) {
+  def isValid: Boolean = {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val fromDate  = Try(LocalDate.parse(accountingPeriodFrom, formatter)).toOption
+    val toDate    = Try(LocalDate.parse(accountingPeriodTo, formatter)).toOption
+    (fromDate, toDate) match {
+      case (Some(from), Some(to)) => !to.isBefore(from)
+      case _                      => false
+    }
+  }
+}
 
 object UKTRSubmissionRequest {
-  implicit val format: OFormat[UKTRSubmissionRequest] = Json.format[UKTRSubmissionRequest]
+  implicit val reads: Reads[UKTRSubmissionRequest] = (
+    (JsPath \ "accountingPeriodFrom").read[String] and
+      (JsPath \ "accountingPeriodTo").read[String] and
+      (JsPath \ "qualifyingGroup").read[Boolean] and
+      (JsPath \ "obligationDTT").read[Boolean] and
+      (JsPath \ "obligationMTT").read[Boolean] and
+      (JsPath \ "electionUKGAAP").read[Boolean] and
+      (JsPath \ "liabilities").read[Liability]
+  )(UKTRSubmissionRequest.apply _)
+
+  implicit val writes: OWrites[UKTRSubmissionRequest] = Json.writes[UKTRSubmissionRequest]
 }

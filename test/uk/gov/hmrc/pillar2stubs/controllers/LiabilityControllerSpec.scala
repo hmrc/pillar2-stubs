@@ -311,5 +311,42 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         s"""{"success":{"processingDate":"${currentDate}T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}"""
       )
     }
+
+    "return BAD_REQUEST if accountingPeriodTo is before accountingPeriodFrom" in {
+      val invalidDateRangeRequestBody = Json.obj(
+        "accountingPeriodFrom" -> "2024-08-14",
+        "accountingPeriodTo"   -> "2024-07-14", // Earlier than accountingPeriodFrom
+        "qualifyingGroup"      -> true,
+        "obligationDTT"        -> true,
+        "obligationMTT"        -> true,
+        "electionUKGAAP"       -> true,
+        "liabilities" -> Json.obj(
+          "totalLiability"     -> 10000.99,
+          "totalLiabilityDTT"  -> 5000.99,
+          "totalLiabilityIIR"  -> 4000,
+          "totalLiabilityUTPR" -> 10000.99,
+          "liableEntities" -> Json.arr(
+            Json.obj(
+              "ukChargeableEntityName" -> "Newco PLC",
+              "idType"                 -> "CRN",
+              "idValue"                -> "12345678",
+              "amountOwedDTT"          -> 5000,
+              "electedDTT"             -> true,
+              "amountOwedIIR"          -> 3400,
+              "amountOwedUTPR"         -> 6000.5,
+              "electedUTPR"            -> true
+            )
+          )
+        )
+      )
+
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+        .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withBody(invalidDateRangeRequestBody)
+
+      val result = route(app, request).value
+      status(result) mustBe BAD_REQUEST
+      contentAsJson(result) mustBe Json.obj("error" -> "Invalid date range: accountingPeriodTo must be after accountingPeriodFrom")
+    }
   }
 }
