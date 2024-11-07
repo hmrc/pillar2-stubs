@@ -1,0 +1,8 @@
+{
+    "failures": [
+        {
+            "code": "CANNOT_COMPLETE_REQUEST",
+            "reason": "Request could not be completed because the subscription is being created or amended."
+        }
+    ]
+}

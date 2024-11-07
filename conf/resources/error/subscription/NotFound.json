@@ -1,0 +1,8 @@
+{
+    "failures": [
+        {
+            "code": "SUBSCRIPTION_NOT_FOUND",
+            "reason": "The backend has indicated that no subscription data has been found."
+        }
+    ]
+}
