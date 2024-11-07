@@ -34,7 +34,9 @@ object SubmissionLiability {
       (JsPath \ "totalLiabilityDTT").readNullable[BigDecimal] and
       (JsPath \ "totalLiabilityIIR").readNullable[BigDecimal] and
       (JsPath \ "totalLiabilityUTPR").readNullable[BigDecimal] and
-      (JsPath \ "liableEntities").readNullable[Seq[LiableEntity]] and
+      (JsPath \ "liableEntities")
+        .readNullable[Seq[LiableEntity]]
+        .filter(JsonValidationError("liableEntities must not be empty"))(_.forall(_.nonEmpty)) and
       (JsPath \ "returnType").readNullable[String]
   )(SubmissionLiability.apply _)
 

@@ -16,13 +16,13 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
+import play.api.Logging
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.{SubmissionLiability, UKTRSubmissionRequest}
+import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionRequest
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import play.api.Logging
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -46,29 +46,39 @@ class LiabilityController @Inject() (
         case Success(json) =>
           json.validate[UKTRSubmissionRequest] match {
             case JsSuccess(uktrRequest, _) =>
-              uktrRequest.liabilities.returnType match {
-                case Some("NIL_RETURN") =>
-                  val nilReturnResponse = resourceAsString("/resources/liabilities/NilReturnSuccessResponse.json")
-                    .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
-                    .map(Json.parse)
-                    .getOrElse(Json.obj("error" -> "Nil return response not found"))
+              if (uktrRequest.liabilities.liableEntities.exists(_.isEmpty)) {
+                logger.error("Liable entities array is empty in liability submission")
+                Future.successful(BadRequest(Json.obj("error" -> "liableEntities must not be empty")).as("application/json"))
+              } else {
+                uktrRequest.liabilities.returnType match {
+                  case Some("NIL_RETURN") =>
+                    val nilReturnResponse = resourceAsString("/resources/liabilities/NilReturnSuccessResponse.json")
+                      .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
+                      .map(Json.parse)
+                      .getOrElse(Json.obj("error" -> "Nil return response not found"))
 
-                  logger.info("Returning success response for Nil return request")
-                  Future.successful(Created(nilReturnResponse).as("application/json"))
+                    logger.info("Returning success response for Nil return request")
+                    Future.successful(Created(nilReturnResponse).as("application/json"))
 
-                case _ =>
-                  val liabilitySuccessResponse = resourceAsString("/resources/liabilities/LiabilitySuccessResponse.json")
-                    .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
-                    .map(Json.parse)
-                    .getOrElse(Json.obj("error" -> "Success response not found"))
+                  case _ =>
+                    val liabilitySuccessResponse = resourceAsString("/resources/liabilities/LiabilitySuccessResponse.json")
+                      .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
+                      .map(Json.parse)
+                      .getOrElse(Json.obj("error" -> "Success response not found"))
 
-                  logger.info("Returning success response for liability request")
-                  Future.successful(Created(liabilitySuccessResponse).as("application/json"))
+                    logger.info("Returning success response for liability request")
+                    Future.successful(Created(liabilitySuccessResponse).as("application/json"))
+                }
               }
 
             case JsError(errors) =>
-              logger.error(s"JSON validation failed with errors: $errors")
-              Future.successful(BadRequest(Json.obj("error" -> "Invalid JSON request format")).as("application/json"))
+              if (errors.exists(_._2.exists(_.messages.contains("liableEntities must not be empty")))) {
+                logger.error("Liable entities array is empty in liability submission")
+                Future.successful(BadRequest(Json.obj("error" -> "liableEntities must not be empty")).as("application/json"))
+              } else {
+                logger.error(s"JSON validation failed with errors: $errors")
+                Future.successful(BadRequest(Json.obj("error" -> "Invalid JSON request format")).as("application/json"))
+              }
           }
 
         case Failure(exception) =>
@@ -80,5 +90,4 @@ class LiabilityController @Inject() (
 
   private def replaceDate(response: String, registrationDate: String): String =
     response.replace("2022-01-31T09:26:17Z", registrationDate)
-
 }

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// File: Liability.scala
 package uk.gov.hmrc.pillar2stubs.models
 
 import play.api.libs.json._
