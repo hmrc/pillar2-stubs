@@ -625,7 +625,7 @@ Request Types and Expected Payloads
 Liability Submission
 
 A valid liability submission includes details about the total liabilities and entities liable for the tax period. Here’s the expected structure for a successful liability submission:
-```json lines
+```
 {
   "accountingPeriodFrom": "2024-08-14",
   "accountingPeriodTo": "2024-12-14",
@@ -657,7 +657,7 @@ A valid liability submission includes details about the total liabilities and en
 Nil Return Submission
 
 A Nil Return submission is used when there is no liability for the specified period. The returnType field in liabilities should be set to "NIL_RETURN":
-```json lines
+```
 {
   "accountingPeriodFrom": "2024-08-14",
   "accountingPeriodTo": "2024-09-14",
