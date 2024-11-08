@@ -330,11 +330,12 @@ Retrieves the Subscription details for the specific plrReference
 |-----------------|-------------|-----------------------|------------------------------------------------------------------------|
 | XEPLR0123456400 | 400         | BAD_REQUEST           | Submission has not passed validation. Invalid plrReference.            |
 | XEPLR0123456404 | 404         | NOT_FOUND             | Submission has not passed validation. Record not found.                |
-| XEPLR0123456422 | 422         | UNPROCESSABLE_ENTITY  | Server cannot process the request due to invalid data.                 |
+| XEPLR0123456422 | 422         | CANNOT_COMPLETE_REQUEST  | Request could not be completed because the subscription is being created or amended.                 |
 | XEPLR0123456500 | 500         | INTERNAL_SERVER_ERROR | Internal Server error.                                                 |
 | XEPLR0123456503 | 503         | SERVICE_UNAVAILABLE   | Dependent systems are currently not responding.                        |
 | XEPLR5555555555 | 200         | OK                    | Returns read success response with accountStatus.inactive set to true. |
 | XEPLR6666666666 | 200         | OK                    | Returns read success response with upe registration year of 2011. |
+| XEPLR1066196600 | 200         | OK                    | Returns read success response with domesticOnly set to true.        |
 | XEPLR__________ | 200         | OK                    | Returns read success response .                                        |
 
 #### Happy Path:
