@@ -1,0 +1,8 @@
+{
+  "failures": [
+    {
+      "code": "LIABILITIES_NOT_FOUND",
+      "reason": "No liabilities have been found."
+    }
+  ]
+}

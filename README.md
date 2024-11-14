@@ -592,10 +592,10 @@ Enrolment Store Response without groupID
 
 ### Test last seven years of transactions
 As it currently stands the end date is always set to today's date, this means that it will generate transactions from the registration date to today's date.
-<br/> 
+<br/>
 In the stubs the registration date is always 2024-01-31 therefore to override this date you need to override the config value set in the `pillar2-frontend` service.
 <br/>
-Example: 
+Example:
 ```sbt "-Dapplication.router=testOnlyDoNotUseInAppConf.Routes" "-Dfeatures.transactionHistoryEndDate=2044-01-31" run```
 <br/>
 This will set the end date to `2044-01-31` and generate transactions from `2037-01-31 to 2044-01-31`. The last seven years.
@@ -611,6 +611,130 @@ For now this API has not been developed by ETMP therefore we are making assumpti
 | XEPLR1000000000                                                          | Obligation with Fulfilled status        |
 | XEPLR4040000000                                                          | NOT_FOUND Error Response                |
 | Any valid ID                                                             | Will return a response with Open status |
+
+
+## Post Liability
+
+Liability Detail Submission
+
+This endpoint allows submission of liability details based on a provided idNumber (PLR Reference Number). There are two main types of submissions supported:
+•	Liability Submission: A detailed submission of liability amounts.
+•	Nil Return Submission: A minimal submission indicating no liability for the period.
+
+Request Types and Expected Payloads
+
+Liability Submission
+
+A valid liability submission includes details about the total liabilities and entities liable for the tax period. Here’s the expected structure for a successful liability submission:
+```
+{
+  "accountingPeriodFrom": "2024-08-14",
+  "accountingPeriodTo": "2024-12-14",
+  "qualifyingGroup": true,
+  "obligationDTT": true,
+  "obligationMTT": true,
+  "electionUKGAAP": true,
+  "liabilities": {
+    "totalLiability": 10000.99,
+    "totalLiabilityDTT": 5000.99,
+    "totalLiabilityIIR": 4000,
+    "totalLiabilityUTPR": 10000.99,
+    "liableEntities": [
+      {
+        "ukChargeableEntityName": "Newco PLC",
+        "idType": "CRN",
+        "idValue": "12345678",
+        "amountOwedDTT": 5000,
+        "electedDTT": true,
+        "amountOwedIIR": 3400,
+        "amountOwedUTPR": 6000.5,
+        "electedUTPR": true
+      }
+    ]
+  }
+}
+```
+
+Nil Return Submission
+
+A Nil Return submission is used when there is no liability for the specified period. The returnType field in liabilities should be set to "NIL_RETURN":
+```
+{
+  "accountingPeriodFrom": "2024-08-14",
+  "accountingPeriodTo": "2024-09-14",
+  "qualifyingGroup": true,
+  "obligationDTT": true,
+  "obligationMTT": true,
+  "electionUKGAAP": true,
+  "liabilities": {
+    "returnType": "NIL_RETURN"
+  }
+}
+```
+
+Response Codes and Conditions
+
+| Status          | Description                                                                               |
+|-----------------|-------------------------------------------------------------------------------------------|
+| 201 CREATED     | Success response for a valid liability or Nil Return submission when idNumber is correct. |
+| 400 BAD_REQUEST | Submission did not pass validation (e.g., invalid JSON format or required fields missing).    |
+| 400 BAD_REQUEST | Non-JSON data received, expecting a valid JSON object.                                    |
+| 404 NOT_FOUND   | No liabilities found for the provided idNumber (PLR Reference Number is incorrect).     |
+
+Examples of Invalid Requests
+
+Invalid JSON
+
+A request with invalid JSON syntax will return a 400 BAD_REQUEST response:
+
+        ```json
+        {
+        "accountingPeriod": "2024-08-1",
+        "accountingPeriod": "2024-12-14"
+        }
+        ```
+
+Non-JSON Body
+
+If a non-JSON body is submitted, a 400 BAD_REQUEST response will be returned:
+
+            ```
+            This is not a JSON body
+            ```
+Details of Expected Fields
+
+	•	idNumber (PLR Reference Number): Only the idNumber “XTC01234123412” will result in a successful 201 CREATED response.
+	•	Valid idNumber: Returns 201 CREATED with the liability success details for valid liability submissions.
+	•	Invalid idNumber: Returns 404 NOT_FOUND, indicating no matching liability data for other idNumbers.
+	•	Liability Fields: In a liability submission, totalLiability, totalLiabilityDTT, totalLiabilityIIR, and totalLiabilityUTPR are expected fields. Additionally, liableEntities should be a non-empty array.
+	•	Nil Return Field: In a Nil Return submission, liabilities.returnType should be "NIL_RETURN", indicating no liability.
+
+Response Examples
+
+Successful Liability Submission Response
+
+If the idNumber is valid and the payload is correct, a 201 CREATED response will be returned with liability details:
+    ```
+        {
+        "success": {
+        "processingDate": "2024-08-14T09:26:17Z",
+        "formBundleNumber": "119000004320",
+        "chargeReference": "XTC01234123412"
+        }
+        }
+    ```
+
+Successful Nil Return Response
+
+If the idNumber is valid and the payload indicates a Nil Return, a 201 CREATED response will be returned with the Nil Return details:
+    ```
+        {
+        "success": {
+        "processingDate": "2024-08-14T09:26:17Z",
+        "message": "Nil return received and processed successfully"
+        }
+        }
+    ```
 
 
 ### License

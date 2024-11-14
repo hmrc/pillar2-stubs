@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2stubs.utils
+package uk.gov.hmrc.pillar2stubs.models
 
-import scala.io.Source
+import play.api.libs.json.{Json, OFormat}
+import java.time.LocalDateTime
 
-object ResourceHelper {
-  def resourceAsString(resourcePath: String): Option[String] =
-    Option(getClass.getResourceAsStream(resourcePath)) map { is =>
-      Source.fromInputStream(is).getLines.mkString("\n")
-    }
+case class UKTRSubmissionResponse(
+  success: UKTRSubmissionSuccess
+)
+
+object UKTRSubmissionResponse {
+  implicit val format: OFormat[UKTRSubmissionResponse] = Json.format[UKTRSubmissionResponse]
+}
+
+case class UKTRSubmissionSuccess(
+  processingDate:   LocalDateTime,
+  formBundleNumber: String,
+  chargeReference:  Option[String]
+)
+
+object UKTRSubmissionSuccess {
+  implicit val format: OFormat[UKTRSubmissionSuccess] = Json.format[UKTRSubmissionSuccess]
 }
