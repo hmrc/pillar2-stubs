@@ -36,7 +36,8 @@ class LiabilityController @Inject() (
 ) extends BackendController(cc)
     with Logging {
 
-  def submitUktr(plrReference: String): Action[String] = (Action(parse.tolerantText) andThen authFilter).async { implicit request =>
+  def submitUktr: Action[String] = (Action(parse.tolerantText) andThen authFilter).async { implicit request =>
+    val plrReference = request.headers.get("X-Pillar2-Id").get //TODO: Update this to just return an error if the header is not present
     if (plrReference != "XTC01234123412") {
       logger.warn(s"Invalid PLR Reference provided: $plrReference")
       Future.successful(NotFound(Json.obj("error" -> "No liabilities found for the given reference")))
