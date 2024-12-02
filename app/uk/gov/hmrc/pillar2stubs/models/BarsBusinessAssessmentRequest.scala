@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2stubs.models
 
 import play.api.libs.json.Json
+import play.api.libs.json.OFormat
 
 final case class BarsBusinessAssessmentRequest(account: Account, business: Business)
 
@@ -29,12 +30,12 @@ final case class Account(
 final case class Business(companyName: String)
 
 object Account {
-  implicit val format = Json.format[Account]
+  implicit val format: OFormat[Account] = Json.format[Account]
 }
 
 object Business {
-  implicit val format = Json.format[Business]
+  implicit val format: OFormat[Business] = Json.format[Business]
 }
 object BarsBusinessAssessmentRequest {
-  implicit val format = Json.format[BarsBusinessAssessmentRequest]
+  implicit val format: OFormat[BarsBusinessAssessmentRequest] = Json.format[BarsBusinessAssessmentRequest]
 }

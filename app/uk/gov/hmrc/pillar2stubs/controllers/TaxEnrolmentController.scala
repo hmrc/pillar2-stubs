@@ -23,11 +23,13 @@ import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
+import scala.annotation.nowarn
 
 class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
   private val badGroupId = "0000"
 
+  @nowarn
   def allocate(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     groupId match {
       case `badGroupId` =>
@@ -38,6 +40,7 @@ class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: Au
     }
   }
 
+  @nowarn
   def revoke(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     groupId match {
       case `badGroupId` =>

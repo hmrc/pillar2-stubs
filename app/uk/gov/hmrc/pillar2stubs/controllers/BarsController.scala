@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, ControllerComponents, Result}
+import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -110,7 +110,7 @@ class BarsController @Inject() (cc: ControllerComponents, authFilter: AuthAction
 
   private def barsAccountResponse(
     nameMatches:                              NameMatches = NameMatches.Yes,
-    accountName:                              Option[String] = None,
+    accountName:                              Option[String],
     accountNumberIsWellFormatted:             AccountNumberIsWellFormatted = AccountNumberIsWellFormatted.Yes,
     accountExists:                            AccountExists = AccountExists.Yes,
     sortCodeIsPresentOnEISCD:                 SortCodeIsPresentOnEISCD = SortCodeIsPresentOnEISCD.Yes,

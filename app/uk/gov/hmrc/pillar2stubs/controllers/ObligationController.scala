@@ -31,7 +31,7 @@ class ObligationController @Inject() (cc: ControllerComponents, authFilter: Auth
 
   // For now this API has not been developed yet by ETMP. Therefore this will just return dummy data to satisfy happy path scenarios based on what we expect to receive
   // The only field we care about is status, as this will determine which page they are forwarded to
-  def getObligation(plrReference: String, dateFrom: String, dateTo: String): Action[AnyContent] = (Action andThen authFilter) { implicit request =>
+  def getObligation(plrReference: String, dateFrom: String, dateTo: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     plrReference match {
       case "XEPLR1000000000" =>
         Ok(

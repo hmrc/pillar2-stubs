@@ -17,6 +17,7 @@
 package uk.gov.hmrc.pillar2stubs.models
 
 import play.api.libs.json.Json
+import play.api.libs.json.OFormat
 
 final case class BarsAccountResponse(
   accountNumberIsWellFormatted:             AccountNumberIsWellFormatted,
@@ -32,5 +33,5 @@ final case class BarsAccountResponse(
 )
 
 object BarsAccountResponse {
-  implicit val format = Json.format[BarsAccountResponse]
+  implicit val format: OFormat[BarsAccountResponse] = Json.format[BarsAccountResponse]
 }

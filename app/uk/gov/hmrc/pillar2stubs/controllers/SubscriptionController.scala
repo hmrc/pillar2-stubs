@@ -16,8 +16,6 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
-import java.time.LocalDate
-
 import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -26,8 +24,9 @@ import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionSuccess, Subscription}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.backend.http.ErrorResponse
-import javax.inject.Inject
 
+import java.time.LocalDate
+import javax.inject.Inject
 import scala.concurrent.Future
 
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
@@ -166,7 +165,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
         }
 
-      case JsError(errors) =>
+      case JsError(_) =>
         Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Invalid JSON format"))))
     }
   }
