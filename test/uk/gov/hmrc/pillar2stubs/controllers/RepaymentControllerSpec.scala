@@ -20,12 +20,12 @@ import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status._
+import play.api.http.Status.{BAD_REQUEST, CREATED, NO_CONTENT}
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{POST, defaultAwaitTimeout, route, status}
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
-import uk.gov.hmrc.pillar2stubs.models.{BankDetails, RepaymentContactDetails, RepaymentDetails, SendRepaymentDetails}
+import uk.gov.hmrc.pillar2stubs.models._
 
 class RepaymentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
   private val authHeader: (String, String) = HeaderNames.authorisation -> "token"

@@ -26,15 +26,14 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 @Singleton
 class LiabilityController @Inject() (
-  cc:          ControllerComponents,
-  authFilter:  AuthActionFilter
-)(implicit ec: ExecutionContext)
-    extends BackendController(cc)
+  cc:         ControllerComponents,
+  authFilter: AuthActionFilter
+) extends BackendController(cc)
     with Logging {
 
   def submitUktr(plrReference: String): Action[String] = (Action(parse.tolerantText) andThen authFilter).async { implicit request =>

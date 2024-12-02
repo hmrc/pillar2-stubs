@@ -21,6 +21,7 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -40,7 +41,7 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
     case _ => None
   }
 
-  override def fakeApplication() = new GuiceApplicationBuilder()
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(
       bind[String => Option[String]].qualifiedWith("resourceLoader").toInstance(stubResourceLoader)
     )

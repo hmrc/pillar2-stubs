@@ -16,8 +16,9 @@
 
 package uk.gov.hmrc.pillar2stubs.models
 
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.util.Try

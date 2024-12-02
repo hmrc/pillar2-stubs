@@ -25,11 +25,13 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.{LocalDate, LocalDateTime}
 import javax.inject.Inject
+import scala.annotation.nowarn
 import scala.util.Random
 import scala.util.matching.Regex
 
 class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
 
+  @nowarn
   def retrieveFinancialData(idType: String, idNumber: String, regimeType: String, dateFrom: String, dateTo: String): Action[AnyContent] =
     (Action andThen authFilter) { _ =>
       val yearsAndTransactionPattern: Regex = "XMPLR0000000(.{3})\\s*$".r
