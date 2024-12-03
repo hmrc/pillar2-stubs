@@ -21,3 +21,5 @@ GET           /enterprise/financial-data/:idType/:idNumber/:regimeType          
 GET           /get-obligation/:plrReference/:dateFrom/:dateTo                              uk.gov.hmrc.pillar2stubs.controllers.ObligationController.getObligation(plrReference: String, dateFrom: String, dateTo: String)
 
 POST          /pillar2/liability/:plrReference                                             uk.gov.hmrc.pillar2stubs.controllers.LiabilityController.submitUktr(plrReference: String)
+
+POST          /RESTAdapter/plr/below-threshold-notification                                uk.gov.hmrc.pillar2stubs.controllers.BTNController.submitBTN(pillar2ID:String)

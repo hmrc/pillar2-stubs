@@ -1,3 +1,28 @@
+# Table of Contents
+* [pillar2\-stubs](#pillar2-stubs)
+    * [Running the service locally](#running-the-service-locally)
+        * [To compile the project:](#to-compile-the-project)
+        * [To check code coverage:](#to-check-code-coverage)
+        * [Integration and unit tests](#integration-and-unit-tests)
+        * [Starting the server in local](#starting-the-server-in-local)
+        * [Using Service Manager](#using-service-manager)
+            * [Using sbt](#using-sbt)
+    * [Endpoints](#endpoints)
+        * [Happy Path:](#happy-path)
+        * [Unhappy Path:](#unhappy-path)
+        * [Happy Path:](#happy-path-1)
+        * [Unhappy Path:](#unhappy-path-1)
+        * [Happy Path:](#happy-path-2)
+        * [Unhappy Path:](#unhappy-path-2)
+        * [Happy Path:](#happy-path-3)
+        * [Unhappy Path:](#unhappy-path-3)
+    * [BARS Business account test data](#bars-business-account-test-data)
+    * [Financial Data \- Get Financial Test Data](#financial-data---get-financial-test-data)
+        * [Test last seven years of transactions](#test-last-seven-years-of-transactions)
+    * [Get Obligation \- Get Obligation Test Data](#get-obligation---get-obligation-test-data)
+    * [Post Liability](#post-liability)
+
+
 # pillar2-stubs
 
 The Pillar2 stubbs service provides stubbs for the GRS systems to mock the responses.
@@ -736,6 +761,18 @@ If the idNumber is valid and the payload indicates a Nil Return, a 201 CREATED r
         }
     ```
 
+## Below Threshold Notification
+
+This endpoint allows submission of a below threshold notification, which defines an organisation as earning below the threshold
+that makes them eligible for submitting pillar2 UKTR.
+
+For this API, the payload is rather simple, so responses are limited in their scope
+
+| Pillar2Id | Response Returned |
+| ---------- | ---------------- |
+| XEPLR4000000000 | BadRequest response |
+| XEPLR5000000000 | InternalServerError response |
+| Any valid ID    | Successful response |
 
 ### License
 
