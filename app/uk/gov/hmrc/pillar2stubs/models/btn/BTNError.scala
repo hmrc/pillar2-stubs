@@ -18,8 +18,8 @@ package uk.gov.hmrc.pillar2stubs.models.btn
 
 import play.api.libs.json.{Json, OFormat}
 
-case class BtnErrorResponse(error: BtnError)
+case class BTNError(code: String, message: String)
 
-object BtnErrorResponse {
-  implicit val format: OFormat[BtnErrorResponse] = Json.format[BtnErrorResponse]
+object BTNError {
+  implicit val format: OFormat[BTNError] = Json.format[BTNError]
 }

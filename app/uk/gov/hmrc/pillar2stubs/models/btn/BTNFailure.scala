@@ -20,8 +20,8 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDateTime
 
-case class BtnSuccess(processingDate: LocalDateTime, formBundleNumber: String, chargeReference: String)
+case class BTNFailure(processingDate: LocalDateTime, code: String, text: String)
 
-object BtnSuccess {
-  implicit val format: OFormat[BtnSuccess] = Json.format[BtnSuccess]
+object BTNFailure {
+  implicit val format: OFormat[BTNFailure] = Json.format[BTNFailure]
 }

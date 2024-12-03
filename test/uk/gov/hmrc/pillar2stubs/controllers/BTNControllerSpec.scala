@@ -30,7 +30,7 @@ import uk.gov.hmrc.pillar2stubs.models.btn._
 import java.time.LocalDate
 import scala.util.Random
 
-class BtnControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
+class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
 
   val validHeaders: List[(String, String)] = (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation)).map(_ -> Random.nextString(10))
 
@@ -53,7 +53,7 @@ class BtnControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
     val result = route(app, request).value
 
     status(result) shouldEqual 400
-    contentAsJson(result).validate[BtnFailureResponsePayload].asEither.isRight shouldBe true
+    contentAsJson(result).validate[BTNFailureResponsePayload].asEither.isRight shouldBe true
   }
 
   test("InternalServerError BTN submission") {
@@ -64,7 +64,7 @@ class BtnControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
     val result = route(app, request).value
 
     status(result) shouldEqual 500
-    contentAsJson(result).validate[BtnErrorResponse].asEither.isRight shouldBe true
+    contentAsJson(result).validate[BTNErrorResponse].asEither.isRight shouldBe true
   }
 
 }

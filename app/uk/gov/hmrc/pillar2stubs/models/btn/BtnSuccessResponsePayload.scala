@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2stubs.models.btn
 
 import play.api.libs.json.{Json, OFormat}
 
-case class BtnSuccessResponsePayload(success: BtnSuccess)
+case class BtnSuccessResponsePayload(success: BTNSuccess)
 
 object BtnSuccessResponsePayload {
   implicit val format: OFormat[BtnSuccessResponsePayload] = Json.format[BtnSuccessResponsePayload]

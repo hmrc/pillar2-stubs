@@ -18,8 +18,10 @@ package uk.gov.hmrc.pillar2stubs.models.btn
 
 import play.api.libs.json.{Json, OFormat}
 
-case class BtnFailureResponsePayload(errors: BtnFailure)
+import java.time.LocalDateTime
 
-object BtnFailureResponsePayload {
-  implicit val format: OFormat[BtnFailureResponsePayload] = Json.format[BtnFailureResponsePayload]
+case class BTNSuccess(processingDate: LocalDateTime, formBundleNumber: String, chargeReference: String)
+
+object BTNSuccess {
+  implicit val format: OFormat[BTNSuccess] = Json.format[BTNSuccess]
 }
