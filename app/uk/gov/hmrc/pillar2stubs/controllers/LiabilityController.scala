@@ -76,7 +76,7 @@ class LiabilityController @Inject() (
                 Future.successful(BadRequest(Json.obj("error" -> "liableEntities must not be empty")).as("application/json"))
               } else {
                 logger.error(s"JSON validation failed with errors: $errors")
-                Future.successful(BadRequest(Json.obj("error" -> "Invalid JSON request format")).as("application/json"))
+                Future.successful(BadRequest(Json.obj("error" -> s"Invalid JSON request format: $errors")).as("application/json"))
               }
           }
 
