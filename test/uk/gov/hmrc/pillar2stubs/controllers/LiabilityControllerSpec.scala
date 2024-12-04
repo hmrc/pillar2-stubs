@@ -79,8 +79,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(validLiabilityRequestBody)
 
       val result      = route(app, request).value
@@ -104,8 +104,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(validNilReturnRequestBody)
 
       val result      = route(app, request).value
@@ -138,8 +138,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("INVALID_PLR_REFERENCE").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "INVALID_PLR_REFERENCE", "Content-Type" -> "application/json", authHeader)
         .withBody(validRequestBody)
 
       val result = route(app, request).value
@@ -150,8 +150,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
     "return BAD_REQUEST for invalid JSON structure" in {
       val invalidJson = Json.obj("invalidField" -> "value")
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(invalidJson)
 
       val result = route(app, request).value
@@ -160,8 +160,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
     }
 
     "return BAD_REQUEST for non-JSON data" in {
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody("non-json body")
 
       val result = route(app, request).value
@@ -185,8 +185,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(invalidRequestBody)
 
       val result = route(app, request).value
@@ -220,8 +220,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(incompleteEntityRequestBody)
 
       val result = route(app, request).value
@@ -244,8 +244,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(missingEntitiesKeyRequestBody)
 
       val result = route(app, request).value
@@ -263,8 +263,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         "electionUKGAAP"       -> true
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(missingLiabilitiesKeyRequestBody)
 
       val result = route(app, request).value
@@ -301,8 +301,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         "extraField" -> "unexpected data"
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(extraFieldsRequestBody)
 
       val result      = route(app, request).value
@@ -341,8 +341,8 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
+      val request = FakeRequest(POST, routes.LiabilityController.submitUktr.url)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(invalidDateRangeRequestBody)
 
       val result = route(app, request).value
