@@ -32,8 +32,10 @@ class BTNController @Inject() (cc: ControllerComponents, authFilter: AuthActionF
 
   def submitBTN(pillar2Id: String): Action[BTNRequest] = (Action(parse.json[BTNRequest]) andThen authFilter andThen etmpHeaderFilter) { _ =>
     pillar2Id match {
+      case "XEPLR4220000000" =>
+        UnprocessableEntity(Json.toJson(BTNFailureResponsePayload(BTNFailure(LocalDateTime.now(ZoneId.of("UTC")), "094", "Invalid DTT Election"))))
       case "XEPLR4000000000" =>
-        BadRequest(Json.toJson(BTNFailureResponsePayload(BTNFailure(LocalDateTime.now(ZoneId.of("UTC")), "003", "Request could not be processed"))))
+        BadRequest(Json.toJson(BTNErrorResponse(BTNError("400", "Request could not be processed"))))
       case "XEPLR5000000000" => InternalServerError(Json.toJson(BTNErrorResponse(BTNError("500", "Error in downstream system"))))
       case _ =>
         Ok(Json.toJson(BtnSuccessResponsePayload(BTNSuccess(LocalDateTime.now(ZoneId.of("UTC")), "11223344556677", "XTC01234123412"))))

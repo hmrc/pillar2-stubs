@@ -45,6 +45,17 @@ class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
     contentAsJson(result).validate[BtnSuccessResponsePayload].asEither.isRight shouldBe true
   }
 
+  test("UnprocessableContent BTN submission") {
+    val request = FakeRequest(POST, routes.BTNController.submitBTN("XEPLR4220000000").url)
+      .withHeaders(Headers(validHeaders: _*))
+      .withBody(Json.toJson(BTNRequest(LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1))))
+
+    val result = route(app, request).value
+
+    status(result) shouldEqual 422
+    contentAsJson(result).validate[BTNFailureResponsePayload].asEither.isRight shouldBe true
+  }
+
   test("BadRequest BTN submission") {
     val request = FakeRequest(POST, routes.BTNController.submitBTN("XEPLR4000000000").url)
       .withHeaders(Headers(validHeaders: _*))
@@ -53,7 +64,8 @@ class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
     val result = route(app, request).value
 
     status(result) shouldEqual 400
-    contentAsJson(result).validate[BTNFailureResponsePayload].asEither.isRight shouldBe true
+    contentAsJson(result).validate[BTNErrorResponse].asEither.isRight shouldBe true
+    contentAsJson(result).as[BTNErrorResponse].error.code shouldEqual "400"
   }
 
   test("InternalServerError BTN submission") {
@@ -65,6 +77,7 @@ class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
 
     status(result) shouldEqual 500
     contentAsJson(result).validate[BTNErrorResponse].asEither.isRight shouldBe true
+    contentAsJson(result).as[BTNErrorResponse].error.code shouldEqual "500"
   }
 
 }
