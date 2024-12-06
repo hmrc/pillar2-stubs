@@ -26,7 +26,7 @@
 
 # pillar2-stubs
 
-The Pillar2 stubbs service provides stubbs for the GRS systems to mock the responses.
+The Pillar2 stubs service provides stubs for the GRS systems to mock the responses.
 
 ## Running the service locally
 
