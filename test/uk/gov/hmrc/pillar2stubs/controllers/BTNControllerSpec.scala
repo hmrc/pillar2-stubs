@@ -42,7 +42,7 @@ class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
     val result = route(app, request).value
 
     status(result) shouldEqual 200
-    contentAsJson(result).validate[BtnSuccessResponsePayload].asEither.isRight shouldBe true
+    contentAsJson(result).validate[BTNSuccessResponsePayload].asEither.isRight shouldBe true
   }
 
   test("UnprocessableContent BTN submission") {

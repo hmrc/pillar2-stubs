@@ -38,7 +38,7 @@ class BTNController @Inject() (cc: ControllerComponents, authFilter: AuthActionF
         BadRequest(Json.toJson(BTNErrorResponse(BTNError("400", "Request could not be processed"))))
       case "XEPLR5000000000" => InternalServerError(Json.toJson(BTNErrorResponse(BTNError("500", "Error in downstream system"))))
       case _ =>
-        Ok(Json.toJson(BtnSuccessResponsePayload(BTNSuccess(LocalDateTime.now(ZoneId.of("UTC")), "11223344556677", "XTC01234123412"))))
+        Ok(Json.toJson(BTNSuccessResponsePayload(BTNSuccess(LocalDateTime.now(ZoneId.of("UTC")), "11223344556677", "XTC01234123412"))))
     }
   }
 
