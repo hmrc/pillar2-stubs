@@ -23,10 +23,10 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
+import play.api.libs.json.Json
 
 class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 
@@ -34,7 +34,9 @@ class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneA
     case "/resources/uktaxreturn/SuccessResponse.json" =>
       Some("""{"success":{"processingDate":"2022-01-31T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}""")
     case "/resources/uktaxreturn/InvalidRequestResponse.json" =>
-      Some("""{"error":{"code":"400","message":"Invalid JSON message content used; Message: \\"Expected a ',' or '}' at character 93 of {...","logID":"C0000AB8190C86300000000200006836"}}""")
+      Some(
+        """{"error":{"code":"400","message":"Invalid JSON message content used; Message: \\"Expected a ',' or '}' at character 93 of {...","logID":"C0000AB8190C86300000000200006836"}}"""
+      )
     case "/resources/uktaxreturn/MissingPLRResponse.json" =>
       Some("""{"errors":{"processingDate":"2022-01-31T09:26:17Z","code":"002","text":"Pillar 2 ID missing or invalid"}}""")
     case _ => None
@@ -48,12 +50,39 @@ class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneA
 
   val authHeader: (String, String) = HeaderNames.authorisation -> "Bearer valid_token"
 
+  private val validRequestBody = Json.obj(
+    "accountingPeriodFrom" -> "2024-01-01",
+    "accountingPeriodTo"   -> "2024-12-31",
+    "obligationMTT"        -> true,
+    "electionUKGAAP"       -> true,
+    "liabilities" -> Json.obj(
+      "totalLiability"     -> Some(BigDecimal("10000.99")),
+      "totalLiabilityDTT"  -> Some(BigDecimal("5000.99")),
+      "totalLiabilityIIR"  -> Some(BigDecimal("4000")),
+      "totalLiabilityUTPR" -> Some(BigDecimal("10000.99")),
+      "liableEntities" -> Some(
+        Seq(
+          Json.obj(
+            "ukChargeableEntityName" -> "Newco PLC",
+            "idType"                 -> "CRN",
+            "idValue"                -> "12345678",
+            "amountOwedDTT"          -> BigDecimal("5000"),
+            "electedDTT"             -> true,
+            "amountOwedIIR"          -> BigDecimal("3400"),
+            "amountOwedUTPR"         -> BigDecimal("6000.5"),
+            "electedUTPR"            -> true
+          )
+        )
+      )
+    )
+  )
+
   "UkTaxReturnController POST" - {
 
     "return CREATED with success response for a valid submission with XTC01234123412" in {
       val request = FakeRequest(POST, "/submit-uk-tax-return")
         .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
-        .withBody("{}")
+        .withBody(validRequestBody)
 
       val result = route(app, request).value
       status(result) mustBe CREATED
@@ -63,7 +92,7 @@ class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneA
     "return BAD_REQUEST with invalid request response for XEPLR1066196400" in {
       val request = FakeRequest(POST, "/submit-uk-tax-return")
         .withHeaders("X-Pillar2-Id" -> "XEPLR1066196400", "Content-Type" -> "application/json", authHeader)
-        .withBody("{}")
+        .withBody(validRequestBody)
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
@@ -73,7 +102,7 @@ class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneA
     "return BAD_REQUEST when X-Pillar2-Id header is missing" in {
       val request = FakeRequest(POST, "/submit-uk-tax-return")
         .withHeaders("Content-Type" -> "application/json", authHeader)
-        .withBody("{}")
+        .withBody(validRequestBody)
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
@@ -83,7 +112,7 @@ class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneA
     "return CREATED with success response for any other PLR reference" in {
       val request = FakeRequest(POST, "/submit-uk-tax-return")
         .withHeaders("X-Pillar2-Id" -> "OTHER_PLR", "Content-Type" -> "application/json", authHeader)
-        .withBody("{}")
+        .withBody(validRequestBody)
 
       val result = route(app, request).value
       status(result) mustBe CREATED

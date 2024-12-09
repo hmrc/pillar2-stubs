@@ -24,37 +24,36 @@ import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 import java.time.ZonedDateTime
 import java.time.ZoneOffset
 import play.api.mvc.Result
+import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionRequest
 
 @Singleton
 class UkTaxReturnController @Inject() (
-  cc:          ControllerComponents,
-  authFilter:  AuthActionFilter
-)(implicit ec: ExecutionContext)
-    extends BackendController(cc)
+  cc:         ControllerComponents,
+  authFilter: AuthActionFilter
+) extends BackendController(cc)
     with Logging {
 
-  def submitUktr: Action[String] = (Action(parse.tolerantText) andThen authFilter).async { implicit request =>
+  def submitUktr: Action[UKTRSubmissionRequest] = (Action(parse.json[UKTRSubmissionRequest]) andThen authFilter).async { implicit request =>
     request.headers.get("X-Pillar2-Id") match {
-      case None => 
+      case None =>
         logger.warn("No PLR Reference provided in headers")
         returnErrorResponse("uktaxreturn/MissingPLRResponse.json")
-      
-      case Some(plrReference) => handleSubmission(plrReference, request.body)
+
+      case Some(plrReference) => handleSubmission(plrReference)
     }
   }
 
-  private def handleSubmission(plrReference: String, body: String): Future[Result] = {
+  private def handleSubmission(plrReference: String): Future[Result] =
     plrReference match {
-      case "XTC01234123412" =>  returnSuccessResponse("uktaxreturn/SuccessResponse.json")
+      case "XTC01234123412"  => returnSuccessResponse("uktaxreturn/SuccessResponse.json")
       case "XEPLR1066196400" => returnErrorResponse("uktaxreturn/InvalidRequestResponse.json")
-      case _ => 
+      case _ =>
         returnSuccessResponse("uktaxreturn/SuccessResponse.json")
     }
-  }
 
   private def returnSuccessResponse(filename: String): Future[Result] = {
     val response = resourceAsString(s"/resources/$filename")
@@ -75,7 +74,7 @@ class UkTaxReturnController @Inject() (
     Future.successful(BadRequest(response))
   }
 
-  private def getCurrentTimestamp: String = 
+  private def getCurrentTimestamp: String =
     ZonedDateTime.now(ZoneOffset.UTC).toString
 
   private def replaceDate(response: String, newDate: String): String =
