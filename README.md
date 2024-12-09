@@ -201,7 +201,6 @@ HTTP 503 Request Could not be processed Error
         }
         }
         }
-
 ```
 
 > Response status: 503
@@ -343,6 +342,66 @@ HTTP 404 Record Not Found Error
 > Response status: 404
 >
 > Response body: N/A
+
+---
+
+```
+POST /submit-uk-tax-return
+```
+
+Submit a UK Tax Return request. This endpoint requires an `X-Pillar2-Id` header.
+
+#### Request Headers:
+- `X-Pillar2-Id`: The Pillar 2 identifier (Required)
+- `Content-Type`: application/json
+- `Authorization`: Bearer token
+
+#### Response Scenarios:
+
+1. **Success Response (PLR Reference: XTC01234123412 or any other valid reference)**
+```json
+{
+    "success": {
+        "processingDate": "2024-12-09T09:03:58.100142Z",
+        "formBundleNumber": "119000004320",
+        "chargeReference": "XTC01234123412"
+    }
+}
+```
+> Response status: 201 (Created)
+
+2. **Invalid Request Response (PLR Reference: XEPLR1066196400)**
+```json
+{
+    "error": {
+        "code": "400",
+        "message": "Invalid JSON message content used; Message: \"Expected a ',' or '}' at character 93 of {...",
+        "logID": "C0000AB8190C86300000000200006836"
+    }
+}
+```
+> Response status: 400 (Bad Request)
+
+3. **Missing PLR Reference Response**
+```json
+{
+    "errors": {
+        "processingDate": "2024-12-09T09:03:58.094225Z",
+        "code": "002",
+        "text": "Pillar 2 ID missing or invalid"
+    }
+}
+```
+> Response status: 400 (Bad Request)
+
+#### Pillar2 Reference Patterns
+
+| Pillar2 Reference | Response Status | Description |
+|------------------|-----------------|-------------|
+| XTC01234123412   | 201 (Created)   | Returns a success response with matching charge reference |
+| XEPLR1066196400  | 400 (Bad Request) | Returns invalid request error response |
+| Missing Header   | 400 (Bad Request) | Returns missing PLR error response |
+| Any Other Value  | 201 (Created)   | Returns a success response with default values |
 
 ---
 
