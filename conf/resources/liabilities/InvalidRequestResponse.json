@@ -1,9 +1,0 @@
-{
-  "failures": [
-    {
-      "code": "INVALID_REQUEST",
-      "reason": "The JSON request is invalid",
-      "details": []
-    }
-  ]
-}

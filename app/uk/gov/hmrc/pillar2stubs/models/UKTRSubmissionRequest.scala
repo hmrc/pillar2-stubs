@@ -26,8 +26,6 @@ import scala.util.Try
 case class UKTRSubmissionRequest(
   accountingPeriodFrom: String,
   accountingPeriodTo:   String,
-  qualifyingGroup:      Boolean,
-  obligationDTT:        Boolean,
   obligationMTT:        Boolean,
   electionUKGAAP:       Boolean,
   liabilities:          Liability
@@ -47,8 +45,6 @@ object UKTRSubmissionRequest {
   implicit val reads: Reads[UKTRSubmissionRequest] = (
     (JsPath \ "accountingPeriodFrom").read[String] and
       (JsPath \ "accountingPeriodTo").read[String] and
-      (JsPath \ "qualifyingGroup").read[Boolean] and
-      (JsPath \ "obligationDTT").read[Boolean] and
       (JsPath \ "obligationMTT").read[Boolean] and
       (JsPath \ "electionUKGAAP").read[Boolean] and
       (JsPath \ "liabilities").read[Liability]
