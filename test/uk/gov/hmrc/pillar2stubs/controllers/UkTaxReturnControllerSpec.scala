@@ -80,7 +80,7 @@ class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneA
   "UkTaxReturnController POST" - {
 
     "return CREATED with success response for a valid submission with XTC01234123412" in {
-      val request = FakeRequest(POST, "/submit-uk-tax-return")
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
         .withHeaders("X-Pillar2-Id" -> "XTC01234123412", "Content-Type" -> "application/json", authHeader)
         .withBody(validRequestBody)
 
@@ -90,7 +90,7 @@ class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneA
     }
 
     "return BAD_REQUEST with invalid request response for XEPLR1066196400" in {
-      val request = FakeRequest(POST, "/submit-uk-tax-return")
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
         .withHeaders("X-Pillar2-Id" -> "XEPLR1066196400", "Content-Type" -> "application/json", authHeader)
         .withBody(validRequestBody)
 
@@ -100,7 +100,7 @@ class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneA
     }
 
     "return BAD_REQUEST when X-Pillar2-Id header is missing" in {
-      val request = FakeRequest(POST, "/submit-uk-tax-return")
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
         .withHeaders("Content-Type" -> "application/json", authHeader)
         .withBody(validRequestBody)
 
@@ -110,13 +110,67 @@ class UkTaxReturnControllerSpec extends AnyFreeSpec with Matchers with GuiceOneA
     }
 
     "return CREATED with success response for any other PLR reference" in {
-      val request = FakeRequest(POST, "/submit-uk-tax-return")
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
         .withHeaders("X-Pillar2-Id" -> "OTHER_PLR", "Content-Type" -> "application/json", authHeader)
         .withBody(validRequestBody)
 
       val result = route(app, request).value
       status(result) mustBe CREATED
       contentAsJson(result).toString must include("formBundleNumber")
+    }
+
+    "return UNAUTHORIZED when PLR reference is XEPLR1066196401" in {
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
+        .withHeaders("X-Pillar2-Id" -> "XEPLR1066196401", "Content-Type" -> "application/json", authHeader)
+        .withBody(validRequestBody)
+
+      val result = route(app, request).value
+      status(result) mustBe UNAUTHORIZED
+    }
+
+    "return FORBIDDEN when PLR reference is XEPLR1066196403" in {
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
+        .withHeaders("X-Pillar2-Id" -> "XEPLR1066196403", "Content-Type" -> "application/json", authHeader)
+        .withBody(validRequestBody)
+
+      val result = route(app, request).value
+      status(result) mustBe FORBIDDEN
+    }
+
+    "return NOT_FOUND when PLR reference is XEPLR1066196404" in {
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
+        .withHeaders("X-Pillar2-Id" -> "XEPLR1066196404", "Content-Type" -> "application/json", authHeader)
+        .withBody(validRequestBody)
+
+      val result = route(app, request).value
+      status(result) mustBe NOT_FOUND
+    }
+
+    "return UNSUPPORTED_MEDIA_TYPE when PLR reference is XEPLR1066196415" in {
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
+        .withHeaders("X-Pillar2-Id" -> "XEPLR1066196415", "Content-Type" -> "application/json", authHeader)
+        .withBody(validRequestBody)
+
+      val result = route(app, request).value
+      status(result) mustBe UNSUPPORTED_MEDIA_TYPE
+    }
+
+    "return UNPROCESSABLE_ENTITY with error response when PLR reference is XEPLR1066196422" in {
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
+        .withHeaders("X-Pillar2-Id" -> "XEPLR1066196422", "Content-Type" -> "application/json", authHeader)
+        .withBody(validRequestBody)
+
+      val result = route(app, request).value
+      status(result) mustBe UNPROCESSABLE_ENTITY
+    }
+
+    "return INTERNAL_SERVER_ERROR with error response when PLR reference is XEPLR1066196500" in {
+      val request = FakeRequest(POST, "/RESTAdapter/PLR/UKTaxReturn")
+        .withHeaders("X-Pillar2-Id" -> "XEPLR1066196500", "Content-Type" -> "application/json", authHeader)
+        .withBody(validRequestBody)
+
+      val result = route(app, request).value
+      status(result) mustBe INTERNAL_SERVER_ERROR
     }
   }
 }

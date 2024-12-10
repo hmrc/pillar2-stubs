@@ -22,6 +22,7 @@
     * [Get Obligation \- Get Obligation Test Data](#get-obligation---get-obligation-test-data)
     * [Post Liability](#post-liability)
     * [Below Threshold Notification](#below-threshold-notification)
+    * [UK Tax Return Submission](#submit-uk-tax-return)
 
 
 # pillar2-stubs
@@ -345,63 +346,36 @@ HTTP 404 Record Not Found Error
 
 ---
 
+## Submit UK Tax Return
+
 ```
-POST /submit-uk-tax-return
+POST /RESTAdapter/PLR/UKTaxReturn
 ```
 
 Submit a UK Tax Return request. This endpoint requires an `X-Pillar2-Id` header.
 
-#### Request Headers:
+### Request Headers:
 - `X-Pillar2-Id`: The Pillar 2 identifier (Required)
 - `Content-Type`: application/json
 - `Authorization`: Bearer token
 
-#### Response Scenarios:
+### Response Scenarios:
 
-1. **Success Response (PLR Reference: XTC01234123412 or any other valid reference)**
-```json
-{
-    "success": {
-        "processingDate": "2024-12-09T09:03:58.100142Z",
-        "formBundleNumber": "119000004320",
-        "chargeReference": "XTC01234123412"
-    }
-}
-```
-> Response status: 201 (Created)
+| PLR Reference | Response Status | Description |
+|--------------|-----------------|-------------|
+| XTC01234123412 | 201 Created | Successful submission |
+| XEPLR1066196400 | 400 Bad Request | Invalid JSON message content |
+| XEPLR1066196401 | 401 Unauthorized | Authentication failed |
+| XEPLR1066196403 | 403 Forbidden | User not authorized |
+| XEPLR1066196404 | 404 Not Found | Resource not found |
+| XEPLR1066196415 | 415 Unsupported Media Type | Invalid content type |
+| XEPLR1066196422 | 422 Unprocessable Entity | Request validation failed |
+| XEPLR1066196500 | 500 Internal Server Error | Internal server error |
+| Any other ID | 201 Created | Successful submission |
 
-2. **Invalid Request Response (PLR Reference: XEPLR1066196400)**
-```json
-{
-    "error": {
-        "code": "400",
-        "message": "Invalid JSON message content used; Message: \"Expected a ',' or '}' at character 93 of {...",
-        "logID": "C0000AB8190C86300000000200006836"
-    }
-}
-```
-> Response status: 400 (Bad Request)
-
-3. **Missing PLR Reference Response**
-```json
-{
-    "errors": {
-        "processingDate": "2024-12-09T09:03:58.094225Z",
-        "code": "002",
-        "text": "Pillar 2 ID missing or invalid"
-    }
-}
-```
-> Response status: 400 (Bad Request)
-
-#### Pillar2 Reference Patterns
-
-| Pillar2 Reference | Response Status | Description |
-|------------------|-----------------|-------------|
-| XTC01234123412   | 201 (Created)   | Returns a success response with matching charge reference |
-| XEPLR1066196400  | 400 (Bad Request) | Returns invalid request error response |
-| Missing Header   | 400 (Bad Request) | Returns missing PLR error response |
-| Any Other Value  | 201 (Created)   | Returns a success response with default values |
+Additionally:
+- Missing X-Pillar2-Id header will return 400 Bad Request
+- Invalid JSON payload will return 400 Bad Request with validation details
 
 ---
 
@@ -696,130 +670,6 @@ For now this API has not been developed by ETMP therefore we are making assumpti
 | XEPLR1000000000                                                          | Obligation with Fulfilled status        |
 | XEPLR4040000000                                                          | NOT_FOUND Error Response                |
 | Any valid ID                                                             | Will return a response with Open status |
-
-
-## Post Liability
-
-Liability Detail Submission
-
-This endpoint allows submission of liability details based on a provided idNumber (PLR Reference Number). There are two main types of submissions supported:
-•	Liability Submission: A detailed submission of liability amounts.
-•	Nil Return Submission: A minimal submission indicating no liability for the period.
-
-Request Types and Expected Payloads
-
-Liability Submission
-
-A valid liability submission includes details about the total liabilities and entities liable for the tax period. Here’s the expected structure for a successful liability submission:
-```
-{
-  "accountingPeriodFrom": "2024-08-14",
-  "accountingPeriodTo": "2024-12-14",
-  "qualifyingGroup": true,
-  "obligationDTT": true,
-  "obligationMTT": true,
-  "electionUKGAAP": true,
-  "liabilities": {
-    "totalLiability": 10000.99,
-    "totalLiabilityDTT": 5000.99,
-    "totalLiabilityIIR": 4000,
-    "totalLiabilityUTPR": 10000.99,
-    "liableEntities": [
-      {
-        "ukChargeableEntityName": "Newco PLC",
-        "idType": "CRN",
-        "idValue": "12345678",
-        "amountOwedDTT": 5000,
-        "electedDTT": true,
-        "amountOwedIIR": 3400,
-        "amountOwedUTPR": 6000.5,
-        "electedUTPR": true
-      }
-    ]
-  }
-}
-```
-
-Nil Return Submission
-
-A Nil Return submission is used when there is no liability for the specified period. The returnType field in liabilities should be set to "NIL_RETURN":
-```
-{
-  "accountingPeriodFrom": "2024-08-14",
-  "accountingPeriodTo": "2024-09-14",
-  "qualifyingGroup": true,
-  "obligationDTT": true,
-  "obligationMTT": true,
-  "electionUKGAAP": true,
-  "liabilities": {
-    "returnType": "NIL_RETURN"
-  }
-}
-```
-
-Response Codes and Conditions
-
-| Status          | Description                                                                               |
-|-----------------|-------------------------------------------------------------------------------------------|
-| 201 CREATED     | Success response for a valid liability or Nil Return submission when idNumber is correct. |
-| 400 BAD_REQUEST | Submission did not pass validation (e.g., invalid JSON format or required fields missing).    |
-| 400 BAD_REQUEST | Non-JSON data received, expecting a valid JSON object.                                    |
-| 404 NOT_FOUND   | No liabilities found for the provided idNumber (PLR Reference Number is incorrect).     |
-
-Examples of Invalid Requests
-
-Invalid JSON
-
-A request with invalid JSON syntax will return a 400 BAD_REQUEST response:
-
-        ```json
-        {
-        "accountingPeriod": "2024-08-1",
-        "accountingPeriod": "2024-12-14"
-        }
-        ```
-
-Non-JSON Body
-
-If a non-JSON body is submitted, a 400 BAD_REQUEST response will be returned:
-
-            ```
-            This is not a JSON body
-            ```
-Details of Expected Fields
-
-	•	idNumber (PLR Reference Number): Only the idNumber “XTC01234123412” will result in a successful 201 CREATED response.
-	•	Valid idNumber: Returns 201 CREATED with the liability success details for valid liability submissions.
-	•	Invalid idNumber: Returns 404 NOT_FOUND, indicating no matching liability data for other idNumbers.
-	•	Liability Fields: In a liability submission, totalLiability, totalLiabilityDTT, totalLiabilityIIR, and totalLiabilityUTPR are expected fields. Additionally, liableEntities should be a non-empty array.
-	•	Nil Return Field: In a Nil Return submission, liabilities.returnType should be "NIL_RETURN", indicating no liability.
-
-Response Examples
-
-Successful Liability Submission Response
-
-If the idNumber is valid and the payload is correct, a 201 CREATED response will be returned with liability details:
-    ```
-        {
-        "success": {
-        "processingDate": "2024-08-14T09:26:17Z",
-        "formBundleNumber": "119000004320",
-        "chargeReference": "XTC01234123412"
-        }
-        }
-    ```
-
-Successful Nil Return Response
-
-If the idNumber is valid and the payload indicates a Nil Return, a 201 CREATED response will be returned with the Nil Return details:
-    ```
-        {
-        "success": {
-        "processingDate": "2024-08-14T09:26:17Z",
-        "message": "Nil return received and processed successfully"
-        }
-        }
-    ```
 
 ## Below Threshold Notification
 

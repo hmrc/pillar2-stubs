@@ -22,4 +22,4 @@ GET           /get-obligation/:plrReference/:dateFrom/:dateTo                   
 
 POST          /RESTAdapter/plr/below-threshold-notification                                uk.gov.hmrc.pillar2stubs.controllers.BTNController.submitBTN(pillar2ID:String)
 
-POST          /submit-uk-tax-return                                                        uk.gov.hmrc.pillar2stubs.controllers.UkTaxReturnController.submitUktr
+POST          /RESTAdapter/PLR/UKTaxReturn                                                    uk.gov.hmrc.pillar2stubs.controllers.UkTaxReturnController.submitUktr

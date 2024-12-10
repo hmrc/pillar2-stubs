@@ -41,7 +41,7 @@ class UkTaxReturnController @Inject() (
     request.headers.get("X-Pillar2-Id") match {
       case None =>
         logger.warn("No PLR Reference provided in headers")
-        returnErrorResponse("uktaxreturn/MissingPLRResponse.json")
+        returnErrorResponse("uktaxreturn/MissingPLRResponse.json", 400)
 
       case Some(plrReference) => handleSubmission(plrReference)
     }
@@ -50,7 +50,13 @@ class UkTaxReturnController @Inject() (
   private def handleSubmission(plrReference: String): Future[Result] =
     plrReference match {
       case "XTC01234123412"  => returnSuccessResponse("uktaxreturn/SuccessResponse.json")
-      case "XEPLR1066196400" => returnErrorResponse("uktaxreturn/InvalidRequestResponse.json")
+      case "XEPLR1066196400" => returnErrorResponse("uktaxreturn/InvalidRequestResponse.json", 400)
+      case "XEPLR1066196401" => Future.successful(Unauthorized)
+      case "XEPLR1066196403" => Future.successful(Forbidden)
+      case "XEPLR1066196404" => Future.successful(NotFound)
+      case "XEPLR1066196415" => Future.successful(UnsupportedMediaType)
+      case "XEPLR1066196422" => returnErrorResponse("uktaxreturn/UnprocessableEntityResponse.json", 422)
+      case "XEPLR1066196500" => returnErrorResponse("uktaxreturn/InternalServerErrorResponse.json", 500)
       case _ =>
         returnSuccessResponse("uktaxreturn/SuccessResponse.json")
     }
@@ -65,13 +71,13 @@ class UkTaxReturnController @Inject() (
     Future.successful(Created(response).as("application/json"))
   }
 
-  private def returnErrorResponse(filename: String): Future[Result] = {
+  private def returnErrorResponse(filename: String, status: Int): Future[Result] = {
     val response = resourceAsString(s"/resources/$filename")
       .map(replaceDate(_, getCurrentTimestamp))
       .map(Json.parse)
       .getOrElse(Json.obj("error" -> "Error response not found"))
 
-    Future.successful(BadRequest(response))
+    Future.successful(Status(status)(response))
   }
 
   private def getCurrentTimestamp: String =
