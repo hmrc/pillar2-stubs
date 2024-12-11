@@ -32,15 +32,14 @@ import scala.util.Random
 
 class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
 
-  def request(implicit pillar2Id: String): FakeRequest[JsValue] = {
-    def validHeaders: List[(String, String)] =
-      (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation)).map(_ -> Random.nextString(10))
+  val validHeaders: List[(String, String)] =
+    (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation)).map(_ -> Random.nextString(10))
 
+  def request(implicit pillar2Id: String): FakeRequest[JsValue] =
     FakeRequest(POST, routes.BTNController.submitBTN.url)
       .withHeaders(Headers(validHeaders: _*))
       .withHeaders("X-PILLAR2-ID" -> pillar2Id)
       .withBody(Json.toJson(BTNRequest(LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1))))
-  }
 
   test("Valid BTN submission") {
     implicit val pillar2Id: String = "XMPLR00000000012"
