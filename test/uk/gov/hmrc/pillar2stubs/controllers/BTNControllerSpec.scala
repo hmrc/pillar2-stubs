@@ -32,24 +32,25 @@ import scala.util.Random
 
 class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
 
-  val validHeaders: List[(String, String)] = (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation)).map(_ -> Random.nextString(10))
+  val validHeaders: List[(String, String)] =
+    (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation)).map(_ -> Random.nextString(10))
 
-  test("Valid BTN submission") {
-    val request = FakeRequest(POST, routes.BTNController.submitBTN("XMPLR00000000012").url)
+  def request(implicit pillar2Id: String): FakeRequest[JsValue] =
+    FakeRequest(POST, routes.BTNController.submitBTN.url)
       .withHeaders(Headers(validHeaders: _*))
+      .withHeaders("X-PILLAR2-ID" -> pillar2Id)
       .withBody(Json.toJson(BTNRequest(LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1))))
 
+  test("Valid BTN submission") {
+    implicit val pillar2Id: String = "XMPLR00000000012"
     val result = route(app, request).value
 
-    status(result) shouldEqual 200
+    status(result) shouldEqual 201
     contentAsJson(result).validate[BTNSuccessResponsePayload].asEither.isRight shouldBe true
   }
 
   test("UnprocessableContent BTN submission") {
-    val request = FakeRequest(POST, routes.BTNController.submitBTN("XEPLR4220000000").url)
-      .withHeaders(Headers(validHeaders: _*))
-      .withBody(Json.toJson(BTNRequest(LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1))))
-
+    implicit val pillar2Id: String = "XEPLR4220000000"
     val result = route(app, request).value
 
     status(result) shouldEqual 422
@@ -57,10 +58,7 @@ class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
   }
 
   test("BadRequest BTN submission") {
-    val request = FakeRequest(POST, routes.BTNController.submitBTN("XEPLR4000000000").url)
-      .withHeaders(Headers(validHeaders: _*))
-      .withBody(Json.toJson(BTNRequest(LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1))))
-
+    implicit val pillar2Id: String = "XEPLR4000000000"
     val result = route(app, request).value
 
     status(result) shouldEqual 400
@@ -69,10 +67,7 @@ class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
   }
 
   test("InternalServerError BTN submission") {
-    val request = FakeRequest(POST, routes.BTNController.submitBTN("XEPLR5000000000").url)
-      .withHeaders(Headers(validHeaders: _*))
-      .withBody(Json.toJson(BTNRequest(LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1))))
-
+    implicit val pillar2Id: String = "XEPLR5000000000"
     val result = route(app, request).value
 
     status(result) shouldEqual 500

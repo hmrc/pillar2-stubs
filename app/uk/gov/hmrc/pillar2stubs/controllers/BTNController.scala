@@ -23,22 +23,22 @@ import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.btn._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import java.time.{LocalDateTime, ZoneId}
+import java.time.temporal.ChronoUnit
+import java.time.{ZoneOffset, ZonedDateTime}
 import javax.inject.Inject
 
 class BTNController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter, etmpHeaderFilter: ETMPHeaderFilter)
     extends BackendController(cc)
     with Logging {
 
-  def submitBTN(pillar2Id: String): Action[BTNRequest] = (Action(parse.json[BTNRequest]) andThen authFilter andThen etmpHeaderFilter) { _ =>
-    pillar2Id match {
-      case "XEPLR4220000000" =>
-        UnprocessableEntity(Json.toJson(BTNFailureResponsePayload(BTNFailure(LocalDateTime.now(ZoneId.of("UTC")), "094", "Invalid DTT Election"))))
-      case "XEPLR4000000000" =>
-        BadRequest(Json.toJson(BTNErrorResponse(BTNError("400", "Request could not be processed"))))
+  def now: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+
+  def submitBTN: Action[BTNRequest] = (Action(parse.json[BTNRequest]) andThen authFilter andThen etmpHeaderFilter) { implicit request =>
+    request.headers.get("X-PILLAR2-ID").get match {
+      case "XEPLR4220000000" => UnprocessableEntity(Json.toJson(BTNFailureResponsePayload(BTNFailure(now, "094", "Invalid DTT Election"))))
+      case "XEPLR4000000000" => BadRequest(Json.toJson(BTNErrorResponse(BTNError("400", "Request could not be processed"))))
       case "XEPLR5000000000" => InternalServerError(Json.toJson(BTNErrorResponse(BTNError("500", "Error in downstream system"))))
-      case _ =>
-        Ok(Json.toJson(BTNSuccessResponsePayload(BTNSuccess(LocalDateTime.now(ZoneId.of("UTC")), "11223344556677", "XTC01234123412"))))
+      case _                 => Created(Json.toJson(BTNSuccessResponsePayload(BTNSuccess(now, "11223344556677", "XTC01234123412"))))
     }
   }
 

@@ -18,9 +18,9 @@ package uk.gov.hmrc.pillar2stubs.models.btn
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
-case class BTNSuccess(processingDate: LocalDateTime, formBundleNumber: String, chargeReference: String)
+case class BTNSuccess(processingDate: ZonedDateTime, formBundleNumber: String, chargeReference: String)
 
 object BTNSuccess {
   implicit val format: OFormat[BTNSuccess] = Json.format[BTNSuccess]
