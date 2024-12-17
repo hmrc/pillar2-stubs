@@ -24,7 +24,7 @@ import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, route, status}
 import uk.gov.hmrc.http.HeaderNames
 
 import scala.concurrent.Future
