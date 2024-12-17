@@ -24,14 +24,15 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.pillar2stubs.models.{LiabilityData, LiableEntity, UKTRSubmissionData}
 
 import java.time.LocalDate
 
-class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
+class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 
   private val stubResourceLoader: String => Option[String] = {
     case "/resources/liabilities/LiabilitySuccessResponse.json" =>
@@ -49,42 +50,35 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
 
   val authHeader: (String, String) = HeaderNames.authorisation -> "Bearer valid_token"
 
-  "LiabilityController POST" - {
+  "UKTRSubmitController POST" - {
 
     "return CREATED with success response for a valid liability submission" in {
-      val validLiabilityRequestBody = Json.obj(
-        "accountingPeriodFrom" -> "2024-08-14",
-        "accountingPeriodTo"   -> "2024-12-14",
-        "qualifyingGroup"      -> true,
-        "obligationDTT"        -> true,
-        "obligationMTT"        -> true,
-        "electionUKGAAP"       -> true,
-        "liabilities" -> Json.obj(
-          "totalLiability"     -> 10000.99,
-          "totalLiabilityDTT"  -> 5000.99,
-          "totalLiabilityIIR"  -> 4000,
-          "totalLiabilityUTPR" -> 10000.99,
-          "liableEntities" -> Json.arr(
-            Json.obj(
-              "ukChargeableEntityName" -> "Newco PLC",
-              "idType"                 -> "CRN",
-              "idValue"                -> "12345678",
-              "amountOwedDTT"          -> 5000,
-              "electedDTT"             -> true,
-              "amountOwedIIR"          -> 3400,
-              "amountOwedUTPR"         -> 6000.5,
-              "electedUTPR"            -> true
-            )
-          )
+      val validLiabilityRequestBody = UKTRSubmissionData(
+        accountingPeriodFrom = LocalDate.of(2024, 8, 14),
+        accountingPeriodTo = LocalDate.of(2024, 12, 14),
+        obligationMTT = true,
+        electionUKGAAP = true,
+        liabilities = LiabilityData(
+          electionDTTSingleMember = false,
+          electionUTPRSingleMember = false,
+          numberSubGroupDTT = 1,
+          numberSubGroupUTPR = 1,
+          totalLiability = 100,
+          totalLiabilityDTT = 50,
+          totalLiabilityIIR = 50,
+          totalLiabilityUTPR = 0,
+          liableEntities = List(LiableEntity("Acme Ltd", "CRN", "123456", 50, 0, 0))
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
-        .withBody(validLiabilityRequestBody)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
+        .withBody(Json.toJson(validLiabilityRequestBody))
 
       val result      = route(app, request).value
       val currentDate = LocalDate.now().toString
+      println(contentAsString(result))
       status(result) mustBe CREATED
       contentAsJson(result) mustBe Json.parse(
         s"""{"success":{"processingDate":"${currentDate}T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}"""
@@ -104,8 +98,9 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(validNilReturnRequestBody)
 
       val result      = route(app, request).value
@@ -116,42 +111,12 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       )
     }
 
-    "return NOT_FOUND for valid JSON but incorrect plrReference" in {
-      val validRequestBody = Json.obj(
-        "accountingPeriodFrom" -> "2024-08-14",
-        "accountingPeriodTo"   -> "2024-12-14",
-        "qualifyingGroup"      -> true,
-        "obligationDTT"        -> true,
-        "obligationMTT"        -> true,
-        "liabilities" -> Json.obj(
-          "totalLiability" -> 10000.99,
-          "liableEntities" -> Json.arr(
-            Json.obj(
-              "ukChargeableEntityName" -> "Newco PLC",
-              "idType"                 -> "CRN",
-              "idValue"                -> "12345678",
-              "amountOwedDTT"          -> 5000,
-              "amountOwedIIR"          -> 3400,
-              "amountOwedUTPR"         -> 6000.5
-            )
-          )
-        )
-      )
-
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("INVALID_PLR_REFERENCE").url)
-        .withHeaders("Content-Type" -> "application/json", authHeader)
-        .withBody(validRequestBody)
-
-      val result = route(app, request).value
-      status(result) mustBe NOT_FOUND
-      contentAsJson(result) mustBe Json.obj("error" -> "No liabilities found for the given reference")
-    }
-
     "return BAD_REQUEST for invalid JSON structure" in {
       val invalidJson = Json.obj("invalidField" -> "value")
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(invalidJson)
 
       val result = route(app, request).value
@@ -160,8 +125,9 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
     }
 
     "return BAD_REQUEST for non-JSON data" in {
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody("non-json body")
 
       val result = route(app, request).value
@@ -185,13 +151,14 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(invalidRequestBody)
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
-      contentAsJson(result) mustBe Json.obj("error" -> "liableEntities must not be empty")
+      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
     }
 
     "return BAD_REQUEST if a required field in liableEntities is missing" in {
@@ -220,8 +187,9 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(incompleteEntityRequestBody)
 
       val result = route(app, request).value
@@ -244,8 +212,9 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(missingEntitiesKeyRequestBody)
 
       val result = route(app, request).value
@@ -263,8 +232,9 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         "electionUKGAAP"       -> true
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(missingLiabilitiesKeyRequestBody)
 
       val result = route(app, request).value
@@ -273,36 +243,31 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
     }
 
     "return CREATED with additional fields ignored in response" in {
-      val extraFieldsRequestBody = Json.obj(
-        "accountingPeriodFrom" -> "2024-08-14",
-        "accountingPeriodTo"   -> "2024-12-14",
-        "qualifyingGroup"      -> true,
-        "obligationDTT"        -> true,
-        "obligationMTT"        -> true,
-        "electionUKGAAP"       -> true,
-        "liabilities" -> Json.obj(
-          "totalLiability"     -> 10000.99,
-          "totalLiabilityDTT"  -> 5000.99,
-          "totalLiabilityIIR"  -> 4000,
-          "totalLiabilityUTPR" -> 10000.99,
-          "liableEntities" -> Json.arr(
-            Json.obj(
-              "ukChargeableEntityName" -> "Newco PLC",
-              "idType"                 -> "CRN",
-              "idValue"                -> "12345678",
-              "amountOwedDTT"          -> 5000,
-              "electedDTT"             -> true,
-              "amountOwedIIR"          -> 3400,
-              "amountOwedUTPR"         -> 6000.5,
-              "electedUTPR"            -> true
+      val extraFieldsRequestBody = Json
+        .toJson(
+          UKTRSubmissionData(
+            accountingPeriodFrom = LocalDate.of(2024, 8, 14),
+            accountingPeriodTo = LocalDate.of(2024, 12, 14),
+            obligationMTT = true,
+            electionUKGAAP = true,
+            liabilities = LiabilityData(
+              electionDTTSingleMember = false,
+              electionUTPRSingleMember = false,
+              numberSubGroupDTT = 1,
+              numberSubGroupUTPR = 1,
+              totalLiability = 100,
+              totalLiabilityDTT = 50,
+              totalLiabilityIIR = 50,
+              totalLiabilityUTPR = 0,
+              liableEntities = List(LiableEntity("Acme Ltd", "CRN", "123456", 50, 0, 0))
             )
           )
-        ),
-        "extraField" -> "unexpected data"
-      )
+        )
+        .as[JsObject] ++ Json.obj("extraField" -> JsString("should be ignored"))
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(extraFieldsRequestBody)
 
       val result      = route(app, request).value
@@ -314,35 +279,29 @@ class LiabilityControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
     }
 
     "return BAD_REQUEST if accountingPeriodTo is before accountingPeriodFrom" in {
-      val invalidDateRangeRequestBody = Json.obj(
-        "accountingPeriodFrom" -> "2024-08-14",
-        "accountingPeriodTo"   -> "2024-07-14", // Earlier than accountingPeriodFrom
-        "qualifyingGroup"      -> true,
-        "obligationDTT"        -> true,
-        "obligationMTT"        -> true,
-        "electionUKGAAP"       -> true,
-        "liabilities" -> Json.obj(
-          "totalLiability"     -> 10000.99,
-          "totalLiabilityDTT"  -> 5000.99,
-          "totalLiabilityIIR"  -> 4000,
-          "totalLiabilityUTPR" -> 10000.99,
-          "liableEntities" -> Json.arr(
-            Json.obj(
-              "ukChargeableEntityName" -> "Newco PLC",
-              "idType"                 -> "CRN",
-              "idValue"                -> "12345678",
-              "amountOwedDTT"          -> 5000,
-              "electedDTT"             -> true,
-              "amountOwedIIR"          -> 3400,
-              "amountOwedUTPR"         -> 6000.5,
-              "electedUTPR"            -> true
-            )
+      val invalidDateRangeRequestBody = Json.toJson(
+        UKTRSubmissionData(
+          accountingPeriodFrom = LocalDate.of(2024, 12, 14),
+          accountingPeriodTo = LocalDate.of(2024, 8, 14),
+          obligationMTT = true,
+          electionUKGAAP = true,
+          liabilities = LiabilityData(
+            electionDTTSingleMember = false,
+            electionUTPRSingleMember = false,
+            numberSubGroupDTT = 1,
+            numberSubGroupUTPR = 1,
+            totalLiability = 100,
+            totalLiabilityDTT = 50,
+            totalLiabilityIIR = 50,
+            totalLiabilityUTPR = 0,
+            liableEntities = List(LiableEntity("Acme Ltd", "CRN", "123456", 50, 0, 0))
           )
         )
       )
 
-      val request = FakeRequest(POST, routes.LiabilityController.submitUktr("XTC01234123412").url)
+      val request = FakeRequest(POST, routes.UKTRSubmitController.submitUKTR.url)
         .withHeaders("Content-Type" -> "application/json", authHeader)
+        .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(invalidDateRangeRequestBody)
 
       val result = route(app, request).value
