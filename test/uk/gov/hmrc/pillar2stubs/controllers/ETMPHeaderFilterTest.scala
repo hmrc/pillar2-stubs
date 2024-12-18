@@ -63,7 +63,6 @@ class ETMPHeaderFilterTest extends AnyFunSuite {
         status(response) shouldEqual 400
         val errorStr    = combo.map(str => s"Header $str not provided").sorted
         val responseStr = contentAsString(response).split(" \\|\\| ").toList.sorted
-        println(responseStr)
         responseStr shouldEqual errorStr
       }
     }
