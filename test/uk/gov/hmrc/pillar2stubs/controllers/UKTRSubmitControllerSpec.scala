@@ -78,7 +78,6 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
 
       val result      = route(app, request).value
       val currentDate = LocalDate.now().toString
-      println(contentAsString(result))
       status(result) mustBe CREATED
       contentAsJson(result) mustBe Json.parse(
         s"""{"success":{"processingDate":"${currentDate}T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}"""
