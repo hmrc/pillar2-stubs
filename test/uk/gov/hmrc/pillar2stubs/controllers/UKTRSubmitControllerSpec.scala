@@ -277,7 +277,7 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
       )
     }
 
-    "return BAD_REQUEST if accountingPeriodTo is before accountingPeriodFrom" in {
+    "return UNPROCESSABLE_ENTITY if accountingPeriodTo is before accountingPeriodFrom" in {
       val invalidDateRangeRequestBody = Json.toJson(
         UKTRSubmissionData(
           accountingPeriodFrom = LocalDate.of(2024, 12, 14),
@@ -304,8 +304,8 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
         .withBody(invalidDateRangeRequestBody)
 
       val result = route(app, request).value
-      status(result) mustBe BAD_REQUEST
-      contentAsJson(result) mustBe Json.obj("error" -> "Invalid date range: accountingPeriodTo must be after accountingPeriodFrom")
+      status(result) mustBe UNPROCESSABLE_ENTITY
+      (contentAsJson(result) \ "errors" \ "text").as[String] mustEqual "Invalid date range: accountingPeriodTo must be after accountingPeriodFrom"
     }
   }
 }
