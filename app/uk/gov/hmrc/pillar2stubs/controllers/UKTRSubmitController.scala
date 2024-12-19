@@ -24,7 +24,7 @@ import uk.gov.hmrc.pillar2stubs.models.{UKTRSubmission, UKTRSubmissionData, UKTR
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
@@ -49,7 +49,17 @@ class UKTRSubmitController @Inject() (
               case d @ UKTRSubmissionData(_, _, _, _, _) =>
                 if (!d.isValid) {
                   logger.error("Invalid date range: accountingPeriodTo is before accountingPeriodFrom")
-                  Future.successful(BadRequest(Json.obj("error" -> "Invalid date range: accountingPeriodTo must be after accountingPeriodFrom")))
+                  Future.successful(
+                    UnprocessableEntity(
+                      Json.obj(
+                        "errors" -> Json.obj(
+                          "processingDate" -> ZonedDateTime.now(ZoneId.of("UTC")),
+                          "code"           -> "001",
+                          "text"           -> "Invalid date range: accountingPeriodTo must be after accountingPeriodFrom"
+                        )
+                      )
+                    )
+                  )
                 } else if (d.liabilities.liableEntities.isEmpty) {
                   logger.error("Liable entities array is empty in liability submission")
                   Future.successful(BadRequest(Json.obj("error" -> "liableEntities must not be empty")).as("application/json"))
