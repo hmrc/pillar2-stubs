@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,14 @@
 
 package uk.gov.hmrc.pillar2stubs.models
 
-import play.api.libs.json.{Reads, __}
+import enumeratum.EnumEntry.UpperSnakecase
+import enumeratum._
 
-case class ReadSubscription(safeId: String, organisationName: String, plrReference: String)
+sealed trait ReturnType extends EnumEntry with UpperSnakecase
 
-object ReadSubscription {
+object ReturnType extends Enum[ReturnType] with PlayJsonEnum[ReturnType] {
 
-  implicit lazy val reads: Reads[ReadSubscription] = {
-    import play.api.libs.functional.syntax._
-    (
-      (__ \ "success" \ "filingMemberDetails" \ "safeId").read[String] and
-        (__ \ "success" \ "upeDetails" \ "organisationName").read[String] and
-        (__ \ "success" \ "plrReference").read[String]
-    )(ReadSubscription.apply _)
-  }
+  val values: IndexedSeq[ReturnType] = findValues
 
+  case object NIL_RETURN extends ReturnType
 }
