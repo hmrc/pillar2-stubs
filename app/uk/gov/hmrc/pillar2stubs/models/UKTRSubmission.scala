@@ -26,6 +26,9 @@ sealed trait UKTRSubmission {
   val obligationMTT:        Boolean
   val electionUKGAAP:       Boolean
   val liabilities:          Liability
+
+  def accountingPeriodValid: Boolean =
+    accountingPeriodFrom.isBefore(accountingPeriodTo)
 }
 
 case class UKTRSubmissionData(
@@ -34,10 +37,7 @@ case class UKTRSubmissionData(
   obligationMTT:        Boolean,
   electionUKGAAP:       Boolean,
   liabilities:          LiabilityData
-) extends UKTRSubmission {
-  def isValid: Boolean =
-    accountingPeriodFrom.isBefore(accountingPeriodTo)
-}
+) extends UKTRSubmission {}
 
 object UKTRSubmissionData {
   implicit val uktrSubmissionDataFormat: OFormat[UKTRSubmissionData] = Json.format[UKTRSubmissionData]

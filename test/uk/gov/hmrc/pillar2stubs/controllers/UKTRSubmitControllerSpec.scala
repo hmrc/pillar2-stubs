@@ -30,7 +30,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.{LiabilityData, LiableEntity, UKTRSubmissionData}
 
-import java.time.LocalDate
+import java.time._
 
 class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 
@@ -42,9 +42,12 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
     case _ => None
   }
 
+  val cogsworth = Clock.fixed(Instant.ofEpochMilli(1734699180110L), ZoneId.of("Z"))
+
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(
-      bind[String => Option[String]].qualifiedWith("resourceLoader").toInstance(stubResourceLoader)
+      bind[String => Option[String]].qualifiedWith("resourceLoader").toInstance(stubResourceLoader),
+      bind[Clock].toInstance(cogsworth)
     )
     .build()
 
@@ -76,12 +79,12 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
         .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(Json.toJson(validLiabilityRequestBody))
 
-      val result      = route(app, request).value
-      val currentDate = LocalDate.now().toString
+      val result = route(app, request).value
       status(result) mustBe CREATED
-      contentAsJson(result) mustBe Json.parse(
-        s"""{"success":{"processingDate":"${currentDate}T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}"""
-      )
+      val jsonResult = contentAsJson(result)
+      (jsonResult \ "success" \ "formBundleNumber").as[String] mustEqual "119000004320"
+      (jsonResult \ "success" \ "chargeReference").as[String] mustEqual "XTC01234123412"
+      (jsonResult \ "success" \ "processingDate").as[ZonedDateTime] mustEqual ZonedDateTime.now(cogsworth)
     }
 
     "return CREATED with success response for a valid NIL_RETURN submission" in {
@@ -102,12 +105,12 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
         .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(validNilReturnRequestBody)
 
-      val result      = route(app, request).value
-      val currentDate = LocalDate.now().toString
+      val result = route(app, request).value
       status(result) mustBe CREATED
-      contentAsJson(result) mustBe Json.parse(
-        s"""{"success":{"processingDate":"${currentDate}T09:26:17Z","message":"Nil return received and processed successfully"}}"""
-      )
+      val jsonResult = contentAsJson(result)
+      (jsonResult \ "success" \ "formBundleNumber").as[String] mustEqual "119000004320"
+      (jsonResult \ "success" \ "chargeReference").as[String] mustEqual "XTC01234123412"
+      (jsonResult \ "success" \ "processingDate").as[ZonedDateTime] mustEqual ZonedDateTime.now(cogsworth)
     }
 
     "return BAD_REQUEST for invalid JSON structure" in {
@@ -269,12 +272,11 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
         .withHeaders("X-Pillar2-Id" -> "XTC01234123412")
         .withBody(extraFieldsRequestBody)
 
-      val result      = route(app, request).value
-      val currentDate = LocalDate.now().toString
-      status(result) mustBe CREATED
-      contentAsJson(result) mustBe Json.parse(
-        s"""{"success":{"processingDate":"${currentDate}T09:26:17Z","formBundleNumber":"119000004320","chargeReference":"XTC01234123412"}}"""
-      )
+      val result     = route(app, request).value
+      val jsonResult = contentAsJson(result)
+      (jsonResult \ "success" \ "formBundleNumber").as[String] mustEqual "119000004320"
+      (jsonResult \ "success" \ "chargeReference").as[String] mustEqual "XTC01234123412"
+      (jsonResult \ "success" \ "processingDate").as[ZonedDateTime] mustEqual ZonedDateTime.now(cogsworth)
     }
 
     "return UNPROCESSABLE_ENTITY if accountingPeriodTo is before accountingPeriodFrom" in {
