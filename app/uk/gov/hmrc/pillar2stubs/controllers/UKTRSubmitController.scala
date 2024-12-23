@@ -17,23 +17,24 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.Logging
-import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.json.{JsError, JsObject, JsSuccess, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.{UKTRSubmission, UKTRSubmissionData, UKTRSubmissionNilReturn}
-import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import java.time.{LocalDate, ZoneId, ZonedDateTime}
+import java.time.format.DateTimeFormatter
+import java.time.{Clock, ZoneId, ZonedDateTime}
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 @Singleton
 class UKTRSubmitController @Inject() (
-  cc:         ControllerComponents,
-  authFilter: AuthActionFilter
-) extends BackendController(cc)
+  cc:             ControllerComponents,
+  authFilter:     AuthActionFilter
+)(implicit clock: Clock)
+    extends BackendController(cc)
     with Logging {
 
   def submitUKTR: Action[String] = (Action(parse.tolerantText) andThen authFilter).async { implicit request =>
@@ -45,41 +46,51 @@ class UKTRSubmitController @Inject() (
       case Success(json) =>
         json.validate[UKTRSubmission] match {
           case JsSuccess(submission, _) =>
-            submission match {
-              case d @ UKTRSubmissionData(_, _, _, _, _) =>
-                if (!d.isValid) {
-                  logger.error("Invalid date range: accountingPeriodTo is before accountingPeriodFrom")
-                  Future.successful(
-                    UnprocessableEntity(
-                      Json.obj(
-                        "errors" -> Json.obj(
-                          "processingDate" -> ZonedDateTime.now(ZoneId.of("UTC")),
-                          "code"           -> "001",
-                          "text"           -> "Invalid date range: accountingPeriodTo must be after accountingPeriodFrom"
+            if (!submission.accountingPeriodValid) {
+              logger.error("Invalid date range: accountingPeriodTo is before accountingPeriodFrom")
+              Future.successful(
+                UnprocessableEntity(
+                  Json.obj(
+                    "errors" -> Json.obj(
+                      "processingDate" -> ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_INSTANT),
+                      "code"           -> "001",
+                      "text"           -> "Invalid date range: accountingPeriodTo must be after accountingPeriodFrom"
+                    )
+                  )
+                )
+              )
+            } else {
+              submission match {
+                case d @ UKTRSubmissionData(_, _, _, _, _) =>
+                  if (d.liabilities.liableEntities.isEmpty) {
+                    logger.error("Liable entities array is empty in liability submission")
+                    Future.successful(
+                      UnprocessableEntity(
+                        Json.obj(
+                          "errors" -> Json.obj(
+                            "processingDate" -> ZonedDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT),
+                            "code"           -> "002",
+                            "text"           -> "Liable entities must not be empty"
+                          )
                         )
                       )
                     )
+                  } else {
+                    logger.info("Returning success response for liability request")
+                    Future.successful(
+                      Created(
+                        successfulResponse
+                      )
+                    )
+                  }
+                case UKTRSubmissionNilReturn(_, _, _, _, _) =>
+                  logger.info("Returning success response for Nil return request")
+                  Future.successful(
+                    Created(
+                      successfulResponse
+                    )
                   )
-                } else if (d.liabilities.liableEntities.isEmpty) {
-                  logger.error("Liable entities array is empty in liability submission")
-                  Future.successful(BadRequest(Json.obj("error" -> "liableEntities must not be empty")).as("application/json"))
-                } else {
-                  val liabilitySuccessResponse = resourceAsString("/resources/liabilities/LiabilitySuccessResponse.json")
-                    .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
-                    .map(Json.parse)
-                    .getOrElse(Json.obj("error" -> "Success response not found"))
-
-                  logger.info("Returning success response for liability request")
-                  Future.successful(Created(liabilitySuccessResponse).as("application/json"))
-                }
-              case UKTRSubmissionNilReturn(_, _, _, _, _) =>
-                val nilReturnResponse = resourceAsString("/resources/liabilities/NilReturnSuccessResponse.json")
-                  .map(replaceDate(_, LocalDate.now().toString + "T09:26:17Z"))
-                  .map(Json.parse)
-                  .getOrElse(Json.obj("error" -> "Nil return response not found"))
-
-                logger.info("Returning success response for Nil return request")
-                Future.successful(Created(nilReturnResponse).as("application/json"))
+              }
             }
 
           case JsError(errors) =>
@@ -97,7 +108,12 @@ class UKTRSubmitController @Inject() (
         Future.successful(BadRequest(Json.obj("error" -> "Invalid JSON data")).as("application/json"))
     }
   }
-
-  private def replaceDate(response: String, registrationDate: String): String =
-    response.replace("2022-01-31T09:26:17Z", registrationDate)
+  private def successfulResponse(implicit clock: Clock): JsObject = Json.obj(
+    "success" -> Json
+      .obj(
+        "processingDate"   -> ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_INSTANT),
+        "formBundleNumber" -> "119000004320",
+        "chargeReference"  -> "XTC01234123412"
+      )
+  )
 }
