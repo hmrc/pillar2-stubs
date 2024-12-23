@@ -52,7 +52,7 @@ class UKTRSubmitController @Inject() (
                 UnprocessableEntity(
                   Json.obj(
                     "errors" -> Json.obj(
-                      "processingDate" -> ZonedDateTime.now(clock),
+                      "processingDate" -> ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_INSTANT),
                       "code"           -> "001",
                       "text"           -> "Invalid date range: accountingPeriodTo must be after accountingPeriodFrom"
                     )
@@ -67,7 +67,7 @@ class UKTRSubmitController @Inject() (
                     Future.successful(
                       UnprocessableEntity(
                         Json.obj(
-                          "errors" -> Json.obj( //2024-12-20T12:54:43.78Z
+                          "errors" -> Json.obj(
                             "processingDate" -> ZonedDateTime.now(ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT),
                             "code"           -> "002",
                             "text"           -> "Liable entities must not be empty"
