@@ -201,7 +201,6 @@ HTTP 503 Request Could not be processed Error
         }
         }
         }
-
 ```
 
 > Response status: 503
@@ -639,7 +638,9 @@ For now this API has not been developed by ETMP therefore we are making assumpti
 | Any valid ID                                                             | Will return a response with Open status |
 
 
-## Post Liability
+## Submit UKTR
+
+POST           /RESTAdapter/PLR/UKTaxReturn
 
 Liability Detail Submission
 
@@ -761,6 +762,69 @@ If the idNumber is valid and the payload indicates a Nil Return, a 201 CREATED r
         }
         }
     ```
+
+## Amend UKTR
+
+PUT           /RESTAdapter/PLR/UKTaxReturn
+
+The request format is the same as the UKTaxReturn POST request, but it uses a PUT method instead. In the real world this would be used to amend a UKTR that has already been submitted but we are not implementing this functionality in the stubs.
+
+### Special PLR Reference Numbers for Testing
+
+| PLR Reference Number | Response                                                |
+|---------------------|--------------------------------------------------------|
+| XEPLR0422044000     | 422 Error - Tax obligation already met                  |
+| XEPLR0400000000     | 400 Error - Bad Request                                |
+| XEPLR0500000000     | 500 Error - Internal Server Error                      |
+| Any other valid ID  | 200 Success - Returns successful amendment response     |
+
+### Success Response (200 OK)
+
+```json
+{
+  "success": {
+    "processingDate": "2024-01-31T12:00:00Z",
+    "formBundleNumber": "119000004320",
+    "chargeReference": "XTC01234123412"
+  }
+}
+```
+
+### Error Response - Tax Obligation Already Met (422)
+
+```json
+{
+  "errors": {
+    "processingDate": "2024-01-31T12:00:00Z",
+    "code": "044",
+    "text": "Tax obligation already met"
+  }
+}
+```
+
+### Error Response - Bad Request (400)
+
+```json
+{
+  "error": {
+    "code": "400",
+    "message": "Invalid request format",
+    "LogID": "C0000AB8190C8E1F000000C700006836"
+  }
+}
+```
+
+### Error Response - Internal Server Error (500)
+
+```json
+{
+  "errors": {
+    "processingDate": "2024-01-31T12:00:00Z",
+    "code": "500",
+    "text": "Internal server error"
+  }
+}
+```
 
 ## Below Threshold Notification
 
