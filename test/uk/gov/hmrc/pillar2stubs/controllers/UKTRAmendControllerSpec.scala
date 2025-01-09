@@ -43,9 +43,9 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
   }
 
   private def createValidSubmissionData(
-      accountingPeriodFrom: LocalDate = LocalDate.of(2024, 8, 14),
-      accountingPeriodTo: LocalDate = LocalDate.of(2024, 12, 14)
-  ): UKTRSubmissionData = {
+    accountingPeriodFrom: LocalDate = LocalDate.of(2024, 8, 14),
+    accountingPeriodTo:   LocalDate = LocalDate.of(2024, 12, 14)
+  ): UKTRSubmissionData =
     UKTRSubmissionData(
       accountingPeriodFrom = accountingPeriodFrom,
       accountingPeriodTo = accountingPeriodTo,
@@ -63,14 +63,12 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         liableEntities = List(LiableEntity("Acme Ltd", "CRN", "123456", 50, 0, 0))
       )
     )
-  }
 
-  private def createRequest(plrId: String, body: JsValue) = {
+  private def createRequest(plrId: String, body: JsValue) =
     FakeRequest(PUT, routes.UKTRAmendController.amendUKTR.url)
       .withHeaders("Content-Type" -> "application/json", authHeader)
       .withHeaders("X-Pillar2-Id" -> plrId)
       .withBody(body)
-  }
 
   val cogsworth = Clock.fixed(Instant.ofEpochMilli(1734699180110L), ZoneId.of("Z"))
 
@@ -151,7 +149,7 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
 
     "return BAD_REQUEST for invalid JSON structure" in {
       val invalidJson = Json.obj("invalidField" -> "value")
-      val request = createRequest("XEPLR1234567890", invalidJson)
+      val request     = createRequest("XEPLR1234567890", invalidJson)
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
@@ -172,10 +170,12 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
     "return UNPROCESSABLE_ENTITY if accountingPeriodTo is before accountingPeriodFrom" in {
       val request = createRequest(
         "XEPLR1234567890",
-        Json.toJson(createValidSubmissionData(
-          accountingPeriodFrom = LocalDate.of(2024, 12, 14),
-          accountingPeriodTo = LocalDate.of(2024, 8, 14)
-        ))
+        Json.toJson(
+          createValidSubmissionData(
+            accountingPeriodFrom = LocalDate.of(2024, 12, 14),
+            accountingPeriodTo = LocalDate.of(2024, 8, 14)
+          )
+        )
       )
 
       val result = route(app, request).value
@@ -197,4 +197,4 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       (jsonResult \ "errors" \ "text").as[String] mustEqual "Liable entities must not be empty"
     }
   }
-} 
+}
