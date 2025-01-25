@@ -20,7 +20,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import java.time.ZonedDateTime
 
-case class BTNSuccess(processingDate: ZonedDateTime, formBundleNumber: String, chargeReference: String)
+case class BTNSuccess(processingDate: ZonedDateTime)
 
 object BTNSuccess {
   implicit val format: OFormat[BTNSuccess] = Json.format[BTNSuccess]
