@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package uk.gov.hmrc.pillar2stubs.models.obligation
+package uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions
 
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
-final case class ObligationInformation(
-  obligationType:           ObligationType,
-  status:                   ObligationStatus,
-  accountingPeriodFromDate: LocalDate,
-  accountingPeriodToDate:   LocalDate,
-  dueDate:                  LocalDate
-)
+case class ObligationsAndSubmissionsRequest(fromDate: LocalDate, toDate: LocalDate) {
+  def accountingPeriodValid: Boolean = fromDate.isBefore(toDate)
+}
 
-object ObligationInformation {
-  implicit val format: OFormat[ObligationInformation] = Json.format[ObligationInformation]
+object ObligationsAndSubmissionsRequest {
+  implicit val format: OFormat[ObligationsAndSubmissionsRequest] = Json.format[ObligationsAndSubmissionsRequest]
 }
