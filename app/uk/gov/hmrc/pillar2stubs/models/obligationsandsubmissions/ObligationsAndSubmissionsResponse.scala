@@ -42,25 +42,19 @@ object ObligationsAndSubmissionsSuccessResponse {
 
   def apply(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
-      processingDate = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS),
+      processingDate = now,
       accountingPeriodDetails = Seq(
         AccountingPeriodDetails(
           startDate = LocalDate.of(2024, 1, 1),
           endDate = LocalDate.of(2024, 12, 31),
           dueDate = LocalDate.of(2025, 1, 31),
-          underEnquiry = true,
-          amend = true,
+          underEnquiry = false,
           obligations = Seq(
             Obligation(
               obligationType = ObligationType.Pillar2TaxReturn,
-              status = ObligationStatus.F,
-              submissions = Seq(
-                Submission(
-                  submissionType = SubmissionType.UKTR,
-                  receivedDate = LocalDate.of(2025, 1, 10),
-                  country = None
-                )
-              )
+              status = ObligationStatus.Fulfilled,
+              canAmend = true,
+              submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
             )
           )
         )
@@ -80,7 +74,6 @@ case class AccountingPeriodDetails(
   endDate:      LocalDate,
   dueDate:      LocalDate,
   underEnquiry: Boolean,
-  amend:        Boolean,
   obligations:  Seq[Obligation]
 )
 

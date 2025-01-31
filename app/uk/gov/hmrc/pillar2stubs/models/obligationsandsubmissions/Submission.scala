@@ -18,9 +18,9 @@ package uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions
 
 import play.api.libs.json._
 
-import java.time.LocalDate
+import java.time.ZonedDateTime
 
-case class Submission(submissionType: SubmissionType, receivedDate: LocalDate, country: Option[String])
+case class Submission(submissionType: SubmissionType, receivedDate: ZonedDateTime, country: Option[String])
 
 object Submission {
   implicit val format: OFormat[Submission] = Json.format[Submission]

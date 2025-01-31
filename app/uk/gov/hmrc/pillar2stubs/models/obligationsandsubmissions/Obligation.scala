@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions
 
 import play.api.libs.json._
 
-case class Obligation(obligationType: ObligationType, status: ObligationStatus, submissions: Seq[Submission])
+case class Obligation(obligationType: ObligationType, status: ObligationStatus, canAmend: Boolean, submissions: Seq[Submission])
 
 object Obligation {
   implicit val format: OFormat[Obligation] = Json.format[Obligation]
@@ -26,21 +26,21 @@ object Obligation {
 
 sealed trait ObligationStatus
 object ObligationStatus {
-  case object O extends ObligationStatus
-  case object F extends ObligationStatus
+  case object Open extends ObligationStatus
+  case object Fulfilled extends ObligationStatus
 
   implicit val format: Format[ObligationStatus] = new Format[ObligationStatus] {
     override def reads(json: JsValue): JsResult[ObligationStatus] =
       json.as[String] match {
-        case "O" => JsSuccess(O)
-        case "F" => JsSuccess(F)
-        case _   => JsError("Invalid obligation status")
+        case "Open"      => JsSuccess(Open)
+        case "Fulfilled" => JsSuccess(Fulfilled)
+        case _           => JsError("Invalid obligation status")
       }
 
     override def writes(ObligationStatus: ObligationStatus): JsValue =
       ObligationStatus match {
-        case O => JsString("O")
-        case F => JsString("F")
+        case Open      => JsString("O")
+        case Fulfilled => JsString("Fulfilled")
       }
   }
 }
