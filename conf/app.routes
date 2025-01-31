@@ -23,4 +23,4 @@ PUT           /RESTAdapter/PLR/UKTaxReturn                                      
 
 POST          /RESTAdapter/plr/below-threshold-notification                                uk.gov.hmrc.pillar2stubs.controllers.BTNController.submitBTN
 
-GET           /RESTAdapter/plr/obligations-and-submissions                                 uk.gov.hmrc.pillar2stubs.controllers.ObligationAndSubmissionsController.getObligations
+GET           /RESTAdapter/plr/obligations-and-submissions                                 uk.gov.hmrc.pillar2stubs.controllers.ObligationAndSubmissionsController.retrieveData(fromDate: String, toDate: String)

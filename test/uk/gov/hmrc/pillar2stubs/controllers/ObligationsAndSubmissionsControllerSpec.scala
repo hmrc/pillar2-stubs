@@ -20,14 +20,12 @@ import org.scalatest.OptionValues
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json._
-import play.api.mvc.Headers
+import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 
-import java.time.LocalDate
 import scala.util.Random
 
 class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
@@ -35,11 +33,13 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   val validHeaders: List[(String, String)] =
     (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation)).map(_ -> Random.nextString(10))
 
-  def request(implicit pillar2Id: String): FakeRequest[JsValue] =
-    FakeRequest(GET, routes.ObligationAndSubmissionsController.getObligations.url)
+  def request(implicit pillar2Id: String): FakeRequest[AnyContentAsEmpty.type] = {
+    val fromDate = "2024-01-31"
+    val toDate   = "2025-01-31"
+    FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData(fromDate, toDate).url)
       .withHeaders(Headers(validHeaders: _*))
       .withHeaders("X-Pillar2-Id" -> pillar2Id)
-      .withBody(Json.toJson(ObligationsAndSubmissionsRequest(LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1))))
+  }
 
   test("Valid ObligationsAndSubmissions submission") {
     implicit val pillar2Id: String = "XMPLR00000000012"
@@ -51,7 +51,10 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
 
   test("UnprocessableEntity - invalid date range") {
     implicit val pillar2Id: String = "XEPLR4220000000"
-    val invalidRequest = request.withBody(Json.toJson(ObligationsAndSubmissionsRequest(LocalDate.of(2026, 1, 1), LocalDate.of(2025, 1, 1))))
+    val invalidRequest =
+      FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData("2024-01-31", "2023-01-31").url)
+        .withHeaders(Headers(validHeaders: _*))
+        .withHeaders("X-Pillar2-Id" -> pillar2Id)
 
     val result = route(app, invalidRequest).value
 
@@ -121,5 +124,4 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     contentAsJson(result).validate[ObligationsAndSubmissionsSimpleErrorResponse].asEither.isRight shouldBe true
     contentAsJson(result).as[ObligationsAndSubmissionsSimpleErrorResponse].error.code shouldEqual "500"
   }
-
 }
