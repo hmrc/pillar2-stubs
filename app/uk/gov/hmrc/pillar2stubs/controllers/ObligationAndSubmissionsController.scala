@@ -45,7 +45,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
         case "XEPLR4000000000" => BadRequest(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.InvalidJsonError()))
         case "XEPLR5000000000" => InternalServerError(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.SAPError))
         case _ =>
-          if (accountingPeriods.accountingPeriodValid) Created(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
+          if (accountingPeriods.accountingPeriodValid) Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
           else UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse.invalidDateRange))
       }
     }.recover { case e: Throwable =>
