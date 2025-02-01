@@ -45,7 +45,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     implicit val pillar2Id: String = "XMPLR00000000012"
     val result = route(app, request).value
 
-    status(result) shouldEqual 201
+    status(result) shouldEqual 200
     contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
   }
 
