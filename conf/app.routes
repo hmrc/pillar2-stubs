@@ -18,10 +18,9 @@ POST          /verify/business                                                  
 
 GET           /enterprise/financial-data/:idType/:idNumber/:regimeType                     uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.retrieveFinancialData(idType: String, idNumber: String, regimeType: String, dateFrom: String, dateTo: String)
 
-GET           /get-obligation/:plrReference/:dateFrom/:dateTo                              uk.gov.hmrc.pillar2stubs.controllers.ObligationController.getObligation(plrReference: String, dateFrom: String, dateTo: String)
-
-POST          /RESTAdapter/PLR/UKTaxReturn                                                uk.gov.hmrc.pillar2stubs.controllers.UKTRSubmitController.submitUKTR
-
-PUT           /RESTAdapter/PLR/UKTaxReturn                                                uk.gov.hmrc.pillar2stubs.controllers.UKTRAmendController.amendUKTR
+POST          /RESTAdapter/PLR/UKTaxReturn                                                 uk.gov.hmrc.pillar2stubs.controllers.UKTRSubmitController.submitUKTR
+PUT           /RESTAdapter/PLR/UKTaxReturn                                                 uk.gov.hmrc.pillar2stubs.controllers.UKTRAmendController.amendUKTR
 
 POST          /RESTAdapter/plr/below-threshold-notification                                uk.gov.hmrc.pillar2stubs.controllers.BTNController.submitBTN
+
+GET           /RESTAdapter/plr/obligations-and-submissions                                 uk.gov.hmrc.pillar2stubs.controllers.ObligationAndSubmissionsController.retrieveData(fromDate: String, toDate: String)
