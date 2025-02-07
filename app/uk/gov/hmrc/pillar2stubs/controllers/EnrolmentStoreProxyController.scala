@@ -30,18 +30,13 @@ class EnrolmentStoreProxyController @Inject() (cc: ControllerComponents, authFil
   private val plrServiceEmpty = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
 
   def status(serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
-    val getGroupRefRegex = "(?<=HMRC-PILLAR2-ORG~PLRID~).*$".r
-
     serviceName match {
       case `badService` => NoContent
       case `plrServiceEmpty` =>
         val path = "/resources/groupsES1/enrolment-response-with-no-groupid.json"
         Ok(resourceAsString(path).get)
       case _ =>
-        getGroupRefRegex.findFirstIn(serviceName) match {
-          case Some(serviceName) => Ok(Json.toJson(GroupIds(principalGroupIds = Seq(serviceName), delegatedGroupIds = Seq.empty)))
-          case None              => NoContent
-        }
+        Ok(Json.toJson(GroupIds(principalGroupIds = Seq("879D6270-E9C2-4092-AC91-21C61B69D1E7"), delegatedGroupIds = Seq.empty)))
     }
   }
 
