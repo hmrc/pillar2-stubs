@@ -70,7 +70,7 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       .withHeaders("X-Pillar2-Id" -> plrId)
       .withBody(body)
 
-  val cogsworth = Clock.fixed(Instant.ofEpochMilli(1734699180110L), ZoneId.of("Z"))
+  val cogsworth: Clock = Clock.fixed(Instant.ofEpochMilli(1734699180110L), ZoneId.of("Z"))
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(

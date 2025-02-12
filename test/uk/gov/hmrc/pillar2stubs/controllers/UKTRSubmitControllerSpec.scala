@@ -42,7 +42,7 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
     case _ => None
   }
 
-  val cogsworth = Clock.fixed(Instant.ofEpochMilli(1734699180110L), ZoneId.of("Z"))
+  val cogsworth: Clock = Clock.fixed(Instant.ofEpochMilli(1734699180110L), ZoneId.of("Z"))
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(
