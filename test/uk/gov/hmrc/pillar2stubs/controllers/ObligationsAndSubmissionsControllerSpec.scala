@@ -68,7 +68,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   }
 
   test("UnprocessableEntity - missing X-Pillar2-Id") {
-    implicit val pillar2Id: String = "XEPLR4220000002"
+    implicit val pillar2Id: String = "XEPLR0200000422"
     val result = route(app, request).value
 
     status(result) shouldEqual 422
@@ -78,7 +78,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   }
 
   test("UnprocessableEntity - invalid request") {
-    implicit val pillar2Id: String = "XEPLR4220000003"
+    implicit val pillar2Id: String = "XEPLR0300000422"
     val result = route(app, request).value
 
     status(result) shouldEqual 422
@@ -88,7 +88,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   }
 
   test("UnprocessableEntity - duplicate submission") {
-    implicit val pillar2Id: String = "XEPLR4220000004"
+    implicit val pillar2Id: String = "XEPLR0400000422"
     val result = route(app, request).value
 
     status(result) shouldEqual 422
@@ -98,7 +98,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   }
 
   test("UnprocessableEntity - no data found") {
-    implicit val pillar2Id: String = "XEPLR4220000025"
+    implicit val pillar2Id: String = "XEPLR2500000422"
     val result = route(app, request).value
 
     status(result) shouldEqual 422
@@ -108,7 +108,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   }
 
   test("BadRequest ObligationsAndSubmissions submission") {
-    implicit val pillar2Id: String = "XEPLR4000000000"
+    implicit val pillar2Id: String = "XEPLR0000000400"
     val result = route(app, request).value
 
     status(result) shouldEqual 400
@@ -117,7 +117,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   }
 
   test("InternalServerError ObligationsAndSubmissions submission") {
-    implicit val pillar2Id: String = "XEPLR5000000000"
+    implicit val pillar2Id: String = "XEPLR0000000500"
     val result = route(app, request).value
 
     status(result) shouldEqual 500
