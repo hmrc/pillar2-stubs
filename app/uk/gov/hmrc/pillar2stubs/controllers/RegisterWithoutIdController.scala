@@ -37,7 +37,7 @@ class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilte
     val orgName    = register.organisation.organisationName
 
     (register.regime, orgName) match {
-      case (`regimeName`, "regNoIDTineoutIssue")      => Thread.sleep(30.seconds.toMillis)
+      case (`regimeName`, "regNoIDTimeoutIssue")      => Thread.sleep(30.seconds.toMillis)
                                                          InternalServerError("failed")
       case (`regimeName`, "regNoIDInternalError")     => InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get)
       case (`regimeName`, "regNoIDInvalidRequest")    => BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get)
