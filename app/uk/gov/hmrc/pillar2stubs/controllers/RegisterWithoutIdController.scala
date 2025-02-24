@@ -25,6 +25,7 @@ import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
+import scala.concurrent.duration.DurationInt
 import scala.util.Random
 
 class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
@@ -36,6 +37,9 @@ class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilte
     val orgName    = register.organisation.organisationName
 
     (register.regime, orgName) match {
+      case (`regimeName`, "regNoIDTimeoutIssue") =>
+        Thread.sleep(30.seconds.toMillis)
+        InternalServerError("failed")
       case (`regimeName`, "regNoIDInternalError")     => InternalServerError(resourceAsString(s"/resources/error/InternalServerError.json").get)
       case (`regimeName`, "regNoIDInvalidRequest")    => BadRequest(resourceAsString(s"/resources/error/BadRequest.json").get)
       case (`regimeName`, "regNoIDServerError")       => ServiceUnavailable(resourceAsString(s"/resources/error/ServiceUnavailable.json").get)
