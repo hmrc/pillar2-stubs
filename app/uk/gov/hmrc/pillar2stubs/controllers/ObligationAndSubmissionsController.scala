@@ -37,16 +37,25 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
     Try {
       val accountingPeriods = ObligationsAndSubmissionsRequest(fromDate = LocalDate.parse(fromDate), toDate = LocalDate.parse(toDate))
 
-      request.headers.get("X-Pillar2-Id").get match {
-        case "XEPLR0200000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(PILLAR_2_ID_MISSING_OR_INVALID_002)))
-        case "XEPLR0300000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(REQUEST_COULD_NOT_BE_PROCESSED_003)))
-        case "XEPLR0400000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(DUPLICATE_SUBMISSION_004)))
-        case "XEPLR2500000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(NO_DATA_FOUND_025)))
-        case "XEPLR0000000400" => BadRequest(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.InvalidJsonError()))
-        case "XEPLR0000000500" => InternalServerError(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.SAPError))
-        case _ =>
-          if (accountingPeriods.accountingPeriodValid) Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
-          else UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse.invalidDateRange))
+      // First check if accounting period is valid, return error if not valid
+      if (!accountingPeriods.accountingPeriodValid) {
+        UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse.invalidDateRange))
+      } else {
+        // Continue with other validations and responses only if accounting period is valid
+        request.headers.get("X-Pillar2-Id").get match {
+          case "XEPLR0200000422" =>
+            UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(PILLAR_2_ID_MISSING_OR_INVALID_002)))
+          case "XEPLR0300000422" =>
+            UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(REQUEST_COULD_NOT_BE_PROCESSED_003)))
+          case "XEPLR0400000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(DUPLICATE_SUBMISSION_004)))
+          case "XEPLR2500000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(NO_DATA_FOUND_025)))
+          case "XEPLR0000000400" => BadRequest(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.InvalidJsonError()))
+          case "XEPLR0000000500" => InternalServerError(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.SAPError))
+          case "XEPLR0111111111" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withMultipleAccountingPeriods()))
+          case "XEPLR2222222222" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
+          case "XEPLR3333333333" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
+          case _                 => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
+        }
       }
     }.recover { case e: Throwable =>
       BadRequest(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.InvalidJsonError(s"Errors parsing date: ${e.getMessage}")))

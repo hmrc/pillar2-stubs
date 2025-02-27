@@ -637,6 +637,162 @@ For now this API has not been developed by ETMP therefore we are making assumpti
 | XEPLR4040000000                                                          | NOT_FOUND Error Response                |
 | Any valid ID                                                             | Will return a response with Open status |
 
+## Obligations and Submissions API
+
+GET /RESTAdapter/plr/obligations-and-submissions?fromDate={fromDate}&toDate={toDate}
+
+This API retrieves obligations and submissions for a given period based on the Pillar2 ID. The fromDate and toDate parameters are required and must be valid date strings in the format YYYY-MM-DD. The toDate must be after the fromDate, or the API will return an error.
+
+### Test Data for Different Responses
+
+The API returns different responses based on the Pillar2 ID provided in the X-Pillar2-Id header:
+
+| Pillar2 ID       | Response Type                         | Description                                                                      |
+|------------------|--------------------------------------|----------------------------------------------------------------------------------|
+| XEPLR1111111111  | Multiple Accounting Periods          | Returns 4 accounting periods with different dates, obligation types, and statuses |
+| XEPLR2222222222  | No Accounting Periods                | Returns a success response with no accounting periods                            |
+| XEPLR3333333333  | Single Accounting Period             | Returns a single accounting period (same as default)                             |
+| XEPLR0200000422  | Error - Missing/Invalid Pillar2 ID   | Returns a 422 error with code 002                                               |
+| XEPLR0300000422  | Error - Request Processing Failure   | Returns a 422 error with code 003                                               |
+| XEPLR0400000422  | Error - Duplicate Submission         | Returns a 422 error with code 004                                               |
+| XEPLR2500000422  | Error - No Data Found                | Returns a 422 error with code 025                                               |
+| XEPLR0000000400  | Error - Invalid JSON                 | Returns a 400 error                                                             |
+| XEPLR0000000500  | Error - Internal Server Error        | Returns a 500 error                                                             |
+| Any other valid ID | Single Accounting Period (Default)  | Returns a single accounting period for the current tax year                     |
+
+**Note:** All successful responses require valid date parameters. If the toDate is not after the fromDate, a 422 error with code 001 will be returned regardless of which Pillar2 ID is used.
+
+### Sample Response (Multiple Accounting Periods)
+
+```json
+{
+  "success": {
+    "processingDate": "2024-07-03T12:34:56Z",
+    "accountingPeriodDetails": [
+      {
+        "startDate": "2024-01-01",
+        "endDate": "2024-12-31",
+        "dueDate": "2025-01-31",
+        "underEnquiry": false,
+        "obligations": [
+          {
+            "obligationType": "Pillar2TaxReturn",
+            "status": "Open",
+            "canAmend": true,
+            "submissions": [
+              {
+                "submissionType": "UKTR",
+                "receivedDate": "2024-07-03T12:34:56Z",
+                "country": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startDate": "2023-01-01",
+        "endDate": "2023-12-31",
+        "dueDate": "2024-01-31",
+        "underEnquiry": true,
+        "obligations": [
+          {
+            "obligationType": "Pillar2TaxReturn",
+            "status": "Fulfilled",
+            "canAmend": false,
+            "submissions": [
+              {
+                "submissionType": "UKTR",
+                "receivedDate": "2024-07-03T12:34:56Z",
+                "country": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startDate": "2022-01-01",
+        "endDate": "2022-12-31",
+        "dueDate": "2023-01-31",
+        "underEnquiry": false,
+        "obligations": [
+          {
+            "obligationType": "GlobeInformationReturn",
+            "status": "Fulfilled",
+            "canAmend": false,
+            "submissions": [
+              {
+                "submissionType": "GIR",
+                "receivedDate": "2024-07-03T12:34:56Z",
+                "country": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "startDate": "2021-01-01",
+        "endDate": "2021-12-31",
+        "dueDate": "2022-01-31",
+        "underEnquiry": false,
+        "obligations": [
+          {
+            "obligationType": "Pillar2TaxReturn",
+            "status": "Fulfilled",
+            "canAmend": true,
+            "submissions": [
+              {
+                "submissionType": "UKTR",
+                "receivedDate": "2024-07-03T12:34:56Z",
+                "country": null
+              },
+              {
+                "submissionType": "BTN",
+                "receivedDate": "2024-07-03T12:34:56Z",
+                "country": "FR"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### Sample Response (No Accounting Periods)
+
+```json
+{
+  "success": {
+    "processingDate": "2024-07-03T12:34:56Z",
+    "accountingPeriodDetails": []
+  }
+}
+```
+
+### Sample Error Response (Invalid Date Range)
+
+```json
+{
+  "errors": {
+    "processingDate": "2024-07-03T12:34:56Z",
+    "code": "001",
+    "text": "Invalid date range: toDate must be after fromDate"
+  }
+}
+```
+
+### Sample Error Response (Invalid Pillar2 ID)
+
+```json
+{
+  "errors": {
+    "processingDate": "2024-07-03T12:34:56Z",
+    "code": "002",
+    "text": "Pillar2 ID is missing or invalid"
+  }
+}
+```
 
 ## Submit UKTR
 
@@ -652,7 +808,7 @@ Request Types and Expected Payloads
 
 Liability Submission
 
-A valid liability submission includes details about the total liabilities and entities liable for the tax period. Here’s the expected structure for a successful liability submission:
+A valid liability submission includes details about the total liabilities and entities liable for the tax period. Here's the expected structure for a successful liability submission:
 ```
 {
   "accountingPeriodFrom": "2024-08-14",
@@ -730,7 +886,7 @@ If a non-JSON body is submitted, a 400 BAD_REQUEST response will be returned:
             ```
 Details of Expected Fields
 
-	•	idNumber (PLR Reference Number): Only the idNumber “XTC01234123412” will result in a successful 201 CREATED response.
+	•	idNumber (PLR Reference Number): Only the idNumber "XTC01234123412" will result in a successful 201 CREATED response.
 	•	Valid idNumber: Returns 201 CREATED with the liability success details for valid liability submissions.
 	•	Invalid idNumber: Returns 404 NOT_FOUND, indicating no matching liability data for other idNumbers.
 	•	Liability Fields: In a liability submission, totalLiability, totalLiabilityDTT, totalLiabilityIIR, and totalLiabilityUTPR are expected fields. Additionally, liableEntities should be a non-empty array.
