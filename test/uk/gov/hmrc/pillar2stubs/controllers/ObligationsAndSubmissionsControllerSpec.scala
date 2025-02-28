@@ -49,6 +49,80 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
   }
 
+  test("Date validation is performed before Pillar2 ID checking") {
+    implicit val pillar2Id: String = "XEPLR0111111111" // Special ID for multiple accounting periods
+
+    val invalidRequest =
+      FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData("2024-01-31", "2023-01-31").url)
+        .withHeaders(Headers(validHeaders: _*))
+        .withHeaders("X-Pillar2-Id" -> pillar2Id)
+
+    val result = route(app, invalidRequest).value
+
+    // Should return 422 for invalid date range, not 200 with multiple accounting periods
+    status(result) shouldEqual 422
+    contentAsJson(result).validate[ObligationsAndSubmissionsDetailedErrorResponse].asEither.isRight shouldBe true
+    contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.code shouldEqual "001"
+  }
+
+  test("Returns multiple accounting periods when Pillar2-Id is XEPLR0111111111") {
+    implicit val pillar2Id: String = "XEPLR0111111111"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 4
+
+    // Check first period (most recent)
+    response.success.accountingPeriodDetails.head.startDate.getYear shouldEqual 2024
+    response.success.accountingPeriodDetails.head.obligations.head.status shouldEqual ObligationStatus.Open
+
+    // Check second period
+    response.success.accountingPeriodDetails(1).startDate.getYear shouldEqual 2023
+    response.success.accountingPeriodDetails(1).underEnquiry shouldEqual true
+
+    // Check third period
+    response.success.accountingPeriodDetails(2).startDate.getYear shouldEqual 2022
+    response.success.accountingPeriodDetails(2).obligations.head.obligationType shouldEqual ObligationType.GlobeInformationReturn
+
+    // Check fourth period (earliest)
+    response.success.accountingPeriodDetails(3).startDate.getYear shouldEqual 2021
+    val submissions = response.success.accountingPeriodDetails(3).obligations.head.submissions
+    submissions.size shouldEqual 2
+    submissions(1).submissionType shouldEqual SubmissionType.BTN
+    submissions(1).country.value shouldEqual "FR"
+  }
+
+  test("Returns no accounting periods when Pillar2-Id is XEPLR2222222222") {
+    implicit val pillar2Id: String = "XEPLR2222222222"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails shouldBe empty
+  }
+
+  test("Returns single accounting period when Pillar2-Id is XEPLR3333333333") {
+    implicit val pillar2Id: String = "XEPLR3333333333"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 1
+
+    val period = response.success.accountingPeriodDetails.head
+    period.startDate.getYear shouldEqual 2024
+    period.endDate.getYear shouldEqual 2024
+    period.obligations.head.obligationType shouldEqual ObligationType.Pillar2TaxReturn
+    period.obligations.head.status shouldEqual ObligationStatus.Open
+  }
+
   test("UnprocessableEntity - invalid date range") {
     implicit val pillar2Id: String = "XEPLR4220000000"
     val invalidRequest =
