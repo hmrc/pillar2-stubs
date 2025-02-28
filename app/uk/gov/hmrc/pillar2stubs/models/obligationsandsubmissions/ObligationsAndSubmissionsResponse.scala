@@ -81,7 +81,19 @@ object ObligationsAndSubmissionsSuccessResponse {
                 obligationType = ObligationType.Pillar2TaxReturn,
                 status = ObligationStatus.Open,
                 canAmend = true,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+                submissions = Seq(
+                  Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None),
+                  Submission(submissionType = SubmissionType.ORN, receivedDate = now, country = None)
+                )
+              ),
+              Obligation(
+                obligationType = ObligationType.GlobeInformationReturn,
+                status = ObligationStatus.Open,
+                canAmend = true,
+                submissions = Seq(
+                  Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None),
+                  Submission(submissionType = SubmissionType.ORN, receivedDate = now, country = None)
+                )
               )
             )
           ),
@@ -181,6 +193,129 @@ object ObligationsAndSubmissionsSuccessResponse {
         )
       )
     )
+
+  //submission history containing multiple submission periods
+  def submissionHistoryMultiplePeriods(): ObligationsAndSubmissionsSuccessResponse =
+    ObligationsAndSubmissionsSuccessResponse(
+      ObligationsAndSubmissionsSuccess(
+        processingDate = ObligationsAndSubmissionsResponse.now,
+        accountingPeriodDetails = Seq(
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(2023, 2, 15),
+            endDate = LocalDate.of(2024, 2, 16),
+            dueDate = LocalDate.of(2025, 2, 16),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.Pillar2TaxReturn,
+                status = ObligationStatus.Fulfilled,
+                canAmend = false,
+                submissions = Seq(
+                  Submission(submissionType = SubmissionType.GIR, receivedDate = now.withYear(2024).withMonth(11).withDayOfMonth(21), country = None),
+                  Submission(
+                    submissionType = SubmissionType.UKTR,
+                    receivedDate = now.withYear(2024).withMonth(11).withDayOfMonth(21),
+                    country = None
+                  ),
+                  Submission(submissionType = SubmissionType.BTN, receivedDate = now.withYear(2025).withMonth(1).withDayOfMonth(10), country = None)
+                )
+              )
+            )
+          ),
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(2022, 2, 15),
+            endDate = LocalDate.of(2023, 2, 16),
+            dueDate = LocalDate.of(2024, 2, 16),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.Pillar2TaxReturn,
+                status = ObligationStatus.Fulfilled,
+                canAmend = false,
+                submissions = Seq(
+                  Submission(
+                    submissionType = SubmissionType.UKTR,
+                    receivedDate = now.withYear(2023).withMonth(11).withDayOfMonth(21),
+                    country = None
+                  ),
+                  Submission(submissionType = SubmissionType.ORN, receivedDate = now.withYear(2023).withMonth(11).withDayOfMonth(19), country = None)
+                )
+              )
+            )
+          ),
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(2021, 2, 15),
+            endDate = LocalDate.of(2022, 2, 16),
+            dueDate = LocalDate.of(2023, 2, 16),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.Pillar2TaxReturn,
+                status = ObligationStatus.Fulfilled,
+                canAmend = false,
+                submissions = Seq(
+                  Submission(
+                    submissionType = SubmissionType.UKTR,
+                    receivedDate = now.withYear(2022).withMonth(11).withDayOfMonth(21),
+                    country = None
+                  ),
+                  Submission(submissionType = SubmissionType.GIR, receivedDate = now.withYear(2022).withMonth(11).withDayOfMonth(21), country = None)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+
+  //submission history containing one submission period
+  def submissionHistorySingularPeriod(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(2023, 9, 28),
+          endDate = LocalDate.of(2024, 9, 27),
+          dueDate = LocalDate.of(2025, 9, 27),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.Pillar2TaxReturn,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq(
+                Submission(submissionType = SubmissionType.GIR, receivedDate = now.withYear(2025).withMonth(5).withDayOfMonth(10), country = None),
+                Submission(submissionType = SubmissionType.UKTR, receivedDate = now.withYear(2025).withMonth(5).withDayOfMonth(10), country = None)
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+
+  //Success response with no submissions
+  def noSubmissionHistory(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(2025, 1, 1),
+          endDate = LocalDate.of(2025, 12, 31),
+          dueDate = LocalDate.of(2026, 1, 31),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.Pillar2TaxReturn,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
 }
 
 case class ObligationsAndSubmissionsSuccess(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])

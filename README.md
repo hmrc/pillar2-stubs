@@ -647,19 +647,22 @@ This API retrieves obligations and submissions for a given period based on the P
 
 The API returns different responses based on the Pillar2 ID provided in the X-Pillar2-Id header:
 
-| Pillar2 ID       | Response Type                         | Description                                                                      |
-|------------------|--------------------------------------|----------------------------------------------------------------------------------|
-| XEPLR1111111111  | Multiple Accounting Periods          | Returns 4 accounting periods with different dates, obligation types, and statuses |
-| XEPLR2222222222  | No Accounting Periods                | Returns a success response with no accounting periods                            |
-| XEPLR3333333333  | Single Accounting Period             | Returns a single accounting period (same as default)                             |
-| XEPLR4444444444  | All Fuffilled                        | Returns Multiple accounting periods with all obligations fuffilled              |
-| XEPLR0200000422  | Error - Missing/Invalid Pillar2 ID   | Returns a 422 error with code 002                                               |
-| XEPLR0300000422  | Error - Request Processing Failure   | Returns a 422 error with code 003                                               |
-| XEPLR0400000422  | Error - Duplicate Submission         | Returns a 422 error with code 004                                               |
-| XEPLR2500000422  | Error - No Data Found                | Returns a 422 error with code 025                                               |
-| XEPLR0000000400  | Error - Invalid JSON                 | Returns a 400 error                                                             |
-| XEPLR0000000500  | Error - Internal Server Error        | Returns a 500 error                                                             |
-| Any other valid ID | Single Accounting Period (Default)  | Returns a single accounting period for the current tax year                     |
+| Pillar2 ID         | Response Type                      | Description                                                                       |
+|--------------------|------------------------------------|-----------------------------------------------------------------------------------|
+| XEPLR1111111111    | Multiple Accounting Periods        | Returns 4 accounting periods with different dates, obligation types, and statuses |
+| XEPLR2222222222    | No Accounting Periods              | Returns a success response with no accounting periods                             |
+| XEPLR3333333333    | Single Accounting Period           | Returns a single accounting period (same as default)                              |
+| XEPLR4444444444    | All Fuffilled                      | Returns Multiple accounting periods with all obligations fuffilled                |
+| XEPLR5555555555    | Multiple Submission History        | Returns Submission History with multiple submission periods                       |
+| XEPLR6666666666    | Singular Submission History        | Returns Submission History with a singular submission period                      |
+| XEPLR7777777777    | No Submission History              | Returns a success response without any submissions                                |
+| XEPLR0200000422    | Error - Missing/Invalid Pillar2 ID | Returns a 422 error with code 002                                                 |
+| XEPLR0300000422    | Error - Request Processing Failure | Returns a 422 error with code 003                                                 |
+| XEPLR0400000422    | Error - Duplicate Submission       | Returns a 422 error with code 004                                                 |
+| XEPLR2500000422    | Error - No Data Found              | Returns a 422 error with code 025                                                 |
+| XEPLR0000000400    | Error - Invalid JSON               | Returns a 400 error                                                               |
+| XEPLR0000000500    | Error - Internal Server Error      | Returns a 500 error                                                               |
+| Any other valid ID | Single Accounting Period (Default) | Returns a single accounting period for the current tax year                       |
 
 **Note:** All successful responses require valid date parameters. If the toDate is not after the fromDate, a 422 error with code 001 will be returned regardless of which Pillar2 ID is used.
 

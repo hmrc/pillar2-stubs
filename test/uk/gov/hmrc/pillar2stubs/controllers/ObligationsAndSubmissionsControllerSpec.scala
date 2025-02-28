@@ -24,6 +24,7 @@ import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.SubmissionType.{BTN, GIR, ORN, UKTR}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 
 import scala.util.Random
@@ -121,6 +122,77 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     period.endDate.getYear shouldEqual 2024
     period.obligations.head.obligationType shouldEqual ObligationType.Pillar2TaxReturn
     period.obligations.head.status shouldEqual ObligationStatus.Open
+  }
+
+  test("Returns submission history for a single account period when Pillar2-Id is XEPLR5555555555") {
+    implicit val pillar2Id: String = "XEPLR5555555555"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 3
+    response.success.accountingPeriodDetails.head.obligations.head.submissions.size shouldEqual 3
+    response.success.accountingPeriodDetails(1).obligations.head.submissions.size shouldEqual 2
+    response.success.accountingPeriodDetails(2).obligations.head.submissions.size shouldEqual 2
+
+    val period1 = response.success.accountingPeriodDetails.head
+    period1.startDate.getYear shouldEqual 2023
+    period1.endDate.getYear shouldEqual 2024
+    period1.obligations.head.submissions.head.submissionType shouldEqual GIR
+    period1.obligations.head.submissions.head.receivedDate.getYear shouldEqual 2024
+    period1.obligations.head.submissions(1).submissionType shouldEqual UKTR
+    period1.obligations.head.submissions(1).receivedDate.getYear shouldEqual 2024
+    period1.obligations.head.submissions(2).submissionType shouldEqual BTN
+    period1.obligations.head.submissions(2).receivedDate.getYear shouldEqual 2025
+
+    val period2 = response.success.accountingPeriodDetails(1)
+    period2.startDate.getYear shouldEqual 2022
+    period2.endDate.getYear shouldEqual 2023
+    period2.obligations.head.submissions.head.submissionType shouldEqual UKTR
+    period2.obligations.head.submissions.head.receivedDate.getYear shouldEqual 2023
+    period2.obligations.head.submissions(1).submissionType shouldEqual ORN
+    period2.obligations.head.submissions(1).receivedDate.getYear shouldEqual 2023
+
+    val period3 = response.success.accountingPeriodDetails(2)
+    period3.startDate.getYear shouldEqual 2021
+    period3.endDate.getYear shouldEqual 2022
+    period3.obligations.head.submissions.head.submissionType shouldEqual UKTR
+    period3.obligations.head.submissions.head.receivedDate.getYear shouldEqual 2022
+    period3.obligations.head.submissions(1).submissionType shouldEqual GIR
+    period3.obligations.head.submissions(1).receivedDate.getYear shouldEqual 2022
+  }
+
+  test("Returns submission history for a single account period when Pillar2-Id is XEPLR6666666666") {
+    implicit val pillar2Id: String = "XEPLR6666666666"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 1
+    response.success.accountingPeriodDetails.flatMap(_.obligations.flatMap(_.submissions)).size shouldEqual 2
+
+    val period = response.success.accountingPeriodDetails.head
+    period.startDate.getYear shouldEqual 2023
+    period.endDate.getYear shouldEqual 2024
+    period.obligations.head.submissions.head.submissionType shouldEqual GIR
+    period.obligations.head.submissions.head.receivedDate.getYear shouldEqual 2025
+    period.obligations.head.submissions(1).submissionType shouldEqual UKTR
+    period.obligations.head.submissions(1).receivedDate.getYear shouldEqual 2025
+  }
+
+  test("Returns no submission history when Pillar2-Id is XEPLR7777777777") {
+    implicit val pillar2Id: String = "XEPLR7777777777"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.forall(_.obligations.forall(_.submissions.isEmpty)) shouldBe true
   }
 
   test("UnprocessableEntity - invalid date range") {
