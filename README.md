@@ -652,6 +652,7 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 | XEPLR1111111111  | Multiple Accounting Periods          | Returns 4 accounting periods with different dates, obligation types, and statuses |
 | XEPLR2222222222  | No Accounting Periods                | Returns a success response with no accounting periods                            |
 | XEPLR3333333333  | Single Accounting Period             | Returns a single accounting period (same as default)                             |
+| XEPLR4444444444  | All Fuffilled                        | Returns Multiple accounting periods with all obligations fuffilled              |
 | XEPLR0200000422  | Error - Missing/Invalid Pillar2 ID   | Returns a 422 error with code 002                                               |
 | XEPLR0300000422  | Error - Request Processing Failure   | Returns a 422 error with code 003                                               |
 | XEPLR0400000422  | Error - Duplicate Submission         | Returns a 422 error with code 004                                               |

@@ -143,6 +143,44 @@ object ObligationsAndSubmissionsSuccessResponse {
         accountingPeriodDetails = Seq.empty
       )
     )
+
+  // All obligations fulfilled
+  def withAllFuffilled(): ObligationsAndSubmissionsSuccessResponse =
+    ObligationsAndSubmissionsSuccessResponse(
+      ObligationsAndSubmissionsSuccess(
+        processingDate = ObligationsAndSubmissionsResponse.now,
+        accountingPeriodDetails = Seq(
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(2024, 1, 1),
+            endDate = LocalDate.of(2024, 12, 31),
+            dueDate = LocalDate.of(2025, 1, 31),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.Pillar2TaxReturn,
+                status = ObligationStatus.Fulfilled,
+                canAmend = false,
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+              )
+            )
+          ),
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(2023, 1, 1),
+            endDate = LocalDate.of(2023, 12, 31),
+            dueDate = LocalDate.of(2024, 1, 31),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.Pillar2TaxReturn,
+                status = ObligationStatus.Fulfilled,
+                canAmend = false,
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+              )
+            )
+          )
+        )
+      )
+    )
 }
 
 case class ObligationsAndSubmissionsSuccess(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])
