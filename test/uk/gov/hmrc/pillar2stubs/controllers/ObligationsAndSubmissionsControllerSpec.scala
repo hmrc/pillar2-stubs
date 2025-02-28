@@ -50,7 +50,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   }
 
   test("Date validation is performed before Pillar2 ID checking") {
-    implicit val pillar2Id: String = "XEPLR0111111111" // Special ID for multiple accounting periods
+    implicit val pillar2Id: String = "XEPLR1111111111" // Special ID for multiple accounting periods
 
     val invalidRequest =
       FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData("2024-01-31", "2023-01-31").url)
@@ -65,8 +65,8 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.code shouldEqual "001"
   }
 
-  test("Returns multiple accounting periods when Pillar2-Id is XEPLR0111111111") {
-    implicit val pillar2Id: String = "XEPLR0111111111"
+  test("Returns multiple accounting periods when Pillar2-Id is XEPLR1111111111") {
+    implicit val pillar2Id: String = "XEPLR1111111111"
     val result = route(app, request).value
 
     status(result) shouldEqual 200
