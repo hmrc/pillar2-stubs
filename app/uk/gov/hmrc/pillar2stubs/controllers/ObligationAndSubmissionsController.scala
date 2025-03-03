@@ -42,11 +42,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
         UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse.invalidDateRange))
       } else {
         // Continue with other validations and responses only if accounting period is valid
-        val pillar2Id = request.headers.get("X-Pillar2-Id").getOrElse("")
-
-        pillar2Id match {
-          case "" =>
-            BadRequest(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.InvalidJsonError("Missing X-Pillar2-Id header")))
+        request.headers.get("X-Pillar2-Id").get match {
           case "XEPLR0200000422" =>
             UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(PILLAR_2_ID_MISSING_OR_INVALID_002)))
           case "XEPLR0300000422" =>
