@@ -109,7 +109,6 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
       status(result) mustBe CREATED
       val jsonResult = contentAsJson(result)
       (jsonResult \ "success" \ "formBundleNumber").as[String] mustEqual "119000004320"
-      (jsonResult \ "success" \ "chargeReference").as[String] mustEqual "XTC01234123412"
       (jsonResult \ "success" \ "processingDate").as[ZonedDateTime] mustEqual ZonedDateTime.now(cogsworth)
     }
 

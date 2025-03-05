@@ -16,23 +16,25 @@
 
 package uk.gov.hmrc.pillar2stubs.models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{JsObject, Json, OFormat}
 
-import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.{Clock, LocalDateTime, ZonedDateTime}
 
-case class UKTRSubmissionResponse(
-  success: UKTRSubmissionSuccess
-)
+case class UKTRSubmissionResponse(success: UKTRSubmissionSuccess)
 
 object UKTRSubmissionResponse {
   implicit val format: OFormat[UKTRSubmissionResponse] = Json.format[UKTRSubmissionResponse]
+
+  def successfulLiabilityResponse(implicit clock: Clock): JsObject =
+    successfulNilResponse.deepMerge(Json.obj("success" -> Json.obj("chargeReference" -> "XTC01234123412")))
+
+  def successfulNilResponse(implicit clock: Clock): JsObject = Json.obj(
+    "success" -> Json.obj("processingDate" -> ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_INSTANT), "formBundleNumber" -> "119000004320")
+  )
 }
 
-case class UKTRSubmissionSuccess(
-  processingDate:   LocalDateTime,
-  formBundleNumber: String,
-  chargeReference:  Option[String]
-)
+case class UKTRSubmissionSuccess(processingDate: LocalDateTime, formBundleNumber: String, chargeReference: Option[String])
 
 object UKTRSubmissionSuccess {
   implicit val format: OFormat[UKTRSubmissionSuccess] = Json.format[UKTRSubmissionSuccess]
