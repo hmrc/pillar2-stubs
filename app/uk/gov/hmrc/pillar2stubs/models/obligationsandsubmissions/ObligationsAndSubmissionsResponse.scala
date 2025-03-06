@@ -132,6 +132,74 @@ object ObligationsAndSubmissionsSuccessResponse {
     )
   }
 
+  def withMultipleAccountingPeriodsWithSubmissions(): ObligationsAndSubmissionsSuccessResponse = {
+    val now = ObligationsAndSubmissionsResponse.now
+
+    ObligationsAndSubmissionsSuccessResponse(
+      ObligationsAndSubmissionsSuccess(
+        processingDate = now,
+        accountingPeriodDetails = Seq(
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(2025, 1, 1),
+            endDate = LocalDate.of(2025, 12, 31),
+            dueDate = LocalDate.of(2026, 1, 31),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.Pillar2TaxReturn,
+                status = ObligationStatus.Fulfilled,
+                canAmend = true,
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+              )
+            )
+          ),
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(2024, 1, 1),
+            endDate = LocalDate.of(2024, 12, 31),
+            dueDate = LocalDate.of(2025, 1, 31),
+            underEnquiry = true,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.Pillar2TaxReturn,
+                status = ObligationStatus.Fulfilled,
+                canAmend = false,
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+              )
+            )
+          ),
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(2022, 1, 1),
+            endDate = LocalDate.of(2022, 12, 31),
+            dueDate = LocalDate.of(2023, 1, 31),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.GlobeInformationReturn,
+                status = ObligationStatus.Open,
+                canAmend = false,
+                submissions = Seq.empty
+              )
+            )
+          ),
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(2021, 1, 1),
+            endDate = LocalDate.of(2021, 12, 31),
+            dueDate = LocalDate.of(2022, 1, 31),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.Pillar2TaxReturn,
+                status = ObligationStatus.Open,
+                canAmend = true,
+                submissions = Seq.empty
+              )
+            )
+          )
+        )
+      )
+    )
+  }
+
   // No accounting periods
   def withNoAccountingPeriods(): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
