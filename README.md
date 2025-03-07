@@ -640,7 +640,7 @@ For now this API has not been developed by ETMP therefore we are making assumpti
 
 ## Submit UKTR
 
-POST           /RESTAdapter/PLR/UKTaxReturn
+POST           /RESTAdapter/plr/uk-tax-return
 
 Liability Detail Submission
 
@@ -765,7 +765,7 @@ If the idNumber is valid and the payload indicates a Nil Return, a 201 CREATED r
 
 ## Amend UKTR
 
-PUT           /RESTAdapter/PLR/UKTaxReturn
+PUT           /RESTAdapter/plr/uk-tax-return
 
 The request format is the same as the UKTaxReturn POST request, but it uses a PUT method instead. In the real world this would be used to amend a UKTR that has already been submitted but we are not implementing this functionality in the stubs.
 
