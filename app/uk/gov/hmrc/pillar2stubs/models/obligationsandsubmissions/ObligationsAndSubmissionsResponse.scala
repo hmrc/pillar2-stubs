@@ -101,7 +101,7 @@ object ObligationsAndSubmissionsSuccessResponse {
           AccountingPeriodDetails(
             startDate = LocalDate.of(currentYear - 2, 1, 1),
             endDate = LocalDate.of(currentYear - 2, 12, 31),
-            dueDate = LocalDate.of(currentYear - 1, 1, 31),
+            dueDate = LocalDate.now().minusDays(1),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -115,7 +115,7 @@ object ObligationsAndSubmissionsSuccessResponse {
           AccountingPeriodDetails(
             startDate = LocalDate.of(currentYear - 3, 1, 1),
             endDate = LocalDate.of(currentYear - 3, 12, 31),
-            dueDate = LocalDate.of(currentYear - 2, 1, 31),
+            dueDate = LocalDate.now().minusDays(1),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -166,7 +166,7 @@ object ObligationsAndSubmissionsSuccessResponse {
           AccountingPeriodDetails(
             startDate = LocalDate.of(currentYear - 2, 1, 1),
             endDate = LocalDate.of(currentYear - 2, 12, 31),
-            dueDate = LocalDate.of(currentYear - 1, 1, 31),
+            dueDate = LocalDate.now().minusDays(1),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -180,7 +180,7 @@ object ObligationsAndSubmissionsSuccessResponse {
           AccountingPeriodDetails(
             startDate = LocalDate.of(currentYear - 3, 1, 1),
             endDate = LocalDate.of(currentYear - 3, 12, 31),
-            dueDate = LocalDate.of(currentYear - 2, 1, 31),
+            dueDate = LocalDate.now().minusDays(1),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
