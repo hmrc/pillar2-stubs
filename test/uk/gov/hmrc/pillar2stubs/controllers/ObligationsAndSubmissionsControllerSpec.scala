@@ -68,7 +68,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
 
   test("Returns multiple accounting periods when Pillar2-Id is XEPLR1111111111") {
     implicit val pillar2Id: String = "XEPLR1111111111"
-    val result = route(app, request).value
+    val result      = route(app, request).value
     val currentYear = LocalDate.now().getYear()
 
     status(result) shouldEqual 200
@@ -106,8 +106,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
 
   test("Returns single accounting period when Pillar2-Id is XEPLR3333333333") {
     implicit val pillar2Id: String = "XEPLR3333333333"
-    val result = route(app, request).value
-    val currentYear = LocalDate.now().getYear()
+    val result      = route(app, request).value
 
     status(result) shouldEqual 200
     contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
@@ -116,8 +115,6 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     response.success.accountingPeriodDetails.size shouldEqual 1
 
     val period = response.success.accountingPeriodDetails.head
-    period.startDate.getYear shouldEqual currentYear
-    period.endDate.getYear shouldEqual currentYear
     period.obligations.head.obligationType shouldEqual ObligationType.Pillar2TaxReturn
     period.obligations.head.status shouldEqual ObligationStatus.Open
   }

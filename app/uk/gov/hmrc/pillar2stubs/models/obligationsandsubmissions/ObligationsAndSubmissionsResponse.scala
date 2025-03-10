@@ -47,9 +47,9 @@ object ObligationsAndSubmissionsSuccessResponse {
       processingDate = now,
       accountingPeriodDetails = Seq(
         AccountingPeriodDetails(
-          startDate = LocalDate.of(currentYear, 1, 1),
+          startDate = LocalDate.of(currentYear - 1, 1, 1),
           endDate = LocalDate.of(currentYear, 12, 31),
-          dueDate = LocalDate.of(currentYear + 1, 1, 31),
+          dueDate = LocalDate.now().minusDays(1),
           underEnquiry = false,
           obligations = Seq(
             Obligation(
@@ -87,7 +87,7 @@ object ObligationsAndSubmissionsSuccessResponse {
           AccountingPeriodDetails(
             startDate = LocalDate.of(currentYear - 1, 1, 1),
             endDate = LocalDate.of(currentYear - 1, 12, 31),
-            dueDate = LocalDate.of(currentYear, 1, 31),
+            dueDate = LocalDate.now().minusDays(1),
             underEnquiry = true,
             obligations = Seq(
               Obligation(
@@ -152,14 +152,14 @@ object ObligationsAndSubmissionsSuccessResponse {
           AccountingPeriodDetails(
             startDate = LocalDate.of(currentYear - 1, 1, 1),
             endDate = LocalDate.of(currentYear - 1, 12, 31),
-            dueDate = LocalDate.of(currentYear, 1, 31),
+            dueDate = LocalDate.now().minusDays(1),
             underEnquiry = true,
             obligations = Seq(
               Obligation(
                 obligationType = ObligationType.Pillar2TaxReturn,
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now.minusYears(1), country = None))
               )
             )
           ),
@@ -227,7 +227,7 @@ object ObligationsAndSubmissionsSuccessResponse {
           AccountingPeriodDetails(
             startDate = LocalDate.of(currentYear - 1, 1, 1),
             endDate = LocalDate.of(currentYear - 1, 12, 31),
-            dueDate = LocalDate.of(currentYear, 1, 31),
+            dueDate = LocalDate.now().minusDays(1),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
