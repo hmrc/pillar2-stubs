@@ -649,7 +649,7 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 
 | Pillar2 ID       | Response Type                         | Description                                                                      |
 |------------------|--------------------------------------|----------------------------------------------------------------------------------|
-| XEPLR1111111111  | Multiple Accounting Periods all open          | Returns 4 accounting periods with different dates, obligation types, and statuses |
+| XEPLR1111111111  | Multiple Accounting Periods all open | Returns 4 accounting periods with different dates, obligation types, and statuses |
 | XEPLR2222222222  | No Accounting Periods                | Returns a success response with no accounting periods                            |
 | XEPLR3333333333  | Single Accounting Period             | Returns a single accounting period (same as default)                             |
 | XEPLR4444444444  | All Fuffilled                        | Returns Multiple accounting periods with all obligations fuffilled              |

@@ -48,7 +48,7 @@ object ObligationsAndSubmissionsSuccessResponse {
       accountingPeriodDetails = Seq(
         AccountingPeriodDetails(
           startDate = LocalDate.of(currentYear - 1, 1, 1),
-          endDate = LocalDate.of(currentYear, 12, 31),
+          endDate = LocalDate.of(currentYear - 1, 12, 31),
           dueDate = LocalDate.now().minusDays(1),
           underEnquiry = false,
           obligations = Seq(
@@ -56,7 +56,7 @@ object ObligationsAndSubmissionsSuccessResponse {
               obligationType = ObligationType.Pillar2TaxReturn,
               status = ObligationStatus.Open,
               canAmend = true,
-              submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+              submissions = Seq.empty
             )
           )
         )
@@ -145,7 +145,7 @@ object ObligationsAndSubmissionsSuccessResponse {
                 obligationType = ObligationType.Pillar2TaxReturn,
                 status = ObligationStatus.Fulfilled,
                 canAmend = true,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now.minusDays(1), country = None))
               )
             )
           ),

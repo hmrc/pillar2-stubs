@@ -106,7 +106,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
 
   test("Returns single accounting period when Pillar2-Id is XEPLR3333333333") {
     implicit val pillar2Id: String = "XEPLR3333333333"
-    val result      = route(app, request).value
+    val result = route(app, request).value
 
     status(result) shouldEqual 200
     contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
