@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions
 
 import play.api.libs.json.{Json, OFormat, Writes}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes.{BAD_REQUEST_400, INTERNAL_SERVER_ERROR_500}
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.now
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.{currentYear, now}
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
@@ -26,7 +26,8 @@ import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
 sealed trait ObligationsAndSubmissionsResponse
 
 object ObligationsAndSubmissionsResponse {
-  def now: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+  def now:         ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+  def currentYear: Int           = now.getYear()
 
   implicit val writes: Writes[ObligationsAndSubmissionsResponse] = Writes {
     case s: ObligationsAndSubmissionsSuccessResponse       => Json.obj("success" -> s.success)
@@ -46,9 +47,9 @@ object ObligationsAndSubmissionsSuccessResponse {
       processingDate = now,
       accountingPeriodDetails = Seq(
         AccountingPeriodDetails(
-          startDate = LocalDate.of(2024, 1, 1),
-          endDate = LocalDate.of(2024, 12, 31),
-          dueDate = LocalDate.of(2025, 1, 31),
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.of(currentYear + 1, 1, 31),
           underEnquiry = false,
           obligations = Seq(
             Obligation(
@@ -64,17 +65,15 @@ object ObligationsAndSubmissionsSuccessResponse {
   )
 
   // Multiple accounting periods (4 periods with different characteristics)
-  def withMultipleAccountingPeriods(): ObligationsAndSubmissionsSuccessResponse = {
-    val now = ObligationsAndSubmissionsResponse.now
-
+  def withMultipleAccountingPeriods(): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
       ObligationsAndSubmissionsSuccess(
         processingDate = now,
         accountingPeriodDetails = Seq(
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2025, 1, 1),
-            endDate = LocalDate.of(2025, 12, 31),
-            dueDate = LocalDate.of(2026, 1, 31),
+            startDate = LocalDate.of(currentYear, 1, 1),
+            endDate = LocalDate.of(currentYear, 12, 31),
+            dueDate = LocalDate.of(currentYear + 1, 1, 31),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -86,9 +85,9 @@ object ObligationsAndSubmissionsSuccessResponse {
             )
           ),
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2024, 1, 1),
-            endDate = LocalDate.of(2024, 12, 31),
-            dueDate = LocalDate.of(2025, 1, 31),
+            startDate = LocalDate.of(currentYear - 1, 1, 1),
+            endDate = LocalDate.of(currentYear - 1, 12, 31),
+            dueDate = LocalDate.of(currentYear, 1, 31),
             underEnquiry = true,
             obligations = Seq(
               Obligation(
@@ -100,9 +99,9 @@ object ObligationsAndSubmissionsSuccessResponse {
             )
           ),
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2022, 1, 1),
-            endDate = LocalDate.of(2022, 12, 31),
-            dueDate = LocalDate.of(2023, 1, 31),
+            startDate = LocalDate.of(currentYear - 2, 1, 1),
+            endDate = LocalDate.of(currentYear - 2, 12, 31),
+            dueDate = LocalDate.of(currentYear - 1, 1, 31),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -114,9 +113,9 @@ object ObligationsAndSubmissionsSuccessResponse {
             )
           ),
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2021, 1, 1),
-            endDate = LocalDate.of(2021, 12, 31),
-            dueDate = LocalDate.of(2022, 1, 31),
+            startDate = LocalDate.of(currentYear - 3, 1, 1),
+            endDate = LocalDate.of(currentYear - 3, 12, 31),
+            dueDate = LocalDate.of(currentYear - 2, 1, 31),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -130,19 +129,16 @@ object ObligationsAndSubmissionsSuccessResponse {
         )
       )
     )
-  }
 
-  def withMultipleAccountingPeriodsWithSubmissions(): ObligationsAndSubmissionsSuccessResponse = {
-    val now = ObligationsAndSubmissionsResponse.now
-
+  def withMultipleAccountingPeriodsWithSubmissions(): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
       ObligationsAndSubmissionsSuccess(
         processingDate = now,
         accountingPeriodDetails = Seq(
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2025, 1, 1),
-            endDate = LocalDate.of(2025, 12, 31),
-            dueDate = LocalDate.of(2026, 1, 31),
+            startDate = LocalDate.of(currentYear, 1, 1),
+            endDate = LocalDate.of(currentYear, 12, 31),
+            dueDate = LocalDate.of(currentYear + 1, 1, 31),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -154,9 +150,9 @@ object ObligationsAndSubmissionsSuccessResponse {
             )
           ),
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2024, 1, 1),
-            endDate = LocalDate.of(2024, 12, 31),
-            dueDate = LocalDate.of(2025, 1, 31),
+            startDate = LocalDate.of(currentYear - 1, 1, 1),
+            endDate = LocalDate.of(currentYear - 1, 12, 31),
+            dueDate = LocalDate.of(currentYear, 1, 31),
             underEnquiry = true,
             obligations = Seq(
               Obligation(
@@ -168,9 +164,9 @@ object ObligationsAndSubmissionsSuccessResponse {
             )
           ),
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2022, 1, 1),
-            endDate = LocalDate.of(2022, 12, 31),
-            dueDate = LocalDate.of(2023, 1, 31),
+            startDate = LocalDate.of(currentYear - 2, 1, 1),
+            endDate = LocalDate.of(currentYear - 2, 12, 31),
+            dueDate = LocalDate.of(currentYear - 1, 1, 31),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -182,9 +178,9 @@ object ObligationsAndSubmissionsSuccessResponse {
             )
           ),
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2021, 1, 1),
-            endDate = LocalDate.of(2021, 12, 31),
-            dueDate = LocalDate.of(2022, 1, 31),
+            startDate = LocalDate.of(currentYear - 3, 1, 1),
+            endDate = LocalDate.of(currentYear - 3, 12, 31),
+            dueDate = LocalDate.of(currentYear - 2, 1, 31),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -198,13 +194,12 @@ object ObligationsAndSubmissionsSuccessResponse {
         )
       )
     )
-  }
 
   // No accounting periods
   def withNoAccountingPeriods(): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
       ObligationsAndSubmissionsSuccess(
-        processingDate = ObligationsAndSubmissionsResponse.now,
+        processingDate = now,
         accountingPeriodDetails = Seq.empty
       )
     )
@@ -213,12 +208,12 @@ object ObligationsAndSubmissionsSuccessResponse {
   def withAllFuffilled(): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
       ObligationsAndSubmissionsSuccess(
-        processingDate = ObligationsAndSubmissionsResponse.now,
+        processingDate = now,
         accountingPeriodDetails = Seq(
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2024, 1, 1),
-            endDate = LocalDate.of(2024, 12, 31),
-            dueDate = LocalDate.of(2025, 1, 31),
+            startDate = LocalDate.of(currentYear, 1, 1),
+            endDate = LocalDate.of(currentYear, 12, 31),
+            dueDate = LocalDate.of(currentYear + 1, 1, 31),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
@@ -230,16 +225,16 @@ object ObligationsAndSubmissionsSuccessResponse {
             )
           ),
           AccountingPeriodDetails(
-            startDate = LocalDate.of(2023, 1, 1),
-            endDate = LocalDate.of(2023, 12, 31),
-            dueDate = LocalDate.of(2024, 1, 31),
+            startDate = LocalDate.of(currentYear - 1, 1, 1),
+            endDate = LocalDate.of(currentYear - 1, 12, 31),
+            dueDate = LocalDate.of(currentYear, 1, 31),
             underEnquiry = false,
             obligations = Seq(
               Obligation(
                 obligationType = ObligationType.Pillar2TaxReturn,
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now.minusYears(1), country = None))
               )
             )
           )
