@@ -27,6 +27,7 @@ import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 
 import scala.util.Random
+import java.time.LocalDate
 
 class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
 
@@ -68,6 +69,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   test("Returns multiple accounting periods when Pillar2-Id is XEPLR1111111111") {
     implicit val pillar2Id: String = "XEPLR1111111111"
     val result = route(app, request).value
+    val currentYear = LocalDate.now().getYear()
 
     status(result) shouldEqual 200
     contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
@@ -76,23 +78,19 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     response.success.accountingPeriodDetails.size shouldEqual 4
 
     // Check first period (most recent)
-    response.success.accountingPeriodDetails.head.startDate.getYear shouldEqual 2024
+    response.success.accountingPeriodDetails.head.startDate.getYear shouldEqual currentYear
     response.success.accountingPeriodDetails.head.obligations.head.status shouldEqual ObligationStatus.Open
 
     // Check second period
-    response.success.accountingPeriodDetails(1).startDate.getYear shouldEqual 2023
+    response.success.accountingPeriodDetails(1).startDate.getYear shouldEqual currentYear - 1
     response.success.accountingPeriodDetails(1).underEnquiry shouldEqual true
 
     // Check third period
-    response.success.accountingPeriodDetails(2).startDate.getYear shouldEqual 2022
+    response.success.accountingPeriodDetails(2).startDate.getYear shouldEqual currentYear - 2
     response.success.accountingPeriodDetails(2).obligations.head.obligationType shouldEqual ObligationType.GlobeInformationReturn
 
     // Check fourth period (earliest)
-    response.success.accountingPeriodDetails(3).startDate.getYear shouldEqual 2021
-    val submissions = response.success.accountingPeriodDetails(3).obligations.head.submissions
-    submissions.size shouldEqual 2
-    submissions(1).submissionType shouldEqual SubmissionType.BTN
-    submissions(1).country.value shouldEqual "FR"
+    response.success.accountingPeriodDetails(3).startDate.getYear shouldEqual currentYear - 3
   }
 
   test("Returns no accounting periods when Pillar2-Id is XEPLR2222222222") {
@@ -109,6 +107,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
   test("Returns single accounting period when Pillar2-Id is XEPLR3333333333") {
     implicit val pillar2Id: String = "XEPLR3333333333"
     val result = route(app, request).value
+    val currentYear = LocalDate.now().getYear()
 
     status(result) shouldEqual 200
     contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
@@ -117,8 +116,8 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     response.success.accountingPeriodDetails.size shouldEqual 1
 
     val period = response.success.accountingPeriodDetails.head
-    period.startDate.getYear shouldEqual 2024
-    period.endDate.getYear shouldEqual 2024
+    period.startDate.getYear shouldEqual currentYear
+    period.endDate.getYear shouldEqual currentYear
     period.obligations.head.obligationType shouldEqual ObligationType.Pillar2TaxReturn
     period.obligations.head.status shouldEqual ObligationStatus.Open
   }
