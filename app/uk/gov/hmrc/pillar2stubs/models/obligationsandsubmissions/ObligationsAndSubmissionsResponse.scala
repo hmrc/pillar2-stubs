@@ -159,7 +159,7 @@ object ObligationsAndSubmissionsSuccessResponse {
                 obligationType = ObligationType.Pillar2TaxReturn,
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now.minusYears(1), country = None))
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now.minusDays(1), country = None))
               )
             )
           ),
@@ -220,7 +220,7 @@ object ObligationsAndSubmissionsSuccessResponse {
                 obligationType = ObligationType.Pillar2TaxReturn,
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now.minusDays(1), country = None))
               )
             )
           ),
@@ -234,7 +234,7 @@ object ObligationsAndSubmissionsSuccessResponse {
                 obligationType = ObligationType.Pillar2TaxReturn,
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now.minusYears(1), country = None))
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now.minusDays(1), country = None))
               )
             )
           )
