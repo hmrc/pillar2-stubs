@@ -20,6 +20,7 @@ import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
+import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionResponse.{successfulLiabilityResponse, successfulNilResponse}
 import uk.gov.hmrc.pillar2stubs.models.{UKTRSubmission, UKTRSubmissionData, UKTRSubmissionNilReturn}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -126,19 +127,11 @@ class UKTRAmendController @Inject() (
                         )
                       } else {
                         logger.info("Returning success response for liability amendment")
-                        Future.successful(
-                          Ok(
-                            successfulResponse
-                          )
-                        )
+                        Future.successful(Ok(successfulLiabilityResponse))
                       }
                     case UKTRSubmissionNilReturn(_, _, _, _, _) =>
                       logger.info("Returning success response for Nil return amendment")
-                      Future.successful(
-                        Ok(
-                          successfulResponse
-                        )
-                      )
+                      Future.successful(Ok(successfulNilResponse))
                   }
                 }
 
@@ -158,13 +151,4 @@ class UKTRAmendController @Inject() (
         }
     }
   }
-
-  private def successfulResponse(implicit clock: Clock): JsObject = Json.obj(
-    "success" -> Json
-      .obj(
-        "processingDate"   -> ZonedDateTime.now(clock).format(DateTimeFormatter.ISO_INSTANT),
-        "formBundleNumber" -> "119000004320",
-        "chargeReference"  -> "XTC01234123412"
-      )
-  )
 }
