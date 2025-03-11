@@ -119,6 +119,44 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     period.obligations.head.status shouldEqual ObligationStatus.Open
   }
 
+  test("Returns all fulfilled obligations when Pillar2-Id is XEPLR4444444444") {
+    implicit val pillar2Id: String = "XEPLR4444444444"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.foreach { period =>
+      period.obligations.foreach { obligation =>
+        obligation.status shouldEqual ObligationStatus.Fulfilled
+      }
+    }
+  }
+
+  test("Returns multiple accounting periods with submissions when Pillar2-Id is XEPLR5555555555") {
+    implicit val pillar2Id: String = "XEPLR5555555555"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size should be > 1
+
+    // Check that at least one obligation has submissions
+    val hasSubmissions = response.success.accountingPeriodDetails.exists { period =>
+      period.obligations.exists(_.submissions.nonEmpty)
+    }
+    hasSubmissions shouldBe true
+
+    // Check first period has a fulfilled obligation with a submission
+    val firstPeriod = response.success.accountingPeriodDetails.head
+    firstPeriod.obligations.head.status shouldEqual ObligationStatus.Fulfilled
+    firstPeriod.obligations.head.submissions.nonEmpty shouldBe true
+    firstPeriod.obligations.head.submissions.head.submissionType shouldEqual SubmissionType.UKTR
+  }
+
   test("UnprocessableEntity - invalid date range") {
     implicit val pillar2Id: String = "XEPLR4220000000"
     val invalidRequest =
