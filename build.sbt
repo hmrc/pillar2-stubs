@@ -6,6 +6,7 @@ ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / majorVersion := 0
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
+ThisBuild / javacOptions ++= Seq("--release", "21")
 
 lazy val microservice = Project("pillar2-stubs", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
