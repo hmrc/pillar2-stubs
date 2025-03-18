@@ -54,7 +54,7 @@ object ObligationsAndSubmissionsSuccessResponse {
           obligations = Seq(
             Obligation(
               obligationType = ObligationType.Pillar2TaxReturn,
-              status = ObligationStatus.Open,
+              status = ObligationStatus.Fulfilled,
               canAmend = true,
               submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
             )
