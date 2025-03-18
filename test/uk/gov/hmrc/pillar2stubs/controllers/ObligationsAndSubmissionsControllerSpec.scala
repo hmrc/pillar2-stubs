@@ -116,7 +116,8 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
 
     val period = response.success.accountingPeriodDetails.head
     period.obligations.head.obligationType shouldEqual ObligationType.Pillar2TaxReturn
-    period.obligations.head.status shouldEqual ObligationStatus.Fulfilled
+    period.obligations.head.status shouldEqual ObligationStatus.Open
+    period.obligations.head.submissions.size shouldEqual 0
   }
 
   test("Returns all fulfilled obligations when Pillar2-Id is XEPLR4444444444") {
@@ -155,6 +156,22 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     firstPeriod.obligations.head.status shouldEqual ObligationStatus.Fulfilled
     firstPeriod.obligations.head.submissions.nonEmpty shouldBe true
     firstPeriod.obligations.head.submissions.head.submissionType shouldEqual SubmissionType.UKTR
+  }
+
+  test("Returns single accounting period when Pillar2-Id is XEPLR7777777777") {
+    implicit val pillar2Id: String = "XEPLR7777777777"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 1
+
+    val period = response.success.accountingPeriodDetails.head
+    period.obligations.head.obligationType shouldEqual ObligationType.Pillar2TaxReturn
+    period.obligations.head.status shouldEqual ObligationStatus.Fulfilled
+    period.obligations.head.submissions.size shouldEqual 1
   }
 
   test("UnprocessableEntity - invalid date range") {
