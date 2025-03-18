@@ -116,7 +116,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
 
     val period = response.success.accountingPeriodDetails.head
     period.obligations.head.obligationType shouldEqual ObligationType.Pillar2TaxReturn
-    period.obligations.head.status shouldEqual ObligationStatus.Open
+    period.obligations.head.status shouldEqual ObligationStatus.Fulfilled
   }
 
   test("Returns all fulfilled obligations when Pillar2-Id is XEPLR4444444444") {
