@@ -145,6 +145,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       case JsSuccess(subscriptionResponse, _) =>
         subscriptionResponse.primaryContactDetails.name match {
           case "400" =>
+            Thread.sleep(5000)
             Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
 
           case "409" =>
@@ -156,6 +157,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
 
           case "500" =>
+            Thread.sleep(5000)
             Future.successful(InternalServerError(resourceAsString("/resources/error/InternalServerError.json").getOrElse("Internal server error")))
 
           case "503" =>
