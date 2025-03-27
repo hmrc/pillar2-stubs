@@ -2,7 +2,7 @@ import org.typelevel.scalacoptions.ScalacOptions
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 
-ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / scalaVersion := "2.13.16"
 ThisBuild / majorVersion := 0
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
