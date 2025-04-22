@@ -32,7 +32,7 @@ import uk.gov.hmrc.pillar2stubs.models.{LiabilityData, LiableEntity, UKTRSubmiss
 
 import java.time._
 
-class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
+class UKTRCREATESubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 
   private val stubResourceLoader: String => Option[String] = {
     case "/resources/liabilities/LiabilitySuccessResponse.json" =>

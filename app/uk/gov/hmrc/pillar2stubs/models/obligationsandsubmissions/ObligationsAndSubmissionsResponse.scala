@@ -53,7 +53,7 @@ object ObligationsAndSubmissionsSuccessResponse {
           underEnquiry = false,
           obligations = Seq(
             Obligation(
-              obligationType = ObligationType.Pillar2TaxReturn,
+              obligationType = ObligationType.UKTR,
               status = ObligationStatus.Open,
               canAmend = true,
               submissions = Seq.empty
@@ -75,10 +75,10 @@ object ObligationsAndSubmissionsSuccessResponse {
           underEnquiry = false,
           obligations = Seq(
             Obligation(
-              obligationType = ObligationType.Pillar2TaxReturn,
+              obligationType = ObligationType.UKTR,
               status = ObligationStatus.Fulfilled,
               canAmend = true,
-              submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+              submissions = Seq(Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None))
             )
           )
         )
@@ -99,7 +99,7 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = false,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.Pillar2TaxReturn,
+                obligationType = ObligationType.UKTR,
                 status = ObligationStatus.Open,
                 canAmend = true,
                 submissions = Seq.empty
@@ -113,7 +113,7 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = true,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.Pillar2TaxReturn,
+                obligationType = ObligationType.UKTR,
                 status = ObligationStatus.Open,
                 canAmend = false,
                 submissions = Seq.empty
@@ -127,7 +127,7 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = false,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.GlobeInformationReturn,
+                obligationType = ObligationType.GIR,
                 status = ObligationStatus.Open,
                 canAmend = false,
                 submissions = Seq.empty
@@ -141,7 +141,7 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = false,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.Pillar2TaxReturn,
+                obligationType = ObligationType.UKTR,
                 status = ObligationStatus.Open,
                 canAmend = true,
                 submissions = Seq.empty
@@ -164,10 +164,16 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = false,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.Pillar2TaxReturn,
+                obligationType = ObligationType.UKTR,
                 status = ObligationStatus.Fulfilled,
                 canAmend = true,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now.minusHours(1), country = None))
+              ),
+              Obligation(
+                obligationType = ObligationType.UKTR,
+                status = ObligationStatus.Fulfilled,
+                canAmend = true,
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR_AMEND, receivedDate = now, country = None))
               )
             )
           ),
@@ -178,10 +184,10 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = true,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.Pillar2TaxReturn,
+                obligationType = ObligationType.UKTR,
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None))
+                submissions = Seq(Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None))
               )
             )
           ),
@@ -192,7 +198,7 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = false,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.GlobeInformationReturn,
+                obligationType = ObligationType.GIR,
                 status = ObligationStatus.Open,
                 canAmend = false,
                 submissions = Seq.empty
@@ -206,7 +212,7 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = false,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.Pillar2TaxReturn,
+                obligationType = ObligationType.UKTR,
                 status = ObligationStatus.Open,
                 canAmend = true,
                 submissions = Seq.empty
@@ -239,11 +245,11 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = false,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.Pillar2TaxReturn,
+                obligationType = ObligationType.UKTR,
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
                 submissions = Seq(
-                  Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None),
+                  Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None),
                   Submission(submissionType = SubmissionType.BTN, receivedDate = now, country = None)
                 )
               )
@@ -256,11 +262,11 @@ object ObligationsAndSubmissionsSuccessResponse {
             underEnquiry = false,
             obligations = Seq(
               Obligation(
-                obligationType = ObligationType.Pillar2TaxReturn,
+                obligationType = ObligationType.UKTR,
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
                 submissions = Seq(
-                  Submission(submissionType = SubmissionType.UKTR, receivedDate = now, country = None),
+                  Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None),
                   Submission(submissionType = SubmissionType.BTN, receivedDate = now, country = None),
                   Submission(submissionType = SubmissionType.GIR, receivedDate = now, country = None)
                 )
