@@ -167,13 +167,10 @@ object ObligationsAndSubmissionsSuccessResponse {
                 obligationType = ObligationType.UKTR,
                 status = ObligationStatus.Fulfilled,
                 canAmend = true,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now.minusHours(1), country = None))
-              ),
-              Obligation(
-                obligationType = ObligationType.UKTR,
-                status = ObligationStatus.Fulfilled,
-                canAmend = true,
-                submissions = Seq(Submission(submissionType = SubmissionType.UKTR_AMEND, receivedDate = now, country = None))
+                submissions = Seq(
+                  Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now.minusHours(1), country = None),
+                  Submission(submissionType = SubmissionType.UKTR_AMEND, receivedDate = now, country = None)
+                )
               )
             )
           ),
