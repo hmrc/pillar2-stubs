@@ -161,9 +161,9 @@ object FinancialDataController {
        |      "items": [
        |        {
        |          "subItem": "001",
-       |          "dueDate": "2024-07-01",
+       |          "dueDate": "2024-03-03",
        |          "amount": -9999.99,
-       |          "clearingDate": "2024-07-01",
+       |          "clearingDate": "2024-03-03",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
        |          "paymentReference": "a",
@@ -192,9 +192,9 @@ object FinancialDataController {
        |      "items": [
        |        {
        |          "subItem": "001",
-       |          "dueDate": "2024-07-01",
+       |          "dueDate": "2023-10-22",
        |          "amount": -9999.99,
-       |          "clearingDate": "2024-07-01",
+       |          "clearingDate": "2023-10-22",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
        |          "paymentReference": "a",
@@ -223,9 +223,9 @@ object FinancialDataController {
        |      "items": [
        |        {
        |          "subItem": "001",
-       |          "dueDate": "2024-07-01",
+       |          "dueDate": "2024-08-15",
        |          "amount": -9999.99,
-       |          "clearingDate": "2024-07-01",
+       |          "clearingDate": "2024-08-15",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
        |          "paymentReference": "a",
@@ -254,9 +254,9 @@ object FinancialDataController {
        |      "items": [
        |        {
        |          "subItem": "001",
-       |          "dueDate": "2024-07-01",
+       |          "dueDate": "2024-06-30",
        |          "amount": -9999.99,
-       |          "clearingDate": "2024-07-01",
+       |          "clearingDate": "2024-06-30",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
        |          "paymentReference": "a",
@@ -285,9 +285,9 @@ object FinancialDataController {
        |      "items": [
        |        {
        |          "subItem": "001",
-       |          "dueDate": "2024-07-01",
+       |          "dueDate": "2023-12-10",
        |          "amount": -9999.99,
-       |          "clearingDate": "2024-07-01",
+       |          "clearingDate": "2023-12-10",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
        |          "paymentReference": "a",
