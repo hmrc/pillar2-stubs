@@ -87,7 +87,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
 
     // Check third period
     response.success.accountingPeriodDetails(2).startDate.getYear shouldEqual currentYear - 2
-    response.success.accountingPeriodDetails(2).obligations.head.obligationType shouldEqual ObligationType.GlobeInformationReturn
+    response.success.accountingPeriodDetails(2).obligations.head.obligationType shouldEqual ObligationType.GIR
 
     // Check fourth period (earliest)
     response.success.accountingPeriodDetails(3).startDate.getYear shouldEqual currentYear - 3
@@ -115,7 +115,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     response.success.accountingPeriodDetails.size shouldEqual 1
 
     val period = response.success.accountingPeriodDetails.head
-    period.obligations.head.obligationType shouldEqual ObligationType.Pillar2TaxReturn
+    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
     period.obligations.head.status shouldEqual ObligationStatus.Open
     period.obligations.head.submissions.size shouldEqual 0
   }
@@ -155,7 +155,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     val firstPeriod = response.success.accountingPeriodDetails.head
     firstPeriod.obligations.head.status shouldEqual ObligationStatus.Fulfilled
     firstPeriod.obligations.head.submissions.nonEmpty shouldBe true
-    firstPeriod.obligations.head.submissions.head.submissionType shouldEqual SubmissionType.UKTR
+    firstPeriod.obligations.head.submissions.head.submissionType shouldEqual SubmissionType.UKTR_CREATE
   }
 
   test("Returns single accounting period when Pillar2-Id is XEPLR7777777777") {
@@ -169,7 +169,7 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     response.success.accountingPeriodDetails.size shouldEqual 1
 
     val period = response.success.accountingPeriodDetails.head
-    period.obligations.head.obligationType shouldEqual ObligationType.Pillar2TaxReturn
+    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
     period.obligations.head.status shouldEqual ObligationStatus.Fulfilled
     period.obligations.head.submissions.size shouldEqual 1
   }
