@@ -21,6 +21,8 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
+import uk.gov.hmrc.pillar2stubs.models.error.Origin.{HIP, HoD}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes._
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -49,7 +51,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
             UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(REQUEST_COULD_NOT_BE_PROCESSED_003)))
           case "XEPLR0400000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(DUPLICATE_SUBMISSION_004)))
           case "XEPLR2500000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(NO_DATA_FOUND_025)))
-          case "XEPLR0000000400" => BadRequest(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.InvalidJsonError()))
+          case "XEPLR0000000400" => BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json"))))))
           case "XEPLR0000000500" => InternalServerError(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.SAPError))
           case "XEPLR1111111111" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withMultipleAccountingPeriods()))
           case "XEPLR2222222222" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
@@ -61,7 +63,9 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
         }
       }
     }.recover { case e: Throwable =>
-      BadRequest(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.InvalidJsonError(s"Errors parsing date: ${e.getMessage}")))
+      BadRequest(
+        Json.toJson(HIPErrorWrapper(HoD, ObligationsAndSubmissionsSimpleErrorResponse.InvalidJsonError(s"Errors parsing date: ${e.getMessage}")))
+      )
     }.get
   }
 }
