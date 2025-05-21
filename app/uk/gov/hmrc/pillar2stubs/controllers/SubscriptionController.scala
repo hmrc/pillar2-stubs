@@ -42,6 +42,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         (organisationName, safeId) match {
           case ("duplicateSub", _) =>
             Conflict(resourceAsString("/resources/error/subscription/Conflict.json").get)
+          case ("unprocessableSub", _) =>
+            UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
           case ("subServerError", _) =>
             ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
           case ("subRecordNotFound", _) =>
