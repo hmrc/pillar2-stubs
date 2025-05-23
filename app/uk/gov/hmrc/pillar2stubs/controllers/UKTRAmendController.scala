@@ -21,6 +21,8 @@ import play.api.libs.json._
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionResponse.{successfulLiabilityResponse, successfulNilResponse}
+import uk.gov.hmrc.pillar2stubs.models.error.Origin.{HIP, HoD}
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.{UKTRSubmission, UKTRSubmissionData, UKTRSubmissionNilReturn}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -65,17 +67,7 @@ class UKTRAmendController @Inject() (
 
       case BadRequestPlrId =>
         logger.info(s"Returning bad request error for PLR ID: $plrId")
-        Future.successful(
-          BadRequest(
-            Json.obj(
-              "error" -> Json.obj(
-                "code"    -> "400",
-                "message" -> "Invalid request format",
-                "LogID"   -> "C0000AB8190C8E1F000000C700006836"
-              )
-            )
-          )
-        )
+        Future.successful(BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json")))))))
 
       case ServerErrorPlrId =>
         logger.info(s"Returning server error for PLR ID: $plrId")
@@ -138,10 +130,10 @@ class UKTRAmendController @Inject() (
               case JsError(errors) =>
                 if (errors.exists(_._2.exists(_.messages.contains("liableEntities must not be empty")))) {
                   logger.error("Liable entities array is empty in liability submission")
-                  Future.successful(BadRequest(Json.obj("error" -> "liableEntities must not be empty")).as("application/json"))
+                  Future.successful(BadRequest(Json.toJson(HIPErrorWrapper(HoD, Json.obj("error" -> "liableEntities must not be empty")))))
                 } else {
                   logger.error(s"JSON validation failed with errors: $errors")
-                  Future.successful(BadRequest(Json.obj("error" -> "Invalid JSON request format")).as("application/json"))
+                  Future.successful(BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json")))))))
                 }
             }
 

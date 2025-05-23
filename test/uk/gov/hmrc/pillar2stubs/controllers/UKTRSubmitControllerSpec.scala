@@ -28,6 +28,8 @@ import play.api.libs.json.{JsObject, JsString, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.{LiabilityData, LiableEntity, UKTRSubmissionData}
 
 import java.time._
@@ -122,7 +124,10 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
-      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
+      val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
+      response.response.failures should have size 1
+      response.response.failures.head.reason shouldEqual "invalid json"
+      response.origin shouldEqual HIP
     }
 
     "return BAD_REQUEST for non-JSON data" in {
@@ -136,19 +141,14 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
       contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON data")
     }
 
-    "return BAD_REQUEST if liableEntities array is empty" in {
-      val invalidRequestBody = Json.obj(
-        "accountingPeriodFrom" -> "2024-08-14",
-        "accountingPeriodTo"   -> "2024-12-14",
-        "qualifyingGroup"      -> true,
-        "obligationDTT"        -> true,
-        "obligationMTT"        -> true,
-        "liabilities" -> Json.obj(
-          "totalLiability"     -> 10000.99,
-          "totalLiabilityDTT"  -> 5000.99,
-          "totalLiabilityIIR"  -> 4000,
-          "totalLiabilityUTPR" -> 10000.99,
-          "liableEntities"     -> Json.arr()
+    "return UNPROCESSABLE_ENTITY if liableEntities array is empty" in {
+      val invalidRequestBody = Json.toJson(
+        UKTRSubmissionData(
+          LocalDate.of(2024, 8, 14),
+          LocalDate.of(2024, 12, 14),
+          obligationMTT = true,
+          electionUKGAAP = false,
+          liabilities = LiabilityData(electionDTTSingleMember = false, electionUTPRSingleMember = false, 0, 0, 0, 0, 0, 0, List.empty)
         )
       )
 
@@ -158,8 +158,10 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
         .withBody(invalidRequestBody)
 
       val result = route(app, request).value
-      status(result) mustBe BAD_REQUEST
-      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
+      status(result) mustBe UNPROCESSABLE_ENTITY
+      val response = contentAsJson(result).as[JsObject]
+      (response \ "errors" \ "code").as[String] shouldEqual "002"
+      (response \ "errors" \ "text").as[String] shouldEqual "Liable entities must not be empty"
     }
 
     "return BAD_REQUEST if a required field in liableEntities is missing" in {
@@ -195,7 +197,10 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
-      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
+      val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
+      response.response.failures should have size 1
+      response.response.failures.head.reason shouldEqual "invalid json"
+      response.origin shouldEqual HIP
     }
 
     "return BAD_REQUEST if liableEntities key is missing" in {
@@ -220,7 +225,10 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
-      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
+      val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
+      response.response.failures should have size 1
+      response.response.failures.head.reason shouldEqual "invalid json"
+      response.origin shouldEqual HIP
     }
 
     "return BAD_REQUEST if liabilities key is missing" in {
@@ -240,7 +248,10 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
-      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
+      val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
+      response.response.failures should have size 1
+      response.response.failures.head.reason shouldEqual "invalid json"
+      response.origin shouldEqual HIP
     }
 
     "return CREATED with additional fields ignored in response" in {

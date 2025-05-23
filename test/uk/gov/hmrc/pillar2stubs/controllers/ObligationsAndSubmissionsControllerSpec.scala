@@ -24,6 +24,8 @@ import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 
 import scala.util.Random
@@ -237,8 +239,10 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     val result = route(app, request).value
 
     status(result) shouldEqual 400
-    contentAsJson(result).validate[ObligationsAndSubmissionsSimpleErrorResponse].asEither.isRight shouldBe true
-    contentAsJson(result).as[ObligationsAndSubmissionsSimpleErrorResponse].error.code shouldEqual "400"
+    val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
+    response.response.failures should have size 1
+    response.response.failures.head.reason shouldEqual "invalid json"
+    response.origin shouldEqual HIP
   }
 
   test("InternalServerError ObligationsAndSubmissions submission") {

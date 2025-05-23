@@ -26,6 +26,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.btn._
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
+import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 
 import java.time.LocalDate
 import scala.util.Random
@@ -62,8 +64,10 @@ class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
     val result = route(app, request).value
 
     status(result) shouldEqual 400
-    contentAsJson(result).validate[BTNErrorResponse].asEither.isRight shouldBe true
-    contentAsJson(result).as[BTNErrorResponse].error.code shouldEqual "400"
+    val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
+    response.response.failures should have size 1
+    response.response.failures.head.reason shouldEqual "invalid json"
+    response.origin shouldEqual HIP
   }
 
   test("InternalServerError BTN submission") {

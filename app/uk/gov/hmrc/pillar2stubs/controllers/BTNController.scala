@@ -21,6 +21,8 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.btn._
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
+import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.temporal.ChronoUnit
@@ -36,7 +38,7 @@ class BTNController @Inject() (cc: ControllerComponents, authFilter: AuthActionF
   def submitBTN: Action[BTNRequest] = (Action(parse.json[BTNRequest]) andThen authFilter andThen etmpHeaderFilter) { implicit request =>
     request.headers.get("X-PILLAR2-ID").get match {
       case "XEPLR4220000000" => UnprocessableEntity(Json.toJson(BTNFailureResponsePayload(BTNFailure(now, "094", "Invalid DTT Election"))))
-      case "XEPLR4000000000" => BadRequest(Json.toJson(BTNErrorResponse(BTNError("400", "Request could not be processed"))))
+      case "XEPLR4000000000" => BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json"))))))
       case "XEPLR5000000000" => InternalServerError(Json.toJson(BTNErrorResponse(BTNError("500", "Error in downstream system"))))
       case _                 => Created(Json.toJson(BTNSuccessResponsePayload(BTNSuccess(now))))
     }

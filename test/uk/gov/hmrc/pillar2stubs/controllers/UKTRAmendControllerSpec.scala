@@ -28,6 +28,8 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
+import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.{LiabilityData, LiableEntity, UKTRSubmissionData}
 
 import java.time._
@@ -131,9 +133,10 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
-      val jsonResult = contentAsJson(result)
-      (jsonResult \ "error" \ "code").as[String] mustEqual "400"
-      (jsonResult \ "error" \ "message").as[String] mustEqual "Invalid request format"
+      val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
+      response.response.failures should have size 1
+      response.response.failures.head.reason shouldEqual "invalid json"
+      response.origin shouldEqual HIP
     }
 
     "return INTERNAL_SERVER_ERROR for specific Pillar2Id" in {
@@ -152,7 +155,10 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
 
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
-      contentAsJson(result) mustBe Json.obj("error" -> "Invalid JSON request format")
+      val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
+      response.response.failures should have size 1
+      response.response.failures.head.reason shouldEqual "invalid json"
+      response.origin shouldEqual HIP
     }
 
     "return BAD_REQUEST for non-JSON data" in {
