@@ -652,8 +652,8 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 | XEPLR1111111111    | Multiple Accounting Periods all open                     | Returns 4 accounting periods with different dates, obligation types, and statuses     |
 | XEPLR2222222222    | No Accounting Periods                                    | Returns a success response with no accounting periods                                 |
 | XEPLR3333333333    | Single Accounting Period                                 | Returns a single accounting period (same as default)                                  |
-| XEPLR4444444444    | All Fuffilled                                            | Returns Multiple accounting periods with all obligations fuffilled                    |
-| XEPLR5555555555    | Multiple accounting periods with some fuffilled          | Returns Multiple accounting periods with some obligations fuffilled                   |
+| XEPLR4444444444    | All Fulfilled                                            | Returns Multiple accounting periods with all obligations fulfilled                    |
+| XEPLR5555555555    | Multiple accounting periods with some fulfilled          | Returns Multiple accounting periods with some obligations fulfilled                   |
 | XEPLR9999999991    | Single active accounting period with no submission       | Returns a single active accounting period with no submission                          |
 | XEPLR9999999992    | Two active accounting periods with no submissions        | Returns two active accounting periods with no submissions                             |
 | XEPLR9999999993    | Three active accounting periods with different scenarios | Returns three active accounting periods with UKTR and two no submission scenarios     |

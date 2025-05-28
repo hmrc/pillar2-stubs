@@ -230,7 +230,7 @@ object ObligationsAndSubmissionsSuccessResponse {
     )
 
   // All obligations fulfilled
-  def withAllFuffilled(): ObligationsAndSubmissionsSuccessResponse =
+  def withAllFulfilled(): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
       ObligationsAndSubmissionsSuccess(
         processingDate = now,
