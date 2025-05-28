@@ -1,8 +1,8 @@
 {
     "failures": [
         {
-            "code": "CANNOT_COMPLETE_REQUEST",
-            "reason": "Request could not be completed because the subscription is being created or amended."
+            "code": "SUBSCRIPTION_CONFLICT",
+            "reason": "The backend has rejected the request due to the business partner already having a SUBSCRIPTION for this regime."
         }
     ]
 }

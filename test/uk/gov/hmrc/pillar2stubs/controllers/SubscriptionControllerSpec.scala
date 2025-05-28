@@ -122,6 +122,48 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         status(result) shouldBe CONFLICT
       }
 
+      "must return UnprocessableEntity response" in {
+
+        val input: String =
+          """{
+            | 			"upeDetails": {
+            | 				"safeId": "XE0000123456789",
+            | 				"organisationName": "unprocessableSub",
+            | 				"registrationDate": "2023-09-28",
+            | 				"domesticOnly": false,
+            | 				"filingMember": false
+            | 			},
+            | 			"accountingPeriod": {
+            | 				"startDate": "2024-12-31",
+            | 				"endDate": "2025-12-12"
+            | 			},
+            | 			"upeCorrespAddressDetails": {
+            | 				"addressLine1": "10 High Street",
+            | 				"addressLine2": "Egham",
+            | 				"addressLine3": "Surrey",
+            | 				"addressLine4": "South East England",
+            | 				"countryCode": "GB"
+            | 			},
+            | 			"primaryContactDetails": {
+            | 				"name": "Ashley Smith",
+            | 				"emailAddress": "Test@test.com"
+            | 			},
+            | 			"filingMemberDetails": {
+            | 				"safeId": "XE6666666666666",
+            | 				"organisationName": "Test"
+            | 			}
+            | 	}
+            |
+            |""".stripMargin
+
+        val json:       JsValue          = Json.parse(input)
+        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe UNPROCESSABLE_ENTITY
+      }
+
       "must Service Unavailable Conflict response" in {
 
         val input: String =
