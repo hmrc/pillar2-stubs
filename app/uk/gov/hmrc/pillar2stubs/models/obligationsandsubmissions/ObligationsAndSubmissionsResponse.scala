@@ -280,8 +280,8 @@ object ObligationsAndSubmissionsSuccessResponse {
       processingDate = now,
       accountingPeriodDetails = Seq(
         AccountingPeriodDetails(
-          startDate = LocalDate.of(currentYear - 1, 1, 1),
-          endDate = LocalDate.of(currentYear - 1, 12, 31),
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
           dueDate = LocalDate.of(currentYear + 1, 12, 31),
           underEnquiry = false,
           obligations = Seq(
@@ -297,8 +297,98 @@ object ObligationsAndSubmissionsSuccessResponse {
     )
   )
 
-  //multiple active accounting periods (start date is no later than today and a due date not before today) with UKTR, BTN and no submission scenarios
-  def multipleActiveAccountingPeriodsWithDifferentScenarios(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+  //two active accounting periods (start date is no later than today and a due date not before today) with no submissions
+  def twoActiveAccountingPeriodsWithNoSubmissions(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear - 1, 1, 1),
+          endDate = LocalDate.of(currentYear - 1, 12, 31),
+          dueDate = LocalDate.of(currentYear + 2, 12, 31),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
+        ),
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.of(currentYear + 3, 12, 31),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
+
+  //three active accounting periods (start date is no later than today and a due date not before today) with UKTR and two no submission scenarios
+  def threeActiveAccountingPeriodsWithDifferentScenarios(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear - 2, 1, 1),
+          endDate = LocalDate.of(currentYear - 2, 12, 31),
+          dueDate = LocalDate.of(currentYear + 1, 12, 31),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Fulfilled,
+              canAmend = true,
+              submissions = Seq(
+                Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None)
+              )
+            )
+          )
+        ),
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear - 1, 1, 1),
+          endDate = LocalDate.of(currentYear - 1, 12, 31),
+          dueDate = LocalDate.of(currentYear + 2, 12, 31),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
+        ),
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.of(currentYear + 3, 12, 31),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
+
+  //four active accounting periods (start date is no later than today and a due date not before today) with UKTR, BTN and no submission scenarios
+  def fourActiveAccountingPeriodsWithDifferentScenarios(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
       processingDate = now,
       accountingPeriodDetails = Seq(
