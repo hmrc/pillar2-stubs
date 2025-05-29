@@ -21,6 +21,8 @@ import play.api.libs.json._
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionResponse.{successfulLiabilityResponse, successfulNilResponse}
+import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.{UKTRSubmission, UKTRSubmissionData, UKTRSubmissionNilReturn}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -87,13 +89,8 @@ class UKTRSubmitController @Inject() (
             }
 
           case JsError(errors) =>
-            if (errors.exists(_._2.exists(_.messages.contains("liableEntities must not be empty")))) {
-              logger.error("Liable entities array is empty in liability submission")
-              Future.successful(BadRequest(Json.obj("error" -> "liableEntities must not be empty")).as("application/json"))
-            } else {
-              logger.error(s"JSON validation failed with errors: $errors")
-              Future.successful(BadRequest(Json.obj("error" -> "Invalid JSON request format")).as("application/json"))
-            }
+            logger.error(s"JSON validation failed with errors: $errors")
+            Future.successful(BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json")))))))
         }
 
       case Failure(exception) =>
