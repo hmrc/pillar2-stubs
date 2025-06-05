@@ -163,6 +163,10 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case "503" =>
             Future.successful(ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error")))
 
+          case "10 seconds" =>
+            Thread.sleep(10000)
+            Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
+
           case _ =>
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
         }

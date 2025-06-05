@@ -537,6 +537,68 @@ HTTP 404 Record Not Found Error
 ---
 
 ```
+PUT /pillar2/subscription
+```
+
+Amends an existing Subscription. The outcome of the request can be controlled by the `name` field within the `primaryContactDetails` of the request body.
+
+| primaryContactDetails.name | Status Code | Status                | Description                                  |
+|----------------------------|-------------|-----------------------|----------------------------------------------|
+| "400"                      | 400         | BAD_REQUEST           | Triggers a Bad Request response.             |
+| "409"                      | 409         | CONFLICT              | Triggers a Duplicate Submission error.       |
+| "422"                      | 422         | UNPROCESSABLE_ENTITY  | Triggers an Unprocessable Entity error.    |
+| "500"                      | 500         | INTERNAL_SERVER_ERROR | Triggers an Internal Server Error.           |
+| "503"                      | 503         | SERVICE_UNAVAILABLE   | Triggers a Service Unavailable error.        |
+| "10 seconds"               | 200         | OK                    | Returns a success response after a 10-second delay. |
+| Any other value            | 200         | OK                    | Returns a success response.                  |
+
+#### Happy Path:
+
+To trigger the happy path, provide a valid request body with a `primaryContactDetails.name` that does not match any of the error triggers (e.g., "Default Contact Name").
+
+Example Request Body:
+```dtd
+{
+  "upeDetails": {
+    "safeId": "XE6666666666666",
+    "organisationName": "Stark Corp",
+    "registrationDate": "2023-12-08",
+    "domesticOnly": false,
+    "filingMember": true
+  },
+  "accountingPeriod": {
+    "startDate": "2024-01-01",
+    "endDate": "2025-01-01"
+  },
+  "upeCorrespAddressDetails": {
+    "addressLine1": "100",
+    "addressLine3": "Newyork",
+    "postCode": "10052",
+    "countryCode": "US"
+  },
+  "primaryContactDetails": {
+    "name": "Default Contact Name",
+    "emailAddress": "stark.tony@starkind.com"
+  }
+}
+```
+
+> Response status: 200
+>
+> Response body:
+```json
+{
+  "success": {
+    "processingDate": "2024-01-31T09:26:17Z",
+    "plrReference": "XMPLR0012345674",
+    "formBundleNumber": "119000004320",
+    "customerIdentification1": "XACBC0000123456",
+    "customerIdentification2": "XACBC0000123457"
+  }
+}
+```
+
+```
 GET /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups
 ```
 
