@@ -550,6 +550,7 @@ Amends an existing Subscription. The outcome of the request can be controlled by
 | "500"                      | 500         | INTERNAL_SERVER_ERROR | Triggers an Internal Server Error.           |
 | "503"                      | 503         | SERVICE_UNAVAILABLE   | Triggers a Service Unavailable error.        |
 | "10 seconds"               | 200         | OK                    | Returns a success response after a 10-second delay. |
+| "timeout"                  | 200         | OK                    | Returns a success response after a 30-second delay (will induce a client-side timeout). |
 | Any other value            | 200         | OK                    | Returns a success response.                  |
 
 #### Happy Path:
