@@ -91,7 +91,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           Future.successful(ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get))
 
         case "XEPLR0000000003" =>
-          Thread.sleep(3000)
           Future.successful(
             Ok(
               resourceAsString("/resources/subscription/ReadSuccessResponse.json")
@@ -101,7 +100,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
 
         case "XEPLR0000000006" =>
-          Thread.sleep(6000)
           Future.successful(
             Ok(
               resourceAsString("/resources/subscription/ReadSuccessResponse.json")
@@ -111,7 +109,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
 
         case "XEPLR0000000010" =>
-          Thread.sleep(10000)
           Future.successful(
             Ok(
               resourceAsString("/resources/subscription/ReadSuccessResponse.json")
@@ -121,7 +118,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
 
         case "XEPLR0000000015" =>
-          Thread.sleep(15000)
           Future.successful(
             Ok(
               resourceAsString("/resources/subscription/ReadSuccessResponse.json")
@@ -131,7 +127,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
 
         case "XEPLR0000000025" =>
-          Thread.sleep(25000)
           Future.successful(
             Ok(
               resourceAsString("/resources/subscription/ReadSuccessResponse.json")
@@ -218,11 +213,9 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Future.successful(ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error")))
 
           case "timeout" =>
-            Thread.sleep(30000)
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
 
           case "10 seconds" =>
-            Thread.sleep(10000)
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
 
           case _ =>
