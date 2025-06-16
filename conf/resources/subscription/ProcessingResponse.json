@@ -1,0 +1,14 @@
+{
+  "errors": {
+    "timestamp": "2024-01-31T09:26:17Z",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "errorCode": "422",
+    "errorMessage": "Request could not be completed because the subscription is being processed",
+    "source": "Back End",
+    "sourceFaultDetail": {
+      "detail": [
+        "Subscription processing in progress - please retry in a few seconds"
+      ]
+    }
+  }
+} 

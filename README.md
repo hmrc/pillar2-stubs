@@ -363,6 +363,31 @@ Retrieves the Subscription details for the specific plrReference
 | XEPLR1066196600 | 200         | OK                    | Returns read success response with domesticOnly set to true.        |
 | XEPLR__________ | 200         | OK                    | Returns read success response .                                        |
 
+#### **🎯 PIL-2105: Async Processing Timeout Test Scenarios**
+
+The following PLR References are specifically designed to test the asynchronous subscription processing timeout logic implemented in PIL-2105:
+
+| plrReference     | Delay   | Status Code | Status                | Description                                                                    |
+|------------------|---------|-------------|-----------------------|--------------------------------------------------------------------------------|
+| XEPLR0000000003  | 3s      | 200         | OK                    | Returns success response after a 3-second delay (tests initial retry logic). |
+| XEPLR0000000006  | 6s      | 200         | OK                    | Returns success response after a 6-second delay (tests mid-range timing).    |
+| XEPLR0000000010  | 10s     | 200         | OK                    | Returns success response after a 10-second delay (tests extended timing).    |
+| XEPLR0000000015  | 15s     | 200         | OK                    | Returns success response after a 15-second delay (tests near-timeout).       |
+| XEPLR0000000025  | 25s     | 200         | OK                    | Returns success response after a 25-second delay (tests timeout scenario).   |
+| XEPLRPROCESSING  | N/A     | 422         | CANNOT_COMPLETE_REQUEST | Always returns processing error to simulate ongoing subscription processing.   |
+
+**Testing Progressive Timeout Logic:**
+- **Frontend behavior**: Progressive retry intervals (3s → 6s → 9s → 15s → 20s timeout)
+- **Use XEPLRPROCESSING**: To test continuous retry attempts until 20-second timeout
+- **Use timed scenarios**: To test success at different stages of the retry process
+- **Expected outcome**: After 20 seconds, frontend should redirect to "Registration in Progress" page
+
+**Example Test Flow:**
+1. Start subscription with `XEPLRPROCESSING` PLR Reference
+2. Frontend polls every 3 seconds for first 9 seconds (gets 422 errors)
+3. Frontend polls every 5 seconds from 10-20 seconds (gets 422 errors)
+4. At 20 seconds: Frontend times out and redirects to Registration in Progress page
+
 #### Happy Path:
 
 To trigger the happy path, ensure you provide a valid plrReference
