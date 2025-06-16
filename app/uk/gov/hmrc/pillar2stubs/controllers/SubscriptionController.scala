@@ -90,9 +90,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         case "XEPLR0123456503" =>
           Future.successful(ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get))
         
-        // New async processing timeout test scenarios for PIL-2105
         case "XEPLR0000000003" =>
-          // Simulate 3-second processing delay
           Thread.sleep(3000)
           Future.successful(
             Ok(
@@ -103,7 +101,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
           
         case "XEPLR0000000006" =>
-          // Simulate 6-second processing delay
           Thread.sleep(6000)
           Future.successful(
             Ok(
@@ -114,7 +111,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
           
         case "XEPLR0000000010" =>
-          // Simulate 10-second processing delay
           Thread.sleep(10000)
           Future.successful(
             Ok(
@@ -125,7 +121,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
           
         case "XEPLR0000000015" =>
-          // Simulate 15-second processing delay
           Thread.sleep(15000)
           Future.successful(
             Ok(
@@ -136,7 +131,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
           
         case "XEPLR0000000025" =>
-          // Simulate 25-second processing delay (timeout scenario)
           Thread.sleep(25000)
           Future.successful(
             Ok(
@@ -147,7 +141,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
           
         case "XEPLRPROCESSING" =>
-          // Always return 422 to simulate ongoing processing
           Future.successful(UnprocessableEntity(resourceAsString("/resources/subscription/ProcessingResponse.json").get))
           
         case "XEPLR5555555555" =>
