@@ -89,7 +89,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
         case "XEPLR0123456503" =>
           Future.successful(ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get))
-        
+
         case "XEPLR0000000003" =>
           Thread.sleep(3000)
           Future.successful(
@@ -99,7 +99,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
                 .get
             )
           )
-          
+
         case "XEPLR0000000006" =>
           Thread.sleep(6000)
           Future.successful(
@@ -109,7 +109,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
                 .get
             )
           )
-          
+
         case "XEPLR0000000010" =>
           Thread.sleep(10000)
           Future.successful(
@@ -119,7 +119,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
                 .get
             )
           )
-          
+
         case "XEPLR0000000015" =>
           Thread.sleep(15000)
           Future.successful(
@@ -129,7 +129,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
                 .get
             )
           )
-          
+
         case "XEPLR0000000025" =>
           Thread.sleep(25000)
           Future.successful(
@@ -139,10 +139,10 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
                 .get
             )
           )
-          
+
         case "XEPLRPROCESSING" =>
           Future.successful(UnprocessableEntity(resourceAsString("/resources/subscription/ProcessingResponse.json").get))
-          
+
         case "XEPLR5555555555" =>
           Future.successful(
             Ok(
