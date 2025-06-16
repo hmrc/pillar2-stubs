@@ -130,6 +130,16 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
           )
 
+        case "XEPLR1066196602" =>
+          Future.successful(
+            Ok(
+              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
+                .map(replacePillar2Id(_, "XEPLR1066196602"))
+                .map(_.replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
+                .get
+            )
+          )
+
         case _ =>
           resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
             case Some(responseTemplate) =>
