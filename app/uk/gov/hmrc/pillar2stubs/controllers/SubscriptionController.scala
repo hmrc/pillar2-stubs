@@ -34,61 +34,78 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
   def createSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
     logger.info(s"Subscription Request received \n ${request.body} \n")
 
-    request.body.asOpt[Subscription] match {
-      case Some(input) =>
-        val organisationName = input.organisationName
-        val safeId           = input.safeId
+    // PIL-2105: Check session cookies for test scenarios first
+    val sessionCookie = request.cookies.get("mdtp").orElse(request.cookies.get("pillar2-frontend-session"))
+    val sessionId     = sessionCookie.map(_.value).getOrElse("")
 
-        (organisationName, safeId) match {
-          // PIL-2105: Test scenarios for Registration in Progress functionality
-          case ("XEPLRPROCESSING", _) =>
-            UnprocessableEntity(resourceAsString("/resources/subscription/ProcessingResponse.json").get)
-          case ("XEPLR0000000003", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
-          case ("XEPLR0000000006", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000006")).get)
-          case ("XEPLR0000000010", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000010")).get)
-          case ("XEPLR0000000015", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000015")).get)
-          case ("XEPLR0000000025", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000025")).get)
+    if (sessionId.contains("XEPLRPROCESSING")) {
+      UnprocessableEntity(resourceAsString("/resources/subscription/ProcessingResponse.json").get)
+    } else if (sessionId.contains("XEPLR0000000025")) {
+      Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000025")).get)
+    } else if (sessionId.contains("XEPLR0000000015")) {
+      Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000015")).get)
+    } else if (sessionId.contains("XEPLR0000000010")) {
+      Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000010")).get)
+    } else if (sessionId.contains("XEPLR0000000006")) {
+      Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000006")).get)
+    } else if (sessionId.contains("XEPLR0000000003")) {
+      Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
+    } else {
+      // Fall back to existing logic
+      request.body.asOpt[Subscription] match {
+        case Some(input) =>
+          val organisationName = input.organisationName
+          val safeId           = input.safeId
 
-          // Existing error test scenarios
-          case ("duplicateSub", _) =>
-            Conflict(resourceAsString("/resources/error/subscription/Conflict.json").get)
-          case ("unprocessableSub", _) =>
-            UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
-          case ("subServerError", _) =>
-            ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
-          case ("subRecordNotFound", _) =>
-            NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get)
-          case ("subReqNotProcessed", _) =>
-            UnprocessableEntity(resourceAsString("/resources/error/subscription/UnprocessableEntity.json").get)
-          case ("subInvalidRequest", _) =>
-            BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
+          (organisationName, safeId) match {
+            // PIL-2105: Test scenarios for Registration in Progress functionality
+            case ("XEPLRPROCESSING", _) =>
+              UnprocessableEntity(resourceAsString("/resources/subscription/ProcessingResponse.json").get)
+            case ("XEPLR0000000003", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
+            case ("XEPLR0000000006", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000006")).get)
+            case ("XEPLR0000000010", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000010")).get)
+            case ("XEPLR0000000015", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000015")).get)
+            case ("XEPLR0000000025", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000025")).get)
 
-          // Existing safeId-based scenarios
-          case ("XE0000123456400", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456400")).get)
-          case ("XE0000123456404", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456404")).get)
-          case ("XE0000123456422", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456422")).get)
-          case ("XE0000123456500", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456500")).get)
-          case ("XE0000123456503", _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456503")).get)
-          case (_, "XE0000123456789") =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
-          case ("XMPLR0009999999", _) =>
-            Conflict(resourceAsString("/resources/error/subscription/Conflict.json").map(replacePillar2Id(_, "XMPLR0009999999")).get)
-          // Default case
-          case (_, _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
-          case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
-        }
-      case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
+            // Existing error test scenarios
+            case ("duplicateSub", _) =>
+              Conflict(resourceAsString("/resources/error/subscription/Conflict.json").get)
+            case ("unprocessableSub", _) =>
+              UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+            case ("subServerError", _) =>
+              ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
+            case ("subRecordNotFound", _) =>
+              NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get)
+            case ("subReqNotProcessed", _) =>
+              UnprocessableEntity(resourceAsString("/resources/error/subscription/UnprocessableEntity.json").get)
+            case ("subInvalidRequest", _) =>
+              BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
+
+            case ("XE0000123456400", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456400")).get)
+            case ("XE0000123456404", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456404")).get)
+            case ("XE0000123456422", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456422")).get)
+            case ("XE0000123456500", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456500")).get)
+            case ("XE0000123456503", _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456503")).get)
+            case (_, "XE0000123456789") =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
+            case ("XMPLR0009999999", _) =>
+              Conflict(resourceAsString("/resources/error/subscription/Conflict.json").map(replacePillar2Id(_, "XMPLR0009999999")).get)
+            case (_, _) =>
+              Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
+            case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
+          }
+        case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
+      }
     }
   }
 
