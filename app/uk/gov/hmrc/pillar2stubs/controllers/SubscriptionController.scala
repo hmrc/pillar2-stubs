@@ -40,6 +40,21 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         val safeId           = input.safeId
 
         (organisationName, safeId) match {
+          // PIL-2105: Test scenarios for Registration in Progress functionality
+          case ("XEPLRPROCESSING", _) =>
+            UnprocessableEntity(resourceAsString("/resources/subscription/ProcessingResponse.json").get)
+          case ("XEPLR0000000003", _) =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
+          case ("XEPLR0000000006", _) =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000006")).get)
+          case ("XEPLR0000000010", _) =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000010")).get)
+          case ("XEPLR0000000015", _) =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000015")).get)
+          case ("XEPLR0000000025", _) =>
+            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000025")).get)
+
+          // Existing error test scenarios
           case ("duplicateSub", _) =>
             Conflict(resourceAsString("/resources/error/subscription/Conflict.json").get)
           case ("unprocessableSub", _) =>
@@ -53,6 +68,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case ("subInvalidRequest", _) =>
             BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
 
+          // Existing safeId-based scenarios
           case ("XE0000123456400", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XE0000123456400")).get)
           case ("XE0000123456404", _) =>
@@ -67,6 +83,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345671")).get)
           case ("XMPLR0009999999", _) =>
             Conflict(resourceAsString("/resources/error/subscription/Conflict.json").map(replacePillar2Id(_, "XMPLR0009999999")).get)
+          // Default case
           case (_, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
           case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
