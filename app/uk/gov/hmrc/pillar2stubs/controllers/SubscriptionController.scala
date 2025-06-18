@@ -34,10 +34,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
   def createSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
     logger.info(s"Subscription Request received \n ${request.body} \n")
 
-    // PIL-2105: Extract primary contact name from JSON for test scenarios
     val primaryContactName = (request.body \ "primaryContactDetails" \ "name").asOpt[String].getOrElse("")
 
-    // Check primary contact name for PIL-2105 test scenarios first
     primaryContactName match {
       case name if name.contains("XEPLRPROCESSING") =>
         UnprocessableEntity(resourceAsString("/resources/subscription/ProcessingResponse.json").get)
@@ -52,14 +50,12 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       case name if name.contains("XEPLR0000000003") =>
         Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
       case _ =>
-        // Fall back to existing organization name logic
         request.body.asOpt[Subscription] match {
           case Some(input) =>
             val organisationName = input.organisationName
             val safeId           = input.safeId
 
             (organisationName, safeId) match {
-              // PIL-2105: Test scenarios for Registration in Progress functionality
               case ("XEPLRPROCESSING", _) =>
                 UnprocessableEntity(resourceAsString("/resources/subscription/ProcessingResponse.json").get)
               case ("XEPLR0000000003", _) =>
@@ -73,7 +69,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
               case ("XEPLR0000000025", _) =>
                 Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000025")).get)
 
-              // Existing error test scenarios
               case ("duplicateSub", _) =>
                 Conflict(resourceAsString("/resources/error/subscription/Conflict.json").get)
               case ("unprocessableSub", _) =>
