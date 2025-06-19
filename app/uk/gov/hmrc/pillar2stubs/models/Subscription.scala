@@ -19,10 +19,10 @@ package uk.gov.hmrc.pillar2stubs.models
 import play.api.libs.json.{Reads, __}
 
 case class Subscription(
-  safeId: String, 
+  safeId:           String,
   organisationName: String,
-  upeContactName: Option[String],
-  upeCapturePhone: Option[String]
+  upeContactName:   Option[String],
+  upeCapturePhone:  Option[String]
 )
 
 object Subscription {

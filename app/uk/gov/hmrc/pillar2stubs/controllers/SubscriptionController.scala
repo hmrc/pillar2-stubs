@@ -31,7 +31,6 @@ import scala.concurrent.Future
 
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
- 
   private val pollCounters = scala.collection.mutable.Map[String, Int]()
 
   def createSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
@@ -43,7 +42,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         val safeId           = input.safeId
         val upeContactName   = input.upeContactName.getOrElse("")
 
-      
         (upeContactName, organisationName, safeId) match {
           case ("Quick Processing", _, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000001")).get)
@@ -58,7 +56,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000002")).get)
           case (_, "Timeout Processing Corp", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
-
 
           case (_, "duplicateSub", _) =>
             Conflict(resourceAsString("/resources/error/subscription/Conflict.json").get)
@@ -100,7 +97,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       logger.info(s"retrieveSubscription Request received \n $plrReference \n")
       plrReference match {
 
-        case "XEPLR0000000001" => 
+        case "XEPLR0000000001" =>
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
@@ -116,7 +113,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
           }
 
-        case "XEPLR0000000002" => 
+        case "XEPLR0000000002" =>
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
@@ -132,11 +129,10 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
           }
 
-        case "XEPLR0000000003" => 
+        case "XEPLR0000000003" =>
           logger.info(s"Timeout Processing Corp - Always processing for $plrReference")
           Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
 
-   
         case "XEPLR0123456400" =>
           Future.successful(BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get))
         case "XEPLR0123456404" =>
@@ -213,8 +209,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     (Action andThen authFilter).async {
       logger.info(s"readSubscriptionAndCache Request received for id: $id, plrReference: $plrReference")
       plrReference match {
-      
-        case "XEPLR0000000001" => 
+
+        case "XEPLR0000000001" =>
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
@@ -230,7 +226,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
           }
 
-        case "XEPLR0000000002" =>  
+        case "XEPLR0000000002" =>
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
@@ -246,11 +242,10 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
           }
 
-        case "XEPLR0000000003" => 
+        case "XEPLR0000000003" =>
           logger.info(s"Timeout Processing Corp - Always processing for $plrReference")
           Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
 
-   
         case _ =>
           resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
             case Some(responseTemplate) =>
