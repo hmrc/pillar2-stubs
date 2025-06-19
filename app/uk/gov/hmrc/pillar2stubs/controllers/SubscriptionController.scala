@@ -97,7 +97,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           pollCounters(plrReference) = count
           logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
           if (count <= 3) {
-            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
+            Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
           } else {
             Future.successful(
               Ok(
@@ -113,7 +113,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           pollCounters(plrReference) = count
           logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
           if (count <= 8) {
-            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
+            Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
           } else {
             Future.successful(
               Ok(
@@ -126,7 +126,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
         case "XEPLR0000000003" => // Timeout scenario - always returns 422 (processing)
           logger.info(s"Timeout Processing Corp - Always processing for $plrReference")
-          Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
+          Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
 
         // Existing test cases
         case "XEPLR0123456400" =>
@@ -134,7 +134,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         case "XEPLR0123456404" =>
           Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
         case "XEPLR0123456422" =>
-          Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
+          Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
         case "XEPLR0123456500" =>
           Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
         case "XEPLR0123456503" =>
