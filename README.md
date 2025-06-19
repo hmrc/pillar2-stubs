@@ -243,7 +243,7 @@ For testing the registration in progress feature, you can use either UPE contact
 
 **Option 1: Using UPE Contact Name**
 
-Set the `upeContactName` field to one of these values:
+Enter one of these values in the "Contact Name" field during registration:
 
 | UPE Contact Name       | PLR Reference Returned | Polling Behavior                                                      |
 |------------------------|------------------------|--------------------------------------------------------------------- |
