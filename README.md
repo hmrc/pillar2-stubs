@@ -52,7 +52,8 @@ By default, the service runs locally on port **10052**
 
 To use test-only route locally, run the below:
 
-`sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10052'`
+`sbt '
+'`
 
 ### Using Service Manager
 
@@ -243,9 +244,9 @@ For testing the registration in progress feature, use specific organisation name
 
 | Test Trigger                           | PLR Reference Returned | Polling Behavior                                                        |
 |----------------------------------------|------------------------|-------------------------------------------------------------------------|
-| Organisation Name: "Quick Processing Corp" OR UPE Contact Name: "Quick Processing"  | XEPLR0000000001        | Returns 422 for first 3 polls (6 seconds), then returns 200 success    |
-| Organisation Name: "Medium Processing Corp" OR UPE Contact Name: "Medium Processing" | XEPLR0000000002        | Returns 422 for first 8 polls (16 seconds), then returns 200 success   |
-| Organisation Name: "Timeout Processing Corp" OR UPE Contact Name: "Timeout Processing"| XEPLR0000000003        | Always returns 422 (processing) - simulates timeout scenario           |
+|  UPE Contact Name: "Quick Processing" OR "Quick Processing Corp"  | XEPLR0000000001        | Returns 422 for first 3 polls (6 seconds), then returns 200 success    |
+| UPE Contact Name: "Medium Processing" OR "Medium Processing Corp" | XEPLR0000000002        | Returns 422 for first 8 polls (16 seconds), then returns 200 success   |
+| UPE Contact Name: "Timeout Processing" OR "Timeout Processing Corp"| XEPLR0000000003        | Always returns 422 (processing) - simulates timeout scenario           |
 
 **Note**: The UPE contact name is read from `primaryContactDetails.name` in the request body. If both organisation name and UPE contact name match test triggers, UPE contact name takes precedence.
 
