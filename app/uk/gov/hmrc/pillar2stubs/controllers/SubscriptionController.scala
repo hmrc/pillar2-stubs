@@ -31,7 +31,7 @@ import scala.concurrent.Future
 
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
-  // Simple in-memory counter for registration in progress testing
+ 
   private val pollCounters = scala.collection.mutable.Map[String, Int]()
 
   def createSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
@@ -43,9 +43,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         val safeId           = input.safeId
         val upeContactName   = input.upeContactName.getOrElse("")
 
-        // Check UPE contact details first, then fall back to company name/safeId
+      
         (upeContactName, organisationName, safeId) match {
-          // Registration in progress test cases - return specific PLR references based on UPE contact details
           case ("Quick Processing", _, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000001")).get)
           case ("Medium Processing", _, _) =>
@@ -53,7 +52,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case ("Timeout Processing", _, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
 
-          // Original company name test cases - return specific PLR references based on company name
           case (_, "Quick Processing Corp", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000001")).get)
           case (_, "Medium Processing Corp", _) =>
@@ -61,7 +59,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           case (_, "Timeout Processing Corp", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
 
-          // Existing test cases
+
           case (_, "duplicateSub", _) =>
             Conflict(resourceAsString("/resources/error/subscription/Conflict.json").get)
           case (_, "unprocessableSub", _) =>
@@ -101,8 +99,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     (Action andThen authFilter).async {
       logger.info(s"retrieveSubscription Request received \n $plrReference \n")
       plrReference match {
-        // Registration in progress test PLR references with polling behavior
-        case "XEPLR0000000001" => // Quick processing - succeeds after 3 polls (6 seconds)
+
+        case "XEPLR0000000001" => 
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
@@ -118,7 +116,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
           }
 
-        case "XEPLR0000000002" => // Medium processing - succeeds after 8 polls (16 seconds)
+        case "XEPLR0000000002" => 
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
@@ -134,11 +132,11 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
           }
 
-        case "XEPLR0000000003" => // Timeout scenario - always returns 422 (processing)
+        case "XEPLR0000000003" => 
           logger.info(s"Timeout Processing Corp - Always processing for $plrReference")
           Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
 
-        // Existing test cases
+   
         case "XEPLR0123456400" =>
           Future.successful(BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get))
         case "XEPLR0123456404" =>
@@ -215,8 +213,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     (Action andThen authFilter).async {
       logger.info(s"readSubscriptionAndCache Request received for id: $id, plrReference: $plrReference")
       plrReference match {
-        // Registration in progress test PLR references - return None to trigger InternalIssueError
-        case "XEPLR0000000001" => // Quick processing - succeeds after 3 polls (6 seconds)
+      
+        case "XEPLR0000000001" => 
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
@@ -232,7 +230,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
           }
 
-        case "XEPLR0000000002" => // Medium processing - succeeds after 8 polls (16 seconds)  
+        case "XEPLR0000000002" =>  
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
@@ -248,11 +246,11 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             )
           }
 
-        case "XEPLR0000000003" => // Timeout scenario - always returns server error
+        case "XEPLR0000000003" => 
           logger.info(s"Timeout Processing Corp - Always processing for $plrReference")
           Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
 
-        // Other test cases return success by default
+   
         case _ =>
           resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
             case Some(responseTemplate) =>
