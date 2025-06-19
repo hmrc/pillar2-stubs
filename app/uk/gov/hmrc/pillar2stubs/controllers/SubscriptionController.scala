@@ -142,7 +142,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         case "XEPLR0123456404" =>
           Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
         case "XEPLR0123456422" =>
-          Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
+          Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
         case "XEPLR0123456500" =>
           Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
         case "XEPLR0123456503" =>
