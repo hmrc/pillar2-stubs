@@ -239,7 +239,20 @@ Creates a Subscription request
 
 #### Registration In Progress Test Data
 
-For testing the registration in progress feature, use specific organisation names to trigger different polling behaviors:
+For testing the registration in progress feature, you can use either UPE contact names or organisation names to trigger different polling behaviors:
+
+**Option 1: Using UPE Contact Name**
+
+Set the `upeContactName` field to one of these values:
+
+| UPE Contact Name       | PLR Reference Returned | Polling Behavior                                                      |
+|------------------------|------------------------|--------------------------------------------------------------------- |
+| Quick Processing       | XEPLR0000000001        | Returns 404 for first 3 polls (6 seconds), then returns 200 success    |
+| Medium Processing      | XEPLR0000000002        | Returns 404 for first 8 polls (16 seconds), then returns 200 success   |
+| Timeout Processing     | XEPLR0000000003        | Always returns 500 (server error) - simulates timeout scenario         |
+
+**Option 2: Using Organisation Name (legacy)**
+
 
 | Organisation Name      | PLR Reference Returned | Polling Behavior                                                        |
 |------------------------|------------------------|-------------------------------------------------------------------------|
