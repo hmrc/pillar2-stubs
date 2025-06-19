@@ -32,7 +32,7 @@ object Subscription {
     (
       (__ \ "upeDetails" \ "safeId").read[String] and
         (__ \ "upeDetails" \ "organisationName").read[String] and
-        (__ \ "upeContactName").readNullable[String] and
+        (__ \ "primaryContactDetails" \ "name").readNullable[String] and
         (__ \ "upeCapturePhone").readNullable[String]
     )(Subscription.apply _)
   }

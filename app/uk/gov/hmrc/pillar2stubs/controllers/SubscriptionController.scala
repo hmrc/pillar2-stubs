@@ -52,8 +52,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000002")).get)
           case ("Timeout Processing", _, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
-          
-          // Original company name test cases - return specific PLR references based on company name  
+
+          // Original company name test cases - return specific PLR references based on company name
           case (_, "Quick Processing Corp", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000001")).get)
           case (_, "Medium Processing Corp", _) =>
