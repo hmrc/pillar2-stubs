@@ -211,6 +211,59 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       }
     }
 
+  def readSubscriptionAndCache(id: String, plrReference: String): Action[AnyContent] =
+    (Action andThen authFilter).async {
+      logger.info(s"readSubscriptionAndCache Request received for id: $id, plrReference: $plrReference")
+      plrReference match {
+        // Registration in progress test PLR references - return None to trigger InternalIssueError
+        case "XEPLR0000000001" => // Quick processing - succeeds after 3 polls (6 seconds)
+          val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
+          pollCounters(plrReference) = count
+          logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
+          if (count <= 3) {
+            Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
+          } else {
+            Future.successful(
+              Ok(
+                resourceAsString("/resources/subscription/ReadSuccessResponse.json")
+                  .map(replacePillar2Id(_, plrReference))
+                  .get
+              )
+            )
+          }
+
+        case "XEPLR0000000002" => // Medium processing - succeeds after 8 polls (16 seconds)  
+          val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
+          pollCounters(plrReference) = count
+          logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
+          if (count <= 8) {
+            Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
+          } else {
+            Future.successful(
+              Ok(
+                resourceAsString("/resources/subscription/ReadSuccessResponse.json")
+                  .map(replacePillar2Id(_, plrReference))
+                  .get
+              )
+            )
+          }
+
+        case "XEPLR0000000003" => // Timeout scenario - always returns server error
+          logger.info(s"Timeout Processing Corp - Always processing for $plrReference")
+          Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
+
+        // Other test cases return success by default
+        case _ =>
+          resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
+            case Some(responseTemplate) =>
+              val responseBody = replacePillar2Id(responseTemplate, plrReference)
+              Future.successful(Ok(responseBody))
+            case None =>
+              Future.successful(InternalServerError("Unable to read ReadSuccessResponse.json"))
+          }
+      }
+    }
+
   def amendSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
     logger.info(s"amendSubscription Request recieved")
     Json.fromJson[AmendSubscriptionSuccess](request.body) match {

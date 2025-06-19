@@ -239,26 +239,13 @@ Creates a Subscription request
 
 #### Registration In Progress Test Data
 
-For testing the registration in progress feature, you can use either UPE contact names or organisation names to trigger different polling behaviors:
-
-**Option 1: Using UPE Contact Name**
-
-Enter one of these values in the "Contact Name" field during registration:
-
-| UPE Contact Name       | PLR Reference Returned | Polling Behavior                                                      |
-|------------------------|------------------------|--------------------------------------------------------------------- |
-| Quick Processing       | XEPLR0000000001        | Returns 404 for first 3 polls (6 seconds), then returns 200 success    |
-| Medium Processing      | XEPLR0000000002        | Returns 404 for first 8 polls (16 seconds), then returns 200 success   |
-| Timeout Processing     | XEPLR0000000003        | Always returns 500 (server error) - simulates timeout scenario         |
-
-**Option 2: Using Organisation Name (legacy)**
-
+For testing the registration in progress feature, use specific organisation names to trigger different polling behaviors:
 
 | Organisation Name      | PLR Reference Returned | Polling Behavior                                                        |
 |------------------------|------------------------|-------------------------------------------------------------------------|
-| Quick Processing Corp  | XEPLR0000000001        | Returns 404 for first 3 polls (6 seconds), then returns 200 success    |
-| Medium Processing Corp | XEPLR0000000002        | Returns 404 for first 8 polls (16 seconds), then returns 200 success   |
-| Timeout Processing Corp| XEPLR0000000003        | Always returns 500 (server error) - simulates timeout scenario           |
+| Quick Processing Corp  | XEPLR0000000001        | Returns 422 for first 3 polls (6 seconds), then returns 200 success    |
+| Medium Processing Corp | XEPLR0000000002        | Returns 422 for first 8 polls (16 seconds), then returns 200 success   |
+| Timeout Processing Corp| XEPLR0000000003        | Always returns 422 (processing) - simulates timeout scenario           |
 
 #### Happy Path:
 
@@ -376,12 +363,12 @@ Retrieves the Subscription details for the specific plrReference
 
 | plrReference    | Status Code | Status                | Description                                                                                          |
 |-----------------|-------------|-----------------------|------------------------------------------------------------------------------------------------------|
-| XEPLR0000000001 | 404/200     | VARIABLE              | Registration in progress test - Returns 404 for first 3 polls, then 200 success                     |
-| XEPLR0000000002 | 404/200     | VARIABLE              | Registration in progress test - Returns 404 for first 8 polls, then 200 success                     |
-| XEPLR0000000003 | 500         | SERVER_ERROR | Registration in progress test - Always returns 500 (timeout scenario)                             |
+| XEPLR0000000001 | 422/200     | VARIABLE              | Registration in progress test - Returns 422 for first 3 polls, then 200 success                     |
+| XEPLR0000000002 | 422/200     | VARIABLE              | Registration in progress test - Returns 422 for first 8 polls, then 200 success                     |
+| XEPLR0000000003 | 422         | CANNOT_COMPLETE_REQUEST | Registration in progress test - Always returns 422 (timeout scenario)                             |
 | XEPLR0123456400 | 400         | BAD_REQUEST           | Submission has not passed validation. Invalid plrReference.                                          |
 | XEPLR0123456404 | 404         | NOT_FOUND             | Submission has not passed validation. Record not found.                                              |
-| XEPLR0123456422 | 404         | NOT_FOUND  | Subscription not found.               |
+| XEPLR0123456422 | 422         | CANNOT_COMPLETE_REQUEST  | Request could not be completed because the subscription is being created or amended.               |
 | XEPLR0123456500 | 500         | INTERNAL_SERVER_ERROR | Internal Server error.                                                                               |
 | XEPLR0123456503 | 503         | SERVICE_UNAVAILABLE   | Dependent systems are currently not responding.                                                      |
 | XEPLR5555555555 | 200         | OK                    | Returns read success response with accountStatus.inactive set to true.                               |
