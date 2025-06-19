@@ -239,13 +239,15 @@ Creates a Subscription request
 
 #### Registration In Progress Test Data
 
-For testing the registration in progress feature, use specific organisation names to trigger different polling behaviors:
+For testing the registration in progress feature, use specific organisation names OR UPE contact names to trigger different polling behaviors:
 
-| Organisation Name      | PLR Reference Returned | Polling Behavior                                                        |
-|------------------------|------------------------|-------------------------------------------------------------------------|
-| Quick Processing Corp  | XEPLR0000000001        | Returns 422 for first 3 polls (6 seconds), then returns 200 success    |
-| Medium Processing Corp | XEPLR0000000002        | Returns 422 for first 8 polls (16 seconds), then returns 200 success   |
-| Timeout Processing Corp| XEPLR0000000003        | Always returns 422 (processing) - simulates timeout scenario           |
+| Test Trigger                           | PLR Reference Returned | Polling Behavior                                                        |
+|----------------------------------------|------------------------|-------------------------------------------------------------------------|
+| Organisation Name: "Quick Processing Corp" OR UPE Contact Name: "Quick Processing"  | XEPLR0000000001        | Returns 422 for first 3 polls (6 seconds), then returns 200 success    |
+| Organisation Name: "Medium Processing Corp" OR UPE Contact Name: "Medium Processing" | XEPLR0000000002        | Returns 422 for first 8 polls (16 seconds), then returns 200 success   |
+| Organisation Name: "Timeout Processing Corp" OR UPE Contact Name: "Timeout Processing"| XEPLR0000000003        | Always returns 422 (processing) - simulates timeout scenario           |
+
+**Note**: The UPE contact name is read from `primaryContactDetails.name` in the request body. If both organisation name and UPE contact name match test triggers, UPE contact name takes precedence.
 
 #### Happy Path:
 
@@ -548,6 +550,34 @@ HTTP 404 Record Not Found Error
 > Response status: 404
 >
 > Response body: N/A
+---
+
+```
+GET /pillar2/subscription/read-subscription/:id/:plrReference
+```
+
+Reads the Subscription details and caches them for the specific PLR reference and ID. This endpoint is used by the DashboardController for testing registration in progress scenarios.
+
+| plrReference    | Status Code | Status                | Description                                                                                          |
+|-----------------|-------------|-----------------------|------------------------------------------------------------------------------------------------------|
+| XEPLR0000000001 | 404/200     | VARIABLE              | Registration in progress test - Returns 404 for first 3 polls, then 200 success                     |
+| XEPLR0000000002 | 404/200     | VARIABLE              | Registration in progress test - Returns 404 for first 8 polls, then 200 success                     |
+| XEPLR0000000003 | 500         | INTERNAL_SERVER_ERROR | Registration in progress test - Always returns 500 (timeout scenario)                              |
+| Any other PLR   | 200         | OK                    | Returns read success response for any other valid PLR reference                                      |
+
+#### Happy Path:
+
+To trigger the happy path, provide a valid `id` and `plrReference`.
+
+The response format is identical to the `GET /pillar2/subscription/:plrReference` endpoint.
+
+#### Registration In Progress Testing:
+
+This endpoint uses the same polling logic as the `retrieveSubscription` endpoint for the special test PLR references:
+- **XEPLR0000000001**: Quick processing scenario - succeeds after 3 attempts
+- **XEPLR0000000002**: Medium processing scenario - succeeds after 8 attempts  
+- **XEPLR0000000003**: Timeout scenario - always returns server error
+
 ---
 
 ```
