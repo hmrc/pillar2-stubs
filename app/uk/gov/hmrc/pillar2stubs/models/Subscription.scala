@@ -18,7 +18,12 @@ package uk.gov.hmrc.pillar2stubs.models
 
 import play.api.libs.json.{Reads, __}
 
-case class Subscription(safeId: String, organisationName: String)
+case class Subscription(
+  safeId:           String,
+  organisationName: String,
+  upeContactName:   Option[String],
+  upeCapturePhone:  Option[String]
+)
 
 object Subscription {
 
@@ -26,7 +31,9 @@ object Subscription {
     import play.api.libs.functional.syntax._
     (
       (__ \ "upeDetails" \ "safeId").read[String] and
-        (__ \ "upeDetails" \ "organisationName").read[String]
+        (__ \ "upeDetails" \ "organisationName").read[String] and
+        (__ \ "primaryContactDetails" \ "name").readNullable[String] and
+        (__ \ "upeCapturePhone").readNullable[String]
     )(Subscription.apply _)
   }
 }
