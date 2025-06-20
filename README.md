@@ -52,8 +52,7 @@ By default, the service runs locally on port **10052**
 
 To use test-only route locally, run the below:
 
-`sbt '
-'`
+`sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10052'`
 
 ### Using Service Manager
 
