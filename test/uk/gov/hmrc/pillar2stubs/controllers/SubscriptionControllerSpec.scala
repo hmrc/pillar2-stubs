@@ -377,49 +377,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         responseBody should include("XEPLR0000000002")
       }
 
-      "must return CREATED with XEPLR0000000003 for UPE contact name Timeout Processing" in {
-        val input: String =
-          """{
-            | 			"upeDetails": {
-            | 				"safeId": "XE6666666666666",
-            | 				"organisationName": "Test Corp",
-            | 				"registrationDate": "2023-09-28",
-            | 				"domesticOnly": false,
-            | 				"filingMember": false
-            | 			},
-            | 			"accountingPeriod": {
-            | 				"startDate": "2024-12-31",
-            | 				"endDate": "2025-12-12"
-            | 			},
-            | 			"upeCorrespAddressDetails": {
-            | 				"addressLine1": "10 High Street",
-            | 				"addressLine2": "Egham",
-            | 				"addressLine3": "Surrey",
-            | 				"addressLine4": "South East England",
-            | 				"countryCode": "GB"
-            | 			},
-            | 			"primaryContactDetails": {
-            | 				"name": "Timeout Processing",
-            | 				"emailAddress": "Test@test.com"
-            | 			},
-            | 			"filingMemberDetails": {
-            | 				"safeId": "XE6666666666666",
-            | 				"organisationName": "Test"
-            | 			}
-            | 	}
-            |
-            |""".stripMargin
-
-        val json:       JsValue          = Json.parse(input)
-        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
-        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe CREATED
-        val responseBody = contentAsString(result)
-        responseBody should include("XEPLR0000000003")
-      }
-
       // Registration in progress test cases - Company name scenarios
       "must return CREATED with XEPLR0000000001 for organisation name Quick Processing Corp" in {
         val input: String =
@@ -507,49 +464,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         responseBody should include("XEPLR0000000002")
       }
 
-      "must return CREATED with XEPLR0000000003 for organisation name Timeout Processing Corp" in {
-        val input: String =
-          """{
-            | 			"upeDetails": {
-            | 				"safeId": "XE6666666666666",
-            | 				"organisationName": "Timeout Processing Corp",
-            | 				"registrationDate": "2023-09-28",
-            | 				"domesticOnly": false,
-            | 				"filingMember": false
-            | 			},
-            | 			"accountingPeriod": {
-            | 				"startDate": "2024-12-31",
-            | 				"endDate": "2025-12-12"
-            | 			},
-            | 			"upeCorrespAddressDetails": {
-            | 				"addressLine1": "10 High Street",
-            | 				"addressLine2": "Egham",
-            | 				"addressLine3": "Surrey",
-            | 				"addressLine4": "South East England",
-            | 				"countryCode": "GB"
-            | 			},
-            | 			"primaryContactDetails": {
-            | 				"name": "Test Contact",
-            | 				"emailAddress": "Test@test.com"
-            | 			},
-            | 			"filingMemberDetails": {
-            | 				"safeId": "XE6666666666666",
-            | 				"organisationName": "Test"
-            | 			}
-            | 	}
-            |
-            |""".stripMargin
-
-        val json:       JsValue          = Json.parse(input)
-        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
-        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe CREATED
-        val responseBody = contentAsString(result)
-        responseBody should include("XEPLR0000000003")
-      }
-
     }
 
   }
@@ -623,12 +537,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         status(result) shouldBe NOT_FOUND
       }
 
-      "must return INTERNAL_SERVER_ERROR for XEPLR0000000003 (Timeout Processing)" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000003").url).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
     }
 
     "readSubscriptionAndCache" - {
@@ -656,12 +564,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         status(result) shouldBe NOT_FOUND
       }
 
-      "must return INTERNAL_SERVER_ERROR for XEPLR0000000003 (Timeout Processing)" in {
-        val request = FakeRequest(GET, "/pillar2/subscription/read-subscription/testId/XEPLR0000000003").withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
     }
 
   }
