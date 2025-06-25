@@ -47,8 +47,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000001")).get)
           case ("Medium Processing", _, _) | ("Medium Processing Corp", _, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000002")).get)
-          case ("Timeout Processing", _, _) | ("Timeout Processing Corp", _, _) =>
-            Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000003")).get)
 
           case (_, "Quick Processing Corp", _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XEPLR0000000001")).get)
@@ -128,10 +126,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
               )
             )
           }
-
-        case "XEPLR0000000003" =>
-          logger.info(s"Timeout Processing Corp - Always processing for $plrReference")
-          Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
 
         case "XEPLR0123456400" =>
           Future.successful(BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get))
