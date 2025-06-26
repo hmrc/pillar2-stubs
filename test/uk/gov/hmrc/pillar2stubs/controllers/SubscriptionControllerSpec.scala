@@ -290,7 +290,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         status(result) shouldBe BAD_REQUEST
       }
 
-      // Registration in progress test cases - UPE contact name scenarios
       "must return CREATED with XEPLR0000000001 for UPE contact name Quick Processing" in {
         val input: String =
           """{
@@ -377,7 +376,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         responseBody should include("XEPLR0000000002")
       }
 
-      // Registration in progress test cases - Company name scenarios
       "must return CREATED with XEPLR0000000001 for organisation name Quick Processing Corp" in {
         val input: String =
           """{
@@ -522,19 +520,18 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         status(result) shouldBe SERVICE_UNAVAILABLE
       }
 
-      // Registration in progress test cases for polling behavior
-      "must return NOT_FOUND initially for XEPLR0000000001 (Quick Processing)" in {
+      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000001 (Quick Processing)" in {
         val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000001").url).withHeaders(authHeader)
         val result  = route(app, request).value
 
-        status(result) shouldBe NOT_FOUND
+        status(result) shouldBe UNPROCESSABLE_ENTITY
       }
 
-      "must return NOT_FOUND initially for XEPLR0000000002 (Medium Processing)" in {
+      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000002 (Medium Processing)" in {
         val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000002").url).withHeaders(authHeader)
         val result  = route(app, request).value
 
-        status(result) shouldBe NOT_FOUND
+        status(result) shouldBe UNPROCESSABLE_ENTITY
       }
 
     }
@@ -550,18 +547,18 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         status(result) shouldBe OK
       }
 
-      "must return NOT_FOUND initially for XEPLR0000000001 (Quick Processing)" in {
+      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000001 (Quick Processing)" in {
         val request = FakeRequest(GET, "/pillar2/subscription/read-subscription/testId/XEPLR0000000001").withHeaders(authHeader)
         val result  = route(app, request).value
 
-        status(result) shouldBe NOT_FOUND
+        status(result) shouldBe UNPROCESSABLE_ENTITY
       }
 
-      "must return NOT_FOUND initially for XEPLR0000000002 (Medium Processing)" in {
+      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000002 (Medium Processing)" in {
         val request = FakeRequest(GET, "/pillar2/subscription/read-subscription/testId/XEPLR0000000002").withHeaders(authHeader)
         val result  = route(app, request).value
 
-        status(result) shouldBe NOT_FOUND
+        status(result) shouldBe UNPROCESSABLE_ENTITY
       }
 
     }

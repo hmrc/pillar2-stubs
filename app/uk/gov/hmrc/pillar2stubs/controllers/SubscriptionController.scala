@@ -100,7 +100,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           pollCounters(plrReference) = count
           logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
           if (count <= 3) {
-            Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
+            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
           } else {
             Future.successful(
               Ok(
@@ -116,7 +116,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           pollCounters(plrReference) = count
           logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
           if (count <= 8) {
-            Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
+            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
           } else {
             Future.successful(
               Ok(
@@ -209,7 +209,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           pollCounters(plrReference) = count
           logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
           if (count <= 3) {
-            Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
+            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
           } else {
             Future.successful(
               Ok(
@@ -225,7 +225,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           pollCounters(plrReference) = count
           logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
           if (count <= 8) {
-            Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
+            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
           } else {
             Future.successful(
               Ok(
