@@ -290,6 +290,178 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         status(result) shouldBe BAD_REQUEST
       }
 
+      "must return CREATED with XEPLR0000000001 for UPE contact name Quick Processing" in {
+        val input: String =
+          """{
+            | 			"upeDetails": {
+            | 				"safeId": "XE6666666666666",
+            | 				"organisationName": "Test Corp",
+            | 				"registrationDate": "2023-09-28",
+            | 				"domesticOnly": false,
+            | 				"filingMember": false
+            | 			},
+            | 			"accountingPeriod": {
+            | 				"startDate": "2024-12-31",
+            | 				"endDate": "2025-12-12"
+            | 			},
+            | 			"upeCorrespAddressDetails": {
+            | 				"addressLine1": "10 High Street",
+            | 				"addressLine2": "Egham",
+            | 				"addressLine3": "Surrey",
+            | 				"addressLine4": "South East England",
+            | 				"countryCode": "GB"
+            | 			},
+            | 			"primaryContactDetails": {
+            | 				"name": "Quick Processing",
+            | 				"emailAddress": "Test@test.com"
+            | 			},
+            | 			"filingMemberDetails": {
+            | 				"safeId": "XE6666666666666",
+            | 				"organisationName": "Test"
+            | 			}
+            | 	}
+            |
+            |""".stripMargin
+
+        val json:       JsValue          = Json.parse(input)
+        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe CREATED
+        val responseBody = contentAsString(result)
+        responseBody should include("XEPLR0000000001")
+      }
+
+      "must return CREATED with XEPLR0000000002 for UPE contact name Medium Processing" in {
+        val input: String =
+          """{
+            | 			"upeDetails": {
+            | 				"safeId": "XE6666666666666",
+            | 				"organisationName": "Test Corp",
+            | 				"registrationDate": "2023-09-28",
+            | 				"domesticOnly": false,
+            | 				"filingMember": false
+            | 			},
+            | 			"accountingPeriod": {
+            | 				"startDate": "2024-12-31",
+            | 				"endDate": "2025-12-12"
+            | 			},
+            | 			"upeCorrespAddressDetails": {
+            | 				"addressLine1": "10 High Street",
+            | 				"addressLine2": "Egham",
+            | 				"addressLine3": "Surrey",
+            | 				"addressLine4": "South East England",
+            | 				"countryCode": "GB"
+            | 			},
+            | 			"primaryContactDetails": {
+            | 				"name": "Medium Processing",
+            | 				"emailAddress": "Test@test.com"
+            | 			},
+            | 			"filingMemberDetails": {
+            | 				"safeId": "XE6666666666666",
+            | 				"organisationName": "Test"
+            | 			}
+            | 	}
+            |
+            |""".stripMargin
+
+        val json:       JsValue          = Json.parse(input)
+        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe CREATED
+        val responseBody = contentAsString(result)
+        responseBody should include("XEPLR0000000002")
+      }
+
+      "must return CREATED with XEPLR0000000001 for organisation name Quick Processing Corp" in {
+        val input: String =
+          """{
+            | 			"upeDetails": {
+            | 				"safeId": "XE6666666666666",
+            | 				"organisationName": "Quick Processing Corp",
+            | 				"registrationDate": "2023-09-28",
+            | 				"domesticOnly": false,
+            | 				"filingMember": false
+            | 			},
+            | 			"accountingPeriod": {
+            | 				"startDate": "2024-12-31",
+            | 				"endDate": "2025-12-12"
+            | 			},
+            | 			"upeCorrespAddressDetails": {
+            | 				"addressLine1": "10 High Street",
+            | 				"addressLine2": "Egham",
+            | 				"addressLine3": "Surrey",
+            | 				"addressLine4": "South East England",
+            | 				"countryCode": "GB"
+            | 			},
+            | 			"primaryContactDetails": {
+            | 				"name": "Test Contact",
+            | 				"emailAddress": "Test@test.com"
+            | 			},
+            | 			"filingMemberDetails": {
+            | 				"safeId": "XE6666666666666",
+            | 				"organisationName": "Test"
+            | 			}
+            | 	}
+            |
+            |""".stripMargin
+
+        val json:       JsValue          = Json.parse(input)
+        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe CREATED
+        val responseBody = contentAsString(result)
+        responseBody should include("XEPLR0000000001")
+      }
+
+      "must return CREATED with XEPLR0000000002 for organisation name Medium Processing Corp" in {
+        val input: String =
+          """{
+            | 			"upeDetails": {
+            | 				"safeId": "XE6666666666666",
+            | 				"organisationName": "Medium Processing Corp",
+            | 				"registrationDate": "2023-09-28",
+            | 				"domesticOnly": false,
+            | 				"filingMember": false
+            | 			},
+            | 			"accountingPeriod": {
+            | 				"startDate": "2024-12-31",
+            | 				"endDate": "2025-12-12"
+            | 			},
+            | 			"upeCorrespAddressDetails": {
+            | 				"addressLine1": "10 High Street",
+            | 				"addressLine2": "Egham",
+            | 				"addressLine3": "Surrey",
+            | 				"addressLine4": "South East England",
+            | 				"countryCode": "GB"
+            | 			},
+            | 			"primaryContactDetails": {
+            | 				"name": "Test Contact",
+            | 				"emailAddress": "Test@test.com"
+            | 			},
+            | 			"filingMemberDetails": {
+            | 				"safeId": "XE6666666666666",
+            | 				"organisationName": "Test"
+            | 			}
+            | 	}
+            |
+            |""".stripMargin
+
+        val json:       JsValue          = Json.parse(input)
+        val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe CREATED
+        val responseBody = contentAsString(result)
+        responseBody should include("XEPLR0000000002")
+      }
+
     }
 
   }
@@ -347,6 +519,48 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         status(result) shouldBe SERVICE_UNAVAILABLE
       }
+
+      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000001 (Quick Processing)" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000001").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe UNPROCESSABLE_ENTITY
+      }
+
+      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000002 (Medium Processing)" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000002").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe UNPROCESSABLE_ENTITY
+      }
+
+    }
+
+    "readSubscriptionAndCache" - {
+
+      val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+
+      "must return OK response for valid id and plrReference" in {
+        val request = FakeRequest(GET, "/pillar2/subscription/read-subscription/testId/validPlr").withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe OK
+      }
+
+      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000001 (Quick Processing)" in {
+        val request = FakeRequest(GET, "/pillar2/subscription/read-subscription/testId/XEPLR0000000001").withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe UNPROCESSABLE_ENTITY
+      }
+
+      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000002 (Medium Processing)" in {
+        val request = FakeRequest(GET, "/pillar2/subscription/read-subscription/testId/XEPLR0000000002").withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe UNPROCESSABLE_ENTITY
+      }
+
     }
 
   }

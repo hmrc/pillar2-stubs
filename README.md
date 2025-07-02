@@ -237,6 +237,17 @@ POST /pillar2/subscription
 
 Creates a Subscription request
 
+#### Registration In Progress Test Data
+
+For testing the registration in progress feature, use specific organisation names OR UPE contact names to trigger different polling behaviors:
+
+| Test Trigger                           | PLR Reference Returned | Polling Behavior                                                        |
+|----------------------------------------|------------------------|-------------------------------------------------------------------------|
+|  UPE Contact Name: "Quick Processing" OR "Quick Processing Corp"  | XEPLR0000000001        | Returns 422 for first 3 polls (6 seconds), then returns 200 success    |
+| UPE Contact Name: "Medium Processing" OR "Medium Processing Corp" | XEPLR0000000002        | Returns 422 for first 8 polls (16 seconds), then returns 200 success   |
+
+**Note**: The UPE contact name is read from `primaryContactDetails.name` in the request body. If both organisation name and UPE contact name match test triggers, UPE contact name takes precedence.
+
 #### Happy Path:
 
 To trigger the happy path, ensure you provide a valid request body
@@ -353,6 +364,8 @@ Retrieves the Subscription details for the specific plrReference
 
 | plrReference    | Status Code | Status                | Description                                                                                          |
 |-----------------|-------------|-----------------------|------------------------------------------------------------------------------------------------------|
+| XEPLR0000000001 | 422/200     | VARIABLE              | Registration in progress test - Returns 422 for first 3 polls, then 200 success                     |
+| XEPLR0000000002 | 422/200     | VARIABLE              | Registration in progress test - Returns 422 for first 8 polls, then 200 success                     |                           |
 | XEPLR0123456400 | 400         | BAD_REQUEST           | Submission has not passed validation. Invalid plrReference.                                          |
 | XEPLR0123456404 | 404         | NOT_FOUND             | Submission has not passed validation. Record not found.                                              |
 | XEPLR0123456422 | 422         | CANNOT_COMPLETE_REQUEST  | Request could not be completed because the subscription is being created or amended.               |
@@ -535,6 +548,32 @@ HTTP 404 Record Not Found Error
 > Response status: 404
 >
 > Response body: N/A
+---
+
+```
+GET /pillar2/subscription/read-subscription/:id/:plrReference
+```
+
+Reads the Subscription details and caches them for the specific PLR reference and ID. This endpoint is used by the DashboardController for testing registration in progress scenarios.
+
+| plrReference    | Status Code | Status                | Description                                                                                          |
+|-----------------|-------------|-----------------------|------------------------------------------------------------------------------------------------------|
+| XEPLR0000000001 | 404/200     | VARIABLE              | Registration in progress test - Returns 404 for first 3 polls, then 200 success                     |
+| XEPLR0000000002 | 404/200     | VARIABLE              | Registration in progress test - Returns 404 for first 8 polls, then 200 success                     |                             |
+| Any other PLR   | 200         | OK                    | Returns read success response for any other valid PLR reference                                      |
+
+#### Happy Path:
+
+To trigger the happy path, provide a valid `id` and `plrReference`.
+
+The response format is identical to the `GET /pillar2/subscription/:plrReference` endpoint.
+
+#### Registration In Progress Testing:
+
+This endpoint uses the same polling logic as the `retrieveSubscription` endpoint for the special test PLR references:
+- **XEPLR0000000001**: Quick processing scenario - succeeds after 3 attempts
+- **XEPLR0000000002**: Medium processing scenario - succeeds after 8 attempts  
+
 ---
 
 ```
