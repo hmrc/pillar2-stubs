@@ -146,6 +146,15 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
                 .get
             )
           )
+        case "XEPLR9999999994" =>
+          Future.successful(
+            Ok(
+              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
+                .map(replacePillar2Id(_, "XEPLR9999999994"))
+                .map(_.replace("\"inactive\": false", "\"inactive\": true"))
+                .get
+            )
+          )
 
         case "XEPLR5555551111" =>
           val currentDate = LocalDate.now()

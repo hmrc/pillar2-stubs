@@ -54,9 +54,11 @@ object ObligationsAndSubmissionsSuccessResponse {
           obligations = Seq(
             Obligation(
               obligationType = ObligationType.UKTR,
-              status = ObligationStatus.Open,
+              status = ObligationStatus.Fulfilled,
               canAmend = true,
-              submissions = Seq.empty
+              submissions = Seq(
+                Submission(submissionType = SubmissionType.BTN, receivedDate = now, country = None)
+              )
             )
           )
         )
