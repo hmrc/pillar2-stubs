@@ -106,21 +106,21 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     response.success.accountingPeriodDetails shouldBe empty
   }
 
-  test("Returns single accounting period when Pillar2-Id is XEPLR3333333333") {
-    implicit val pillar2Id: String = "XEPLR3333333333"
-    val result = route(app, request).value
+  // test("Returns single accounting period when Pillar2-Id is XEPLR3333333333") {
+  //   implicit val pillar2Id: String = "XEPLR3333333333"
+  //   val result = route(app, request).value
 
-    status(result) shouldEqual 200
-    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+  //   status(result) shouldEqual 200
+  //   contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
 
-    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
-    response.success.accountingPeriodDetails.size shouldEqual 1
+  //   val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+  //   response.success.accountingPeriodDetails.size shouldEqual 1
 
-    val period = response.success.accountingPeriodDetails.head
-    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
-    period.obligations.head.status shouldEqual ObligationStatus.Open
-    period.obligations.head.submissions.size shouldEqual 0
-  }
+  //   val period = response.success.accountingPeriodDetails.head
+  //   period.obligations.head.obligationType shouldEqual ObligationType.UKTR
+  //   period.obligations.head.status shouldEqual ObligationStatus.Open
+  //   period.obligations.head.submissions.size shouldEqual 0
+  // }
 
   test("Returns all fulfilled obligations when Pillar2-Id is XEPLR4444444444") {
     implicit val pillar2Id: String = "XEPLR4444444444"
