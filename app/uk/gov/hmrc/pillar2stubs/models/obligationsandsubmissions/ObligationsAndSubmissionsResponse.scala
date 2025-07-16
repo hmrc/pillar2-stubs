@@ -455,6 +455,83 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
   )
+
+  // UKTR Banner Test Scenarios
+  
+  // UKTR Due: Returns UKTR obligations due within 60 days (30 days from now)
+  def uktrDueScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(18).plusDays(30),
+          endDate = LocalDate.now().minusMonths(6).plusDays(30),
+          dueDate = LocalDate.now().plusDays(30), // Due in 30 days (within 60-day threshold)
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = false,
+              submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
+
+  // UKTR Overdue: Returns UKTR obligations past due date (30 days overdue)
+  def uktrOverdueScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(18).minusDays(30),
+          endDate = LocalDate.now().minusMonths(6).minusDays(30),
+          dueDate = LocalDate.now().minusDays(30), // Overdue by 30 days
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = false,
+              submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
+
+  // UKTR Incomplete: Returns UKTR obligations with submissions but still Open status
+  def uktrIncompleteScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(18).minusDays(60),
+          endDate = LocalDate.now().minusMonths(6).minusDays(60),
+          dueDate = LocalDate.now().minusDays(60), // Overdue by 60 days
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open, // Still Open despite having submissions = Incomplete
+              canAmend = true,
+              submissions = Seq(
+                Submission(
+                  submissionType = SubmissionType.UKTR_CREATE,
+                  receivedDate = now.minusDays(5),
+                  country = Some("GB")
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
 }
 
 case class ObligationsAndSubmissionsSuccess(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])
