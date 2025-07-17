@@ -457,7 +457,7 @@ object ObligationsAndSubmissionsSuccessResponse {
   )
 
   // UKTR Banner Test Scenarios
-  
+
   // UKTR Due: Returns UKTR obligations due within 60 days (30 days from now)
   def uktrDueScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
@@ -510,9 +510,9 @@ object ObligationsAndSubmissionsSuccessResponse {
       processingDate = now,
       accountingPeriodDetails = Seq(
         AccountingPeriodDetails(
-          startDate = LocalDate.now().minusMonths(18).minusDays(60),
-          endDate = LocalDate.now().minusMonths(6).minusDays(60),
-          dueDate = LocalDate.now().minusDays(60), // Overdue by 60 days
+          startDate = LocalDate.now().minusMonths(18).minusDays(45),
+          endDate = LocalDate.now().minusMonths(6).minusDays(45),
+          dueDate = LocalDate.now().minusDays(15), // Overdue by 15 days
           underEnquiry = false,
           obligations = Seq(
             Obligation(
