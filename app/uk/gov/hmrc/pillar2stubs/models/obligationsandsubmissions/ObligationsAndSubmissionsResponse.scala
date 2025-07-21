@@ -455,6 +455,74 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
   )
+
+  def uktrDueScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.now().plusDays(30),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
+
+  def uktrOverdueScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear - 1, 1, 1),
+          endDate = LocalDate.of(currentYear - 1, 12, 31),
+          dueDate = LocalDate.now().minusDays(10),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
+
+  def uktrIncompleteScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.now().plusDays(45),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq(
+                Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None)
+              )
+            )
+          )
+        )
+      )
+    )
+  )
 }
 
 case class ObligationsAndSubmissionsSuccess(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])
