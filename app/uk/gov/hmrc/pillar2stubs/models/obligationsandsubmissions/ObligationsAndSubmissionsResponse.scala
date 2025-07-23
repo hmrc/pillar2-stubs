@@ -529,6 +529,66 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
   )
+
+  def bothFulfilledScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.now().minusDays(10),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Fulfilled,
+              canAmend = true,
+              submissions = Seq(
+                Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None)
+              )
+            ),
+            Obligation(
+              obligationType = ObligationType.GIR,
+              status = ObligationStatus.Fulfilled,
+              canAmend = true,
+              submissions = Seq(
+                Submission(submissionType = SubmissionType.GIR, receivedDate = now, country = None)
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+
+  def neitherFulfilledScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.now().minusDays(10),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            ),
+            Obligation(
+              obligationType = ObligationType.GIR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
 }
 
 case class ObligationsAndSubmissionsSuccess(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])
