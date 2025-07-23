@@ -507,7 +507,7 @@ object ObligationsAndSubmissionsSuccessResponse {
         AccountingPeriodDetails(
           startDate = LocalDate.of(currentYear, 1, 1),
           endDate = LocalDate.of(currentYear, 12, 31),
-          dueDate = LocalDate.now().plusDays(45),
+          dueDate = LocalDate.now().minusDays(10),
           underEnquiry = false,
           obligations = Seq(
             Obligation(
@@ -517,6 +517,12 @@ object ObligationsAndSubmissionsSuccessResponse {
               submissions = Seq(
                 Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None)
               )
+            ),
+            Obligation(
+              obligationType = ObligationType.GIR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
             )
           )
         )
