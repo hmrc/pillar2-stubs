@@ -754,8 +754,8 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 |--------------------|----------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
 | XEPLR1111111111    | Multiple Accounting Periods all open                     | Returns 4 accounting periods with different dates, obligation types, and statuses                   |
 | XMPLR0012345675    | UKTR Due                                                 | Returns two accounting periods with UKTR and GIR obligations (due and overdue periods)             |
-| XMPLR0012345676    | UKTR Overdue                                             | Returns UKTR obligations past due date (30 days overdue)                                            |
-| XMPLR0012345677    | UKTR Incomplete                                          | Returns UKTR obligations with submissions but still Open status (due December 27, future date)      |
+| XMPLR0012345676    | UKTR Overdue                                             | Returns two accounting periods (one due, one overdue) with both UKTR and GIR obligations - should trigger Overdue banner despite having due items |
+| XMPLR0012345677    | UKTR Incomplete                                          | Returns two accounting periods matching prototype - Period 1: both UKTR/GIR with UKTR submitted, Period 2: only GIR with no submissions |
 | XMPLR0012345678    | Both UKTR and GIR Fulfilled                             | Returns both UKTR and GIR obligations fulfilled with past due date (should not show incomplete)    |
 | XMPLR0012345679    | Neither UKTR nor GIR Fulfilled                          | Returns neither UKTR nor GIR obligations fulfilled with past due date (should show overdue)        |
 
