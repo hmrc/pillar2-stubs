@@ -69,6 +69,17 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XMPLR0012345677" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrIncompleteScenario()))
           case "XMPLR0012345678" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.bothFulfilledScenario()))
           case "XMPLR0012345679" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.neitherFulfilledScenario()))
+          case "XNEG0012345681"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrDueBeyond60DaysScenario()))
+          case "XNEG0012345682"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrDueAlreadyFulfilledScenario()))
+          case "XNEG0012345683"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.noUktrObligationsScenario()))
+          case "XNEG0012345684"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueAlreadyFulfilledScenario()))
+          case "XNEG0012345685"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueFutureDatesScenario()))
+          case "XNEG0012345686"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.noUktrObligationsOverdueScenario()))
+          case "XNEG0012345687"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrIncompleteBothFulfilledScenario()))
+          case "XNEG0012345688"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrIncompleteFutureDueScenario()))
+          case "XNEG0012345689"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrIncompleteOnlyOneTypeNoSubmissionsScenario()))
+          case "XNEG0012345690"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrIncompleteNeitherFulfilledScenario()))
+          case "XNEG0012345691"  => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withEmptyObligations()))
           case _                 => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
         }
       }
