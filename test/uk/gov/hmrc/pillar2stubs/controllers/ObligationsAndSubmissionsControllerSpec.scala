@@ -253,4 +253,164 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     contentAsJson(result).validate[ObligationsAndSubmissionsSimpleErrorResponse].asEither.isRight shouldBe true
     contentAsJson(result).as[ObligationsAndSubmissionsSimpleErrorResponse].error.code shouldEqual "500"
   }
+
+  test("Returns UKTR Due Beyond 60 Days scenario when Pillar2-Id is XNEG0012345681") {
+    implicit val pillar2Id: String = "XNEG0012345681"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.dueDate shouldBe LocalDate.now().plusDays(70)
+    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
+    period.obligations.head.status shouldEqual ObligationStatus.Open
+    period.obligations.head.submissions.size shouldEqual 0
+  }
+
+  test("Returns UKTR Due Already Fulfilled scenario when Pillar2-Id is XNEG0012345682") {
+    implicit val pillar2Id: String = "XNEG0012345682"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.dueDate shouldBe LocalDate.now().plusDays(30)
+    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
+    period.obligations.head.status shouldEqual ObligationStatus.Fulfilled
+  }
+
+  test("Returns No UKTR Obligations scenario when Pillar2-Id is XNEG0012345683") {
+    implicit val pillar2Id: String = "XNEG0012345683"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.obligations.size shouldEqual 1
+    period.obligations.head.obligationType shouldEqual ObligationType.GIR
+    period.obligations.exists(_.obligationType == ObligationType.UKTR) shouldBe false
+  }
+
+  test("Returns UKTR Overdue Already Fulfilled scenario when Pillar2-Id is XNEG0012345684") {
+    implicit val pillar2Id: String = "XNEG0012345684"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.dueDate shouldBe LocalDate.now().minusDays(10)
+    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
+    period.obligations.head.status shouldEqual ObligationStatus.Fulfilled
+  }
+
+  test("Returns UKTR Overdue Future Dates scenario when Pillar2-Id is XNEG0012345685") {
+    implicit val pillar2Id: String = "XNEG0012345685"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.dueDate shouldBe LocalDate.now().plusDays(30)
+    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
+    period.obligations.head.status shouldEqual ObligationStatus.Open
+  }
+
+  test("Returns No UKTR Obligations Overdue scenario when Pillar2-Id is XNEG0012345686") {
+    implicit val pillar2Id: String = "XNEG0012345686"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.obligations.size shouldEqual 1
+    period.obligations.head.obligationType shouldEqual ObligationType.GIR
+    period.obligations.exists(_.obligationType == ObligationType.UKTR) shouldBe false
+  }
+
+  test("Returns UKTR Incomplete Both Fulfilled scenario when Pillar2-Id is XNEG0012345687") {
+    implicit val pillar2Id: String = "XNEG0012345687"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.obligations.foreach { obligation =>
+      obligation.status shouldEqual ObligationStatus.Fulfilled
+    }
+    period.obligations.exists(_.obligationType == ObligationType.UKTR) shouldBe true
+    period.obligations.exists(_.obligationType == ObligationType.GIR)  shouldBe true
+  }
+
+  test("Returns UKTR Incomplete Future Due scenario when Pillar2-Id is XNEG0012345688") {
+    implicit val pillar2Id: String = "XNEG0012345688"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.dueDate shouldBe LocalDate.now().plusDays(30)
+    val uktrObligation = period.obligations.find(_.obligationType == ObligationType.UKTR).value
+    uktrObligation.status shouldEqual ObligationStatus.Open
+    uktrObligation.submissions.size should be > 0
+  }
+
+  test("Returns UKTR Incomplete Only One Type No Submissions scenario when Pillar2-Id is XNEG0012345689") {
+    implicit val pillar2Id: String = "XNEG0012345689"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.obligations.size shouldEqual 1
+    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
+    period.obligations.head.status shouldEqual ObligationStatus.Open
+    period.obligations.head.submissions.size shouldEqual 0
+  }
+
+  test("Returns UKTR Incomplete Neither Fulfilled scenario when Pillar2-Id is XNEG0012345690") {
+    implicit val pillar2Id: String = "XNEG0012345690"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.obligations.foreach { obligation =>
+      obligation.status shouldEqual ObligationStatus.Open
+      obligation.submissions.size shouldEqual 0
+    }
+    period.obligations.exists(_.obligationType == ObligationType.UKTR) shouldBe true
+    period.obligations.exists(_.obligationType == ObligationType.GIR)  shouldBe true
+  }
+
+  test("Returns Empty Obligations scenario when Pillar2-Id is XNEG0012345691") {
+    implicit val pillar2Id: String = "XNEG0012345691"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    val period   = response.success.accountingPeriodDetails.head
+    period.obligations shouldBe empty
+  }
 }
