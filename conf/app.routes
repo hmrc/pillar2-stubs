@@ -17,7 +17,7 @@ DELETE        /tax-enrolments/groups/:groupId/enrolments/:serviceName           
 
 POST          /verify/business                                                             uk.gov.hmrc.pillar2stubs.controllers.BarsController.verify
 
-GET           /enterprise/financial-data/:idType/:idNumber/:regimeType                     uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.retrieveFinancialData(idType: String, idNumber: String, regimeType: String, dateFrom: String, dateTo: String)
+GET           /enterprise/financial-data/ZPLR/:idNumber/PLR                                uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.retrieveFinancialData(idNumber: String, dateFrom: String, dateTo: String)
 
 POST          /RESTAdapter/plr/uk-tax-return                                               uk.gov.hmrc.pillar2stubs.controllers.UKTRSubmitController.submitUKTR
 PUT           /RESTAdapter/plr/uk-tax-return                                               uk.gov.hmrc.pillar2stubs.controllers.UKTRAmendController.amendUKTR
