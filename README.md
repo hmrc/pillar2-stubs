@@ -756,24 +756,7 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 | XMPLR0012345675    | UKTR Due                                                 | Returns two accounting periods with UKTR and GIR obligations (due and overdue periods)             |
 | XMPLR0012345676    | UKTR Overdue                                             | Returns two accounting periods (one due, one overdue) with both UKTR and GIR obligations - should trigger Overdue banner despite having due items |
 | XMPLR0012345677    | UKTR Incomplete                                          | Returns two accounting periods matching prototype - Period 1: both UKTR/GIR with UKTR submitted, Period 2: only GIR with no submissions |
-| XMPLR0012345678    | Both UKTR and GIR Fulfilled                             | Returns both UKTR and GIR obligations fulfilled with past due date (should not show incomplete)    |
-| XMPLR0012345679    | Neither UKTR nor GIR Fulfilled                          | Returns neither UKTR nor GIR obligations fulfilled with past due date (should show overdue)        |
 
-#### Negative Test Scenarios (Banner should NOT appear)
-
-| Pillar2 ID         | Scenario Type                                            | Description                                                                                         |
-|--------------------|----------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
-| XNEG0012345681     | UKTR Due NEGATIVE - Beyond 60 Days                      | Returns UKTR obligations due 70 days from now                                                      |
-| XNEG0012345682     | UKTR Due NEGATIVE - Already Fulfilled                   | Returns UKTR obligations within 60 days but already fulfilled                                      |
-| XNEG0012345683     | UKTR Due NEGATIVE - No UKTR Obligations                 | Returns only GIR obligations within 60 days                                                        |
-| XNEG0012345684     | UKTR Overdue NEGATIVE - Already Fulfilled               | Returns overdue UKTR obligations but already fulfilled                                             |
-| XNEG0012345685     | UKTR Overdue NEGATIVE - Future Dates                    | Returns UKTR obligations with future due dates                                                     |
-| XNEG0012345686     | UKTR Overdue NEGATIVE - No UKTR Obligations             | Returns only GIR obligations with overdue dates                                                    |
-| XNEG0012345687     | UKTR Incomplete NEGATIVE - Both Fulfilled               | Returns both UKTR and GIR fulfilled with past due date                                             |
-| XNEG0012345688     | UKTR Incomplete NEGATIVE - Future Due Date              | Returns partially fulfilled obligations with future due date                                       |
-| XNEG0012345689     | UKTR Incomplete NEGATIVE - Only One Type, No Submissions| Returns only UKTR obligation with no submissions and past due                                      |
-| XNEG0012345690     | UKTR Incomplete NEGATIVE - Neither Fulfilled            | Returns neither UKTR nor GIR fulfilled with past due                                               |
-| XNEG0012345691     | UKTR NEGATIVE - Empty Obligations                       | Returns accounting period with no obligations                                                      |
 
 | XEPLR2222222222    | No Accounting Periods                                    | Returns a success response with no accounting periods                                               |
 | XEPLR3333333333    | Single Accounting Period                                 | Returns a single accounting period (same as default)                                                |
