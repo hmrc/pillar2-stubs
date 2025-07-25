@@ -67,6 +67,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XMPLR0012345675" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrDueScenario()))
           case "XMPLR0012345676" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
           case "XMPLR0012345677" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrIncompleteScenario()))
+          case "XEPLR0000000504" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilled()))
 
           case _ => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
         }
