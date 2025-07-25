@@ -461,29 +461,9 @@ object ObligationsAndSubmissionsSuccessResponse {
       processingDate = now,
       accountingPeriodDetails = Seq(
         AccountingPeriodDetails(
-          startDate = LocalDate.of(2023, 9, 28),
-          endDate = LocalDate.of(2024, 9, 27),
-          dueDate = LocalDate.of(2025, 12, 27),
-          underEnquiry = false,
-          obligations = Seq(
-            Obligation(
-              obligationType = ObligationType.UKTR,
-              status = ObligationStatus.Open,
-              canAmend = true,
-              submissions = Seq.empty
-            ),
-            Obligation(
-              obligationType = ObligationType.GIR,
-              status = ObligationStatus.Open,
-              canAmend = true,
-              submissions = Seq.empty
-            )
-          )
-        ),
-        AccountingPeriodDetails(
-          startDate = LocalDate.of(2022, 9, 28),
-          endDate = LocalDate.of(2023, 9, 27),
-          dueDate = LocalDate.of(2024, 12, 27),
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.now().plusDays(30),
           underEnquiry = false,
           obligations = Seq(
             Obligation(
@@ -509,9 +489,9 @@ object ObligationsAndSubmissionsSuccessResponse {
       processingDate = now,
       accountingPeriodDetails = Seq(
         AccountingPeriodDetails(
-          startDate = LocalDate.of(2023, 9, 28),
-          endDate = LocalDate.of(2024, 9, 27),
-          dueDate = LocalDate.of(2025, 12, 27),
+          startDate = LocalDate.of(currentYear - 1, 1, 1),
+          endDate = LocalDate.of(currentYear - 1, 12, 31),
+          dueDate = LocalDate.now().minusDays(10),
           underEnquiry = false,
           obligations = Seq(
             Obligation(
@@ -529,9 +509,9 @@ object ObligationsAndSubmissionsSuccessResponse {
           )
         ),
         AccountingPeriodDetails(
-          startDate = LocalDate.of(2022, 9, 28),
-          endDate = LocalDate.of(2023, 9, 27),
-          dueDate = LocalDate.of(2024, 12, 27),
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.now().plusDays(10),
           underEnquiry = false,
           obligations = Seq(
             Obligation(
@@ -557,33 +537,19 @@ object ObligationsAndSubmissionsSuccessResponse {
       processingDate = now,
       accountingPeriodDetails = Seq(
         AccountingPeriodDetails(
-          startDate = LocalDate.of(2023, 9, 28),
-          endDate = LocalDate.of(2024, 9, 27),
-          dueDate = LocalDate.of(2025, 12, 27),
+          startDate = LocalDate.of(currentYear - 1, 1, 1),
+          endDate = LocalDate.of(currentYear - 1, 12, 31),
+          dueDate = LocalDate.now().minusDays(10),
           underEnquiry = false,
           obligations = Seq(
             Obligation(
               obligationType = ObligationType.UKTR,
-              status = ObligationStatus.Open,
+              status = ObligationStatus.Fulfilled,
               canAmend = true,
               submissions = Seq(
                 Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None)
               )
             ),
-            Obligation(
-              obligationType = ObligationType.GIR,
-              status = ObligationStatus.Open,
-              canAmend = true,
-              submissions = Seq.empty
-            )
-          )
-        ),
-        AccountingPeriodDetails(
-          startDate = LocalDate.of(2022, 9, 28),
-          endDate = LocalDate.of(2023, 9, 27),
-          dueDate = LocalDate.of(2025, 12, 27),
-          underEnquiry = false,
-          obligations = Seq(
             Obligation(
               obligationType = ObligationType.GIR,
               status = ObligationStatus.Open,
