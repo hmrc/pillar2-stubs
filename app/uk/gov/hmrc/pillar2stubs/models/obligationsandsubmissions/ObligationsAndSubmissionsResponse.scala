@@ -483,7 +483,7 @@ object ObligationsAndSubmissionsSuccessResponse {
         AccountingPeriodDetails(
           startDate = LocalDate.of(currentYear - 3, 9, 28),
           endDate = LocalDate.of(currentYear - 2, 9, 27),
-          dueDate = LocalDate.of(currentYear - 1, 12, 27),
+          dueDate = LocalDate.now().plusDays(60),
           underEnquiry = false,
           obligations = Seq(
             Obligation(
