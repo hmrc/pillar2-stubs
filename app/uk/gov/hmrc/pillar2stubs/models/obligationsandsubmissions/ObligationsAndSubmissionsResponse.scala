@@ -479,6 +479,26 @@ object ObligationsAndSubmissionsSuccessResponse {
               submissions = Seq.empty
             )
           )
+        ),
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear - 3, 9, 28),
+          endDate = LocalDate.of(currentYear - 2, 9, 27),
+          dueDate = LocalDate.of(currentYear - 1, 12, 27),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            ),
+            Obligation(
+              obligationType = ObligationType.GIR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
         )
       )
     )
