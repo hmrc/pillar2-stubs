@@ -64,7 +64,12 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XEPLR9999999993" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.threeActiveAccountingPeriodsWithDifferentScenarios()))
           case "XEPLR9999999994" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.fourActiveAccountingPeriodsWithDifferentScenarios()))
           case "XEPLR1066196602" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.twoActiveAccountingPeriodsWithNoSubmissions()))
-          case _                 => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
+          case "XMPLR0012345675" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrDueScenario()))
+          case "XMPLR0012345676" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
+          case "XMPLR0012345677" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrIncompleteScenario()))
+          case "XEPLR0000000504" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilled()))
+
+          case _ => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
         }
       }
     }.recover { case e: Throwable =>

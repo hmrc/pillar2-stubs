@@ -253,4 +253,54 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     contentAsJson(result).validate[ObligationsAndSubmissionsSimpleErrorResponse].asEither.isRight shouldBe true
     contentAsJson(result).as[ObligationsAndSubmissionsSimpleErrorResponse].error.code shouldEqual "500"
   }
+
+  test("Returns default single accounting period for any other valid Pillar2 ID") {
+    implicit val pillar2Id: String = "XTEST0012345999"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 1
+
+    val period = response.success.accountingPeriodDetails.head
+    period.startDate.getYear shouldEqual LocalDate.now().getYear() - 1
+    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
+    period.obligations.head.status shouldEqual ObligationStatus.Open
+    period.obligations.head.submissions shouldBe empty
+  }
+
+  test("Returns fulfilled scenario when Pillar2-Id is XEPLR0000000504") {
+    implicit val pillar2Id: String = "XEPLR0000000504"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 2
+
+    val periods = response.success.accountingPeriodDetails
+    periods.foreach { period =>
+      period.obligations.head.status shouldEqual ObligationStatus.Fulfilled
+      period.obligations.head.submissions should not be empty
+    }
+  }
+
+  test("Returns UKTR due scenario when Pillar2-Id is XMPLR0012345675") {
+    implicit val pillar2Id: String = "XMPLR0012345675"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails should not be empty
+
+    val period = response.success.accountingPeriodDetails.head
+    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
+    period.obligations.head.status shouldEqual ObligationStatus.Open
+  }
+
 }
