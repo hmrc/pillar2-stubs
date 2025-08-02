@@ -425,9 +425,9 @@ The below is the expected success response:
         "customerIdentification2": "1234567Y"
         },
         "accountingPeriod": {
-        "startDate": "2024-01-06",
-        "endDate": "2025-04-06",
-        "duetDate": "2024-04-06"
+        "startDate": "2024-01-01",
+        "endDate": "2024-12-31",
+        "duetDate": "2025-06-01"
         },
         "accountStatus": {
         "inactive": true
