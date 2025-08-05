@@ -25,13 +25,16 @@ import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
 
-import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
 import javax.inject.Inject
 import scala.concurrent.Future
 
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
   private val pollCounters = scala.collection.mutable.Map[String, Int]()
+  def now:         ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+  def currentYear: Int           = now.getYear
 
   def createSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter) { implicit request =>
     logger.info(s"Subscription Request received \n ${request.body} \n")
@@ -189,64 +192,17 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           )
 
         case _ =>
-          resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
-            case Some(responseTemplate) =>
-              val responseBody = replacePillar2Id(responseTemplate, plrReference)
-              Future.successful(Ok(responseBody))
-            case None =>
-              Future.successful(InternalServerError("Unable to read ReadSuccessResponse.json"))
-          }
-      }
-    }
-
-  def readSubscriptionAndCache(id: String, plrReference: String): Action[AnyContent] =
-    (Action andThen authFilter).async {
-      logger.info(s"readSubscriptionAndCache Request received for id: $id, plrReference: $plrReference")
-      plrReference match {
-
-        case "XEPLR0000000001" =>
-          val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
-          pollCounters(plrReference) = count
-          logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
-          if (count <= 3) {
-            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
-          } else {
-            Future.successful(
-              Ok(
-                resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                  .map(replacePillar2Id(_, plrReference))
-                  .get
-              )
+          Future.successful {
+            Ok(
+              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
+                .map(replacePillar2Id(_, "plrReference"))
+                .map {
+                  _.replace("\"startDate\": \"2024-01-06\"", s"\"startDate\": \"${LocalDate.of(currentYear - 1, 1, 1)}\"")
+                    .replace("\"endDate\": \"2025-04-06\"", s"\"endDate\": \"${LocalDate.of(currentYear - 1, 12, 31)}\"")
+                    .replace("\"dueDate\": \"2024-04-06\"", s"\"dueDate\": \"${LocalDate.now()}\"")
+                }
+                .get
             )
-          }
-
-        case "XEPLR0000000002" =>
-          val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
-          pollCounters(plrReference) = count
-          logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
-          if (count <= 8) {
-            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
-          } else {
-            Future.successful(
-              Ok(
-                resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                  .map(replacePillar2Id(_, plrReference))
-                  .get
-              )
-            )
-          }
-
-        case "XEPLR0000000003" =>
-          logger.info(s"Timeout Processing Corp - Always processing for $plrReference")
-          Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
-
-        case _ =>
-          resourceAsString("/resources/subscription/ReadSuccessResponse.json") match {
-            case Some(responseTemplate) =>
-              val responseBody = replacePillar2Id(responseTemplate, plrReference)
-              Future.successful(Ok(responseBody))
-            case None =>
-              Future.successful(InternalServerError("Unable to read ReadSuccessResponse.json"))
           }
       }
     }

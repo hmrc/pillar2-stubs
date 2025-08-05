@@ -535,34 +535,6 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       }
 
     }
-
-    "readSubscriptionAndCache" - {
-
-      val authHeader: (String, String) = HeaderNames.authorisation -> "token"
-
-      "must return OK response for valid id and plrReference" in {
-        val request = FakeRequest(GET, "/pillar2/subscription/read-subscription/testId/validPlr").withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe OK
-      }
-
-      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000001 (Quick Processing)" in {
-        val request = FakeRequest(GET, "/pillar2/subscription/read-subscription/testId/XEPLR0000000001").withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe UNPROCESSABLE_ENTITY
-      }
-
-      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000002 (Medium Processing)" in {
-        val request = FakeRequest(GET, "/pillar2/subscription/read-subscription/testId/XEPLR0000000002").withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe UNPROCESSABLE_ENTITY
-      }
-
-    }
-
   }
 
   "PUT" - {
