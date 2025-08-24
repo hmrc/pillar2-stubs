@@ -42,6 +42,7 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         case "XEPLR2000000000" => Ok(Json.parse(etmpTestDataFull(idNumber)))
         case "XEPLR2000000001" => Ok(Json.parse(oneAp(idNumber)))
         case "XEPLR2000000002" => Ok(Json.parse(twoAps(idNumber)))
+        case "XEPLR2000000003" => Ok(Json.parse(overdueUktr(idNumber)))
         case v @ yearsAndTransactionPattern(numberOfTransactions) =>
           Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
         case _ => Ok(Json.parse(SuccessfulResponse(idNumber)))
@@ -653,6 +654,56 @@ object FinancialDataController {
      |    }
      |  ]
      |}
+      |""".stripMargin
+
+  private val overdueUktr = (idNumber: String) => s"""
+      |{
+      |  "idType":"ZPLR",
+      |  "idNumber":"$idNumber",
+      |  "regimeType":"PLR",
+      |  "processingDate":"${LocalDateTime.now.toString}",
+      |  "financialTransactions":[
+      |    {
+      |      "chargeType":"Pillar 2 MTT IIR",
+      |      "mainType":"OECD Pillar 2 UK Tax Return",
+      |      "taxPeriodFrom":"2024-01-01",
+      |      "taxPeriodTo":"2024-12-31",
+      |      "businessPartner":"0100007961",
+      |      "contractAccountCategory":"53",
+      |      "contractAccount":"002100001302",
+      |      "contractObjectType":"PLR",
+      |      "contractObject":"00000300000000000682",
+      |      "sapDocumentNumber":"003540024920",
+      |      "sapDocumentNumberItem":"0002",
+      |      "chargeReference":"XD002610233120",
+      |      "mainTransaction":"6500",
+      |      "subTransaction":"6234",
+      |      "originalAmount":200000.3,
+      |      "outstandingAmount":100000.3,
+      |      "clearedAmount":100000.0,
+      |      "items":[
+      |        {
+      |          "subItem":"000",
+      |          "dueDate":"2024-10-01",
+      |          "amount":100000.3
+      |        },
+      |        {
+      |          "subItem":"000",
+      |          "dueDate":"2024-10-01",
+      |          "amount":100000.0,
+      |          "clearingDate":"2024-10-14",
+      |          "clearingReason":"Incoming Payment",
+      |          "paymentReference":"XD002610233120",
+      |          "paymentAmount":900000.0,
+      |          "paymentMethod":"PAYMENTS MADE BY CHEQUE",
+      |          "paymentLot":"C00125",
+      |          "paymentLotItem":"000001",
+      |          "clearingSAPDocument":"294000000145"
+      |        }
+      |      ]
+      |    }
+      |  ]
+      |}
       |""".stripMargin
 
 }
