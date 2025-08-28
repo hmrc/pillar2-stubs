@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@ package uk.gov.hmrc.pillar2stubs.models
 
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDateTime
+import java.time.LocalDate
 
-final case class FinancialDataResponse(
-  idType:                String,
-  idNumber:              String,
-  regimeType:            String,
-  processingDate:        LocalDateTime,
-  financialTransactions: Seq[FinancialTransaction]
+final case class FinancialItem(
+  dueDate:        Option[LocalDate] = None,
+  amount:         Option[BigDecimal] = None,
+  paymentAmount:  Option[BigDecimal] = None,
+  clearingDate:   Option[LocalDate] = None,
+  clearingReason: Option[String] = None
 )
 
-object FinancialDataResponse {
-  implicit val format: OFormat[FinancialDataResponse] = Json.format[FinancialDataResponse]
+object FinancialItem {
+  implicit val format: OFormat[FinancialItem] = Json.format[FinancialItem]
 }
