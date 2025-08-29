@@ -111,6 +111,17 @@ class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOn
       contentAsJson(result) mustBe Json.parse(twoAccountingPeriods(validIdNumber, processingDateTime))
     }
 
+    "must return OK with two Late Payment Interest (Overdue) data when financial data exists for the given ID" in {
+      val validIdNumber: String                              = "XEPLR2000000003"
+      val request:       FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(validIdNumber)
+      val result:        Future[Result]                      = route(app, request).value
+
+      val processingDateTime: String = (contentAsJson(result) \ "processingDate").as[String]
+
+      status(result) mustBe OK
+      contentAsJson(result) mustBe Json.parse(overdueUktr(validIdNumber, processingDateTime))
+    }
+
     "must return OK with Repayment Interest (RPI) data when financial data exists for the given ID" in {
       val validIdNumber: String                              = "XEPLR2000000010"
       val request:       FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(validIdNumber)
