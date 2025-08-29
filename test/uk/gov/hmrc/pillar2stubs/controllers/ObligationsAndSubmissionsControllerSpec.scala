@@ -28,8 +28,8 @@ import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 
-import scala.util.Random
 import java.time.LocalDate
+import scala.util.Random
 
 class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
 

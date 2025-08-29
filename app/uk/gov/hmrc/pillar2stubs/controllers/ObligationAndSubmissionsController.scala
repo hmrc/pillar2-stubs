@@ -21,8 +21,8 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.{HIP, HoD}
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes._
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
