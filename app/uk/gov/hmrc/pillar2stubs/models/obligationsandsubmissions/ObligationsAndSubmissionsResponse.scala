@@ -274,6 +274,7 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
 
+  //All obligations fulfilled and also received flag
   def withAllFulfilledAndReceived(): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
       ObligationsAndSubmissionsSuccess(
@@ -290,7 +291,7 @@ object ObligationsAndSubmissionsSuccessResponse {
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
                 submissions = Seq(
-                  Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now.minusDays(30), country = None),
+                  Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now.minusDays(40), country = None),
                   Submission(submissionType = SubmissionType.BTN, receivedDate = now, country = None)
                 )
               ),
@@ -299,7 +300,7 @@ object ObligationsAndSubmissionsSuccessResponse {
                 status = ObligationStatus.Fulfilled,
                 canAmend = true,
                 submissions = Seq(
-                  Submission(submissionType = SubmissionType.GIR, receivedDate = now.minusDays(50), country = None)
+                  Submission(submissionType = SubmissionType.GIR, receivedDate = now.minusDays(90), country = None)
                 )
               )
             )
@@ -315,9 +316,9 @@ object ObligationsAndSubmissionsSuccessResponse {
                 status = ObligationStatus.Fulfilled,
                 canAmend = false,
                 submissions = Seq(
-                  Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None),
-                  Submission(submissionType = SubmissionType.BTN, receivedDate = now, country = None),
-                  Submission(submissionType = SubmissionType.GIR, receivedDate = now, country = None)
+                  Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now.minusDays(365), country = None),
+                  Submission(submissionType = SubmissionType.BTN, receivedDate = now.minusDays(365), country = None),
+                  Submission(submissionType = SubmissionType.GIR, receivedDate = now.minusDays(365), country = None)
                 )
               )
             )
