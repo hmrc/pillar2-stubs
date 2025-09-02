@@ -166,8 +166,8 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     hasRecentUktrOrGir shouldBe true
   }
 
-  test("Returns multiple accounting periods with submissions when Pillar2-Id is XEPLR4444444445") {
-    implicit val pillar2Id: String = "XEPLR4444444445"
+  test("Returns multiple accounting periods with submissions when Pillar2-Id is XEPLR5555555555") {
+    implicit val pillar2Id: String = "XEPLR5555555555"
     val result = route(app, request).value
 
     status(result) shouldEqual 200
