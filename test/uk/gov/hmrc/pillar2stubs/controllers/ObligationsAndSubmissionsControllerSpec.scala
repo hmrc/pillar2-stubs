@@ -139,8 +139,8 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     }
   }
 
-  test("Returns all fulfilled obligations when Pillar2-Id is XEPLR9999999995") {
-    implicit val pillar2Id: String = "XEPLR9999999995"
+  test("Returns all fulfilled obligations when Pillar2-Id is XEPLR4444444445") {
+    implicit val pillar2Id: String = "XEPLR4444444445"
     val result = route(app, request).value
 
     status(result) shouldEqual 200
