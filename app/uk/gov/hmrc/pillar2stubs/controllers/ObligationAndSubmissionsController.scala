@@ -57,6 +57,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XEPLR2222222222" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
           case "XEPLR3333333333" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
           case "XEPLR4444444444" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilled()))
+          case "XEPLR4444444445" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilledAndReceived()))
           case "XEPLR5555555555" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withMultipleAccountingPeriodsWithSubmissions()))
           case "XEPLR7777777777" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withOneAccountingPeriodAndOneSubmission()))
           case "XEPLR9999999991" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.singleActiveAccountingPeriodWithNoSubmission()))

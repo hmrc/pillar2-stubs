@@ -274,6 +274,59 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
 
+  //All obligations fulfilled and also received flag
+  def withAllFulfilledAndReceived(): ObligationsAndSubmissionsSuccessResponse =
+    ObligationsAndSubmissionsSuccessResponse(
+      ObligationsAndSubmissionsSuccess(
+        processingDate = now,
+        accountingPeriodDetails = Seq(
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(currentYear, 1, 1),
+            endDate = LocalDate.of(currentYear, 12, 31),
+            dueDate = LocalDate.of(currentYear + 1, 1, 31),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.UKTR,
+                status = ObligationStatus.Fulfilled,
+                canAmend = false,
+                submissions = Seq(
+                  Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now.minusDays(40), country = None),
+                  Submission(submissionType = SubmissionType.BTN, receivedDate = now, country = None)
+                )
+              ),
+              Obligation(
+                obligationType = ObligationType.GIR,
+                status = ObligationStatus.Fulfilled,
+                canAmend = true,
+                submissions = Seq(
+                  Submission(submissionType = SubmissionType.GIR, receivedDate = now.minusDays(90), country = None)
+                )
+              )
+            )
+          ),
+          AccountingPeriodDetails(
+            startDate = LocalDate.of(currentYear - 1, 1, 1),
+            endDate = LocalDate.of(currentYear - 1, 12, 31),
+            dueDate = LocalDate.now().minusDays(1),
+            underEnquiry = false,
+            obligations = Seq(
+              Obligation(
+                obligationType = ObligationType.UKTR,
+                status = ObligationStatus.Fulfilled,
+                canAmend = false,
+                submissions = Seq(
+                  Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now.minusDays(365), country = None),
+                  Submission(submissionType = SubmissionType.BTN, receivedDate = now.minusDays(365), country = None),
+                  Submission(submissionType = SubmissionType.GIR, receivedDate = now.minusDays(365), country = None)
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+
   //single active accounting period (start date is no later than today and a due date not before today) with no submission
   def singleActiveAccountingPeriodWithNoSubmission(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
