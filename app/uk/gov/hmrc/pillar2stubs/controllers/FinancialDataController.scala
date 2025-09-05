@@ -853,7 +853,7 @@ object FinancialDataController {
   private def generateFinancialTransactions(numberOfTransactions: Int, dateFrom: LocalDate, dateTo: LocalDate): Seq[FinancialTransaction] = {
     require(numberOfTransactions > 0, "Number of transactions must be positive")
 
-    /** Transactions distribution: ensure at least 1 Payment, then split remaining between Repayments and Interest */
+    // Transactions distribution: ensure at least 1 Payment, then split remaining between Repayments and Interest
     val paymentsCount:         Int = math.max(1, math.min(numberOfTransactions, numberOfTransactions / 3)) // at least 1 Payment
     val remainingTransactions: Int = numberOfTransactions - paymentsCount
     val repaymentsCount: Int = if (remainingTransactions > 0) math.max(1, remainingTransactions / 2) else 0 // at least one Repayment if possible
