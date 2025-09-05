@@ -21,12 +21,13 @@ lazy val microservice = Project("pillar2-stubs", file("."))
   .settings(CodeCoverageSettings.settings *)
   .settings(tpolecatExcludeOptions += ScalacOptions.warnNonUnitStatement)
 
-addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
-addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
-
 lazy val it = project
   .enablePlugins(play.sbt.PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
   .settings(tpolecatExcludeOptions += ScalacOptions.warnNonUnitStatement)
   .settings(libraryDependencies ++= AppDependencies.it)
+
+addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")
+addCommandAlias("checkCodeCoverage", "; clean; coverage; test; it/test; coverageReport")
+addCommandAlias("lint", "; scalafmtAll; scalafmtSbt; scalafixAll")
