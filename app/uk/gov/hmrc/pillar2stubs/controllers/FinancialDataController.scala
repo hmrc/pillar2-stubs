@@ -164,12 +164,12 @@ object FinancialDataController {
        |        {
        |          "subItem": "001",
        |          "dueDate": "2024-03-03",
-       |          "amount": -9999.99,
+       |          "amount": -9999.9,
        |          "clearingDate": "2024-03-03",
        |          "clearingReason": "Outgoing payment - Paid",
        |          "outgoingPaymentMethod": "BACS Payment out",
        |          "paymentReference": "a",
-       |          "paymentAmount": 5000,
+       |          "paymentAmount": 5000.567,
        |          "paymentMethod": "FPS Receipts",
        |          "paymentLot": "081203010024",
        |          "paymentLotItem": "000001",
@@ -337,7 +337,7 @@ object FinancialDataController {
     |          "clearingDate":"2025-07-14",
     |          "clearingReason":"Incoming Payment",
     |          "paymentReference":"XD002610233120",
-    |          "paymentAmount":9000.0,
+    |          "paymentAmount":90001.88,
     |          "paymentMethod":"PAYMENTS MADE BY CHEQUE",
     |          "paymentLot":"C00125",
     |          "paymentLotItem":"000001",
@@ -435,6 +435,36 @@ object FinancialDataController {
     |          "paymentMethod":"PAYMENTS MADE BY CHEQUE",
     |          "paymentLot":"C00125",
     |          "paymentLotItem":"000001"
+    |        }
+    |      ]
+    |    },
+    |    {
+    |      "chargeType": "Pillar 2 (Payment on Account)",
+    |      "mainType": "On Account",
+    |      "businessPartner": "6622334455",
+    |      "contractAccountCategory": "53",
+    |      "contractAccount": "X",
+    |      "contractObjectType": "PLR",
+    |      "contractObject": "00000003000000002757",
+    |      "sapDocumentNumber": "1040000872",
+    |      "sapDocumentNumberItem": "0001",
+    |      "mainTransaction": "0060",
+    |      "subTransaction": "0400",
+    |      "originalAmount": 9999.99,
+    |      "outstandingAmount": 9999.99,
+    |      "items": [
+    |        {
+    |          "subItem": "001",
+    |          "dueDate": "2025-07-14",
+    |          "amount": -9999.99,
+    |          "clearingDate": "2025-07-14",
+    |          "clearingReason": "Outgoing payment - Paid",
+    |          "outgoingPaymentMethod": "BACS Payment out",
+    |          "paymentReference": "a",
+    |          "paymentMethod": "FPS Receipts",
+    |          "paymentLot": "081203010024",
+    |          "paymentLotItem": "000001",
+    |          "clearingSAPDocument": "000001"
     |        }
     |      ]
     |    },
