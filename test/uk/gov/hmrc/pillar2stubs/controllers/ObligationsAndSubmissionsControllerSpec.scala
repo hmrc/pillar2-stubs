@@ -26,10 +26,12 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.now
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.SubmissionType.{GIR, UKTR_CREATE}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 
-import scala.util.Random
 import java.time.LocalDate
+import scala.util.Random
 
 class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
 
@@ -135,6 +137,33 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
         obligation.status shouldEqual ObligationStatus.Fulfilled
       }
     }
+  }
+
+  test("Returns all fulfilled obligations and received flag when Pillar2-Id is XEPLR4444444445") {
+    implicit val pillar2Id: String = "XEPLR4444444445"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.foreach { period =>
+      period.obligations.foreach { obligation =>
+        obligation.status shouldEqual ObligationStatus.Fulfilled
+      }
+    }
+
+    val receivedPeriodStart = now.minusDays(60)
+    val hasRecentUktrOrGir: Boolean =
+      response.success.accountingPeriodDetails.exists { period =>
+        period.obligations
+          .flatMap(_.submissions)
+          .exists(s =>
+            (s.submissionType == UKTR_CREATE || s.submissionType == GIR) &&
+              receivedPeriodStart.isBefore(s.receivedDate)
+          )
+      }
+    hasRecentUktrOrGir shouldBe true
   }
 
   test("Returns multiple accounting periods with submissions when Pillar2-Id is XEPLR5555555555") {

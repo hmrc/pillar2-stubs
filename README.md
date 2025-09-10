@@ -1,604 +1,672 @@
-# Table of Contents
-* [pillar2\-stubs](#pillar2-stubs)
-    * [Running the service locally](#running-the-service-locally)
-        * [To compile the project:](#to-compile-the-project)
-        * [To check code coverage:](#to-check-code-coverage)
-        * [Integration and unit tests](#integration-and-unit-tests)
-        * [Starting the server in local](#starting-the-server-in-local)
-        * [Using Service Manager](#using-service-manager)
-            * [Using sbt](#using-sbt)
-    * [Endpoints](#endpoints)
-        * [Happy Path:](#happy-path)
-        * [Unhappy Path:](#unhappy-path)
-        * [Happy Path:](#happy-path-1)
-        * [Unhappy Path:](#unhappy-path-1)
-        * [Happy Path:](#happy-path-2)
-        * [Unhappy Path:](#unhappy-path-2)
-        * [Happy Path:](#happy-path-3)
-        * [Unhappy Path:](#unhappy-path-3)
-    * [BARS Business account test data](#bars-business-account-test-data)
-    * [Financial Data \- Get Financial Test Data](#financial-data---get-financial-test-data)
-        * [Test last seven years of transactions](#test-last-seven-years-of-transactions)
-    * [Get Obligation \- Get Obligation Test Data](#get-obligation---get-obligation-test-data)
-    * [Post Liability](#post-liability)
-    * [Below Threshold Notification](#below-threshold-notification)
-
-
 # pillar2-stubs
 
 The Pillar2 stubs service provides stubs for the GRS systems to mock the responses.
 
-## Running the service locally
+## Table of Contents
+<!-- TOC -->
+* [pillar2-stubs](#pillar2-stubs)
+  * [Table of Contents](#table-of-contents)
+  * [Running Pillar 2 Stubs Locally](#running-pillar-2-stubs-locally)
+  * [Running with Service Manager](#running-with-service-manager)
+  * [Developing Locally](#developing-locally)
+  * [Testing](#testing)
+  * [Endpoints](#endpoints)
+    * [Create a Registration Request](#create-a-registration-request)
+      * [Happy Path](#happy-path)
+      * [Unhappy Path](#unhappy-path)
+          * [HTTP 500 Internal Server Error](#http-500-internal-server-error)
+          * [HTTP 400 Bad Request Error](#http-400-bad-request-error)
+          * [HTTP 503 Service Unavailable Error](#http-503-service-unavailable-error)
+        * [HTTP 503 Request Could not be processed Error](#http-503-request-could-not-be-processed-error)
+        * [HTTP 404 Record Not Found Error](#http-404-record-not-found-error)
+    * [Create a Subscription Request](#create-a-subscription-request)
+      * [Registration In Progress Test Data](#registration-in-progress-test-data)
+      * [Happy Path](#happy-path-1)
+      * [Unhappy Path](#unhappy-path-1)
+        * [HTTP 409 Duplicate Submission Error](#http-409-duplicate-submission-error)
+        * [HTTP 503 Service Unavailable Error](#http-503-service-unavailable-error-1)
+        * [HTTP 404 Record Not Found Error](#http-404-record-not-found-error-1)
+    * [Retrieve Subscription Details](#retrieve-subscription-details)
+      * [Happy Path](#happy-path-2)
+      * [Unhappy Path](#unhappy-path-2)
+        * [HTTP 500 Internal Server Error](#http-500-internal-server-error-1)
+        * [HTTP 400 Bad Request Error](#http-400-bad-request-error-1)
+        * [HTTP 503 Service Unavailable Error](#http-503-service-unavailable-error-2)
+        * [HTTP 503 Request Could not be processed Error](#http-503-request-could-not-be-processed-error-1)
+        * [HTTP 404 Record Not Found Error](#http-404-record-not-found-error-2)
+    * [Retrieve Subscription Details (Cache)](#retrieve-subscription-details-cache)
+      * [Happy Path](#happy-path-3)
+    * [Amend Existing Subscription](#amend-existing-subscription)
+      * [Happy Path](#happy-path-4)
+    * [Retrieve Enrolment Store Response](#retrieve-enrolment-store-response)
+      * [Happy Path](#happy-path-5)
+        * [Enrolment Store Response with groupID](#enrolment-store-response-with-groupid)
+        * [Enrolment Store Response without groupID](#enrolment-store-response-without-groupid)
+      * [Unhappy Path](#unhappy-path-3)
+    * [Business Bank Account Reputation Service (BARS)](#business-bank-account-reputation-service-bars)
+      * [BARS Test Data](#bars-test-data)
+    * [Financial Data - Get Financial Test Data](#financial-data---get-financial-test-data)
+      * [Test last seven years of transactions](#test-last-seven-years-of-transactions)
+      * [Get Obligation - Get Obligation Test Data](#get-obligation---get-obligation-test-data)
+    * [Obligations and Submissions API](#obligations-and-submissions-api)
+      * [Test Data for Different Responses](#test-data-for-different-responses)
+      * [Happy Path](#happy-path-6)
+        * [Sample Response (Multiple Accounting Periods)](#sample-response-multiple-accounting-periods)
+        * [Sample Response (No Accounting Periods)](#sample-response-no-accounting-periods)
+      * [Unhappy Path](#unhappy-path-4)
+        * [Sample Error Response (Invalid Date Range)](#sample-error-response-invalid-date-range)
+        * [Sample Error Response (Invalid Pillar2 ID)](#sample-error-response-invalid-pillar2-id)
+    * [Submit UKTR (Liability Detail Submission)](#submit-uktr-liability-detail-submission)
+      * [Request Types and Expected Payloads](#request-types-and-expected-payloads)
+        * [Liability Submission](#liability-submission)
+        * [Nil Return Submission](#nil-return-submission)
+      * [Response Codes and Conditions](#response-codes-and-conditions)
+      * [Examples of Invalid Requests](#examples-of-invalid-requests)
+        * [Invalid JSON](#invalid-json)
+        * [Non-JSON Body](#non-json-body)
+      * [Response Examples](#response-examples)
+        * [Successful Liability Submission Response](#successful-liability-submission-response)
+        * [Successful Nil Return Response](#successful-nil-return-response)
+    * [Amend UKTR](#amend-uktr)
+      * [Special PLR Reference Numbers for Testing](#special-plr-reference-numbers-for-testing)
+      * [Happy Path](#happy-path-7)
+      * [Unhappy Path](#unhappy-path-5)
+        * [Error Response - Tax Obligation Already Met (422)](#error-response---tax-obligation-already-met-422)
+        * [HTTP 400 Bad Request Error](#http-400-bad-request-error-2)
+        * [HTTP 500 Internal Server Error](#http-500-internal-server-error-2)
+    * [Below-Threshold Notification (BTN)](#below-threshold-notification-btn)
+  * [License](#license)
+<!-- TOC -->
 
-#### To compile the project:
+## Running Pillar 2 Stubs Locally
 
-`sbt clean update compile`
+Compile the project with:
+```shell
+sbt clean update compile
+```
 
-#### To check code coverage:
+Run the project locally with:
+```shell
+sbt run
+```
 
-`sbt scalafmt test:scalafmt it:test::scalafmt coverage test it/test coverageReport`
-
-#### Integration and unit tests
-
-To run the unit tests within the project:
-
-`sbt test`
-
-#### Starting the server in local
-
-`sbt run`
-
-By default, the service runs locally on port **10052**
+By default, the service runs on port **10052**.
 
 To use test-only route locally, run the below:
+```shell
+sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10052'
+```
 
-`sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10052'`
 
-### Using Service Manager
+## Running with Service Manager
 
-You can use service manager to provide necessary assets to the pillar2 backend.
-**PILLAR2_ALL** service is responsible for starting up all the services required by the tax credits service project.
+Use [Service Manager](https://github.com/hmrc/sm2) to start all the services required to run and test Pillar 2 locally.
+Start the **PILLAR2_ALL** profile, responsible for starting up all the services required by Pillar 2, with:
 
-This can be started by running the below in a new terminal:
+```shell
+sm2 --start PILLAR2_ALL
+```
 
-    sm2 --start PILLAR2_ALL
+Head to the [Authority Wizard](http://localhost:9949/auth-login-stub/gg-sign-in) to sign in and create a session for a
+user with your choice of enrolments and IDs.
 
-#### Using sbt
+When you sign in with, provide the following details:
 
-For local development, use `sbt run` but if it is already running in sm2, execute below command to stop the
-service before running sbt commands.
+- **Redirect URL**: http://localhost:10050/report-pillar2-top-up-taxes
+- **Affinity Group**: Organisation
 
-    sm2 --stop PILLAR_2_STUBS
+To stop all services, run:
+```shell
+sm2 --stop PILLAR2_ALL
+```
 
-This is an authenticated service, so users first need to be authenticated via GG in order to use the service.
+## Developing Locally
+Start all the Pillar 2 services as mentioned above:
+```shell
+sm2 --start PILLAR2_ALL
+```
 
-Navigate to http://localhost:9949/auth-login-stub/gg-sign-in which redirects to auth-login-stub page.
+Stop the `PILLAR_2_STUBS` service with:
+```shell
+sm2 --stop PILLAR_2_STUBS
+```
 
-Make sure to fill in the fields as below:
+Confirm that all dependent services but the `PILLAR_2_STUBS` are running with:
+```shell
+sm2 --status
+```
 
-***Redirect URL: http://localhost:10050/report-pillar2-top-up-taxes***
+Run Pillar 2 Stubs locally with:
+```shell
+sbt run
+```
 
-***Affinity Group: Organisation***
+Head to the [Authority Wizard](http://localhost:9949/auth-login-stub/gg-sign-in) to sign in and create a session for a
+user with your choice of enrolments and IDs.
+
+When you sign in with the [Authority Wizard](http://localhost:9949/auth-login-stub/gg-sign-in), provide the following details:
+
+- **Redirect URL**: http://localhost:10050/report-pillar2-top-up-taxes
+- **Affinity Group**: Organisation
+
+
+---
+
+
+## Testing
+Run unit tests with:
+```shell
+sbt test
+```
+
+Run integration tests with:
+```shell
+sbt it/test
+```
+
+Check code coverage with:
+```shell
+sbt clean coverage test it/test coverageReport
+```
+
+---
+
 
 ## Endpoints
 
-```
-POST /registration/02.00.00/organisation 
-```
+### Create a Registration Request
 
-Creates a Registration request without passing ID
+**Endpoint**: `POST /registration/02.00.00/organisation`
 
-#### Happy Path:
+**Description**: Creates a Registration request without passing ID
 
-To trigger the happy path, ensure you provide a valid request body
+#### Happy Path
 
-```dtd
+To trigger the happy path, ensure you provide a valid request body:
+
+```json
 {
-        "regime": "PLR",
-        "acknowledgementReference": "d31186c7412e4823897ecc7ee339545c",
-        "isAnAgent": false,
-        "isAGroup": true,
-        "organisation": {
-        "organisationName": "Stark Corp"
-        },
-        "address": {
-        "addressLine1": "100",
-        "addressLine3": "Newyork",
-        "postalCode": "10052",
-        "countryCode": "US"
-        },
-        "contactDetails": {
-        "emailAddress": "stark.tony@starkind.com"
-        }
-        }
+  "regime": "PLR",
+  "acknowledgementReference": "d31186c7412e4823897ecc7ee339545c",
+  "isAnAgent": false,
+  "isAGroup": true,
+  "organisation": {
+    "organisationName": "Stark Corp"
+  },
+  "address": {
+    "addressLine1": "100",
+    "addressLine3": "Newyork",
+    "postalCode": "10052",
+    "countryCode": "US"
+  },
+  "contactDetails": {
+    "emailAddress": "stark.tony@starkind.com"
+  }
+}
 ```
 
-> Response status: 200
->
-> Response body: N/A
+- Response status: `200`
+- Response body: N/A
 
-#### Unhappy Path:
+#### Unhappy Path
 
-To trigger the unhappy paths, ensure you provide a valid request body.<br>
+To trigger the unhappy paths, ensure you provide a valid request body.
+
 The below error responses can be expected:
 
-HTTP 500 Internal Server Error
+###### HTTP 500 Internal Server Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "timestamp": "2016-08-23T18:15:41Z",
-        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-        "errorCode": "500",
-        "errorMessage": "Internal error",
-        "source": "Internal Server error"
-        }
-        }
+  "errorDetail": {
+    "timestamp": "2016-08-23T18:15:41Z",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "errorCode": "500",
+    "errorMessage": "Internal error",
+    "source": "Internal Server error"
+  }
+}
 ```
 
-> Response status: 500
->
-> Response body: N/A
+- Response status: `500`
+- Response body: N/A
 
-HTTP 400 Bad Request Error
+###### HTTP 400 Bad Request Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "timestamp" : "2023-02-14T12:58:44Z",
-        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-        "errorCode": "400",
-        "errorMessage": "Invalid ID",
-        "source": "Back End",
-        "sourceFaultDetail":{
-        "detail":[
+  "errorDetail": {
+    "timestamp" : "2023-02-14T12:58:44Z",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "errorCode": "400",
+    "errorMessage": "Invalid ID",
+    "source": "Back End",
+    "sourceFaultDetail": {
+      "detail": [
         "001 - Invalid Regime"
-        ]
-        }
-        }
-        }
+      ]
+    }
+  }
+}
 ```
 
-> Response status: 400
->
-> Response body: N/A
+- Response status: `400`
+- Response body: N/A
 
-HTTP 503 Service Unavailable Error
+###### HTTP 503 Service Unavailable Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "timestamp": "2016-08-23T18:15:41Z",
-        "correlationId": "",
-        "errorCode": "503",
-        "errorMessage": "Send timeout",
-        "source": "Back End",
-        "sourceFaultDetail": {
-        "detail": ["101504 - Timeout "]
-        }
-        }
-        }
+  "errorDetail": {
+    "timestamp": "2016-08-23T18:15:41Z",
+    "correlationId": "",
+    "errorCode": "503",
+    "errorMessage": "Send timeout",
+    "source": "Back End",
+    "sourceFaultDetail": {
+      "detail": ["101504 - Timeout "]
+    }
+  }
+}
 ```
 
-> Response status: 503
->
-> Response body: N/A
+- Response status: `503`
+- Response body: N/A
 
-HTTP 503 Request Could not be processed Error
+##### HTTP 503 Request Could not be processed Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "source": "Back End",
-        "timestamp": "2020-11-11T13:19:52.307Z",
-        "errorMessage": "Request could not be processed",
-        "errorCode": "503",
-        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-        "sourceFaultDetail": {
-        "detail": [
+  "errorDetail": {
+    "source": "Back End",
+    "timestamp": "2020-11-11T13:19:52.307Z",
+    "errorMessage": "Request could not be processed",
+    "errorCode": "503",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "sourceFaultDetail": {
+      "detail": [
         "001 - Request Cannot be processed"
-        ]
-        }
-        }
-        }
+      ]
+    }
+  }
+}
 ```
 
-> Response status: 503
->
-> Response body: N/A
+- Response status: `503`
+- Response body: N/A
 
-HTTP 404 Record Not Found Error
+##### HTTP 404 Record Not Found Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "source": "Back End",
-        "timestamp": "2020-11-23T13:19:52.307Z",
-        "errorMessage": "Record not found",
-        "errorCode": "404",
-        "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
-        "sourceFaultDetail": {
-        "detail": [
+  "errorDetail": {
+    "source": "Back End",
+    "timestamp": "2020-11-23T13:19:52.307Z",
+    "errorMessage": "Record not found",
+    "errorCode": "404",
+    "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
+    "sourceFaultDetail": {
+      "detail": [
         "Detail cannot be found"
-        ]
-        }
-        }
-        }
+      ]
+    }
+  }
+}
 ```
 
-> Response status: 404
->
-> Response body: N/A
+- Response status: `404`
+-  Response body: N/A
+
 ---
 
-```
-POST /pillar2/subscription
-```
+### Create a Subscription Request
 
-Creates a Subscription request
+**Endpoint**: `POST /pillar2/subscription`
+
+**Description**: Creates a Subscription request
 
 #### Registration In Progress Test Data
 
 For testing the registration in progress feature, use specific organisation names OR UPE contact names to trigger different polling behaviors:
 
-| Test Trigger                           | PLR Reference Returned | Polling Behavior                                                        |
-|----------------------------------------|------------------------|-------------------------------------------------------------------------|
-|  UPE Contact Name: "Quick Processing" OR "Quick Processing Corp"  | XEPLR0000000001        | Returns 422 for first 3 polls (6 seconds), then returns 200 success    |
-| UPE Contact Name: "Medium Processing" OR "Medium Processing Corp" | XEPLR0000000002        | Returns 422 for first 8 polls (16 seconds), then returns 200 success   |
+| Test Trigger                                                      | PLR Reference Returned | Polling Behavior                                                     |
+|-------------------------------------------------------------------|------------------------|----------------------------------------------------------------------|
+| UPE Contact Name: "Quick Processing" OR "Quick Processing Corp"   | XEPLR0000000001        | Returns 422 for first 3 polls (6 seconds), then returns 200 success  |
+| UPE Contact Name: "Medium Processing" OR "Medium Processing Corp" | XEPLR0000000002        | Returns 422 for first 8 polls (16 seconds), then returns 200 success |
 
 **Note**: The UPE contact name is read from `primaryContactDetails.name` in the request body. If both organisation name and UPE contact name match test triggers, UPE contact name takes precedence.
 
-#### Happy Path:
+#### Happy Path
 
-To trigger the happy path, ensure you provide a valid request body
+To trigger the happy path, ensure you provide a valid request body:
 
-```dtd
+```json
 {
-        "upeDetails": {
-        "safeId": "XE6666666666666",
-        "organisationName": "Stark Corp",
-        "registrationDate": "2023-12-08",
-        "domesticOnly": false,
-        "filingMember": true
-        },
-        "accountingPeriod": {
-        "startDate": "2024-01-01",
-        "endDate": "2025-01-01"
-        },
-        "upeCorrespAddressDetails": {
-        "addressLine1": "100",
-        "addressLine3": "Newyork",
-        "postCode": "10052",
-        "countryCode": "US"
-        },
-        "primaryContactDetails": {
-        "name": "Tony Stark",
-        "emailAddress": "stark.tony@starkind.com"
-        }
-        }
+  "upeDetails": {
+    "safeId": "XE6666666666666",
+    "organisationName": "Stark Corp",
+    "registrationDate": "2023-12-08",
+    "domesticOnly": false,
+    "filingMember": true
+  },
+  "accountingPeriod": {
+    "startDate": "2024-01-01",
+    "endDate": "2025-01-01"
+  },
+  "upeCorrespAddressDetails": {
+    "addressLine1": "100",
+    "addressLine3": "Newyork",
+    "postCode": "10052",
+    "countryCode": "US"
+  },
+  "primaryContactDetails": {
+    "name": "Tony Stark",
+    "emailAddress": "stark.tony@starkind.com"
+  }
+}
 ```
 
-> Response status: 200
->
-> Response body: N/A
+- Response status: `200`
+- Response body: N/A
 
-#### Unhappy Path:
+#### Unhappy Path
 
-To trigger the unhappy paths, ensure you provide a valid request body.<br>
-The below error responses can be expected:
+To trigger the unhappy paths, ensure you provide a valid request body. The below error responses can be expected:
 
-HTTP 409 Duplicate Submission Error
+##### HTTP 409 Duplicate Submission Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "timestamp" : "2023-03-11T08:20:44Z",
-        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-        "errorCode": "409",
-        "errorMessage": "Duplicate submission",
-        "source": "Back End",
-        "sourceFaultDetail": {
-        "detail": [
+  "errorDetail": {
+    "timestamp" : "2023-03-11T08:20:44Z",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "errorCode": "409",
+    "errorMessage": "Duplicate submission",
+    "source": "Back End",
+    "sourceFaultDetail": {
+      "detail": [
         "Duplicate submission"
-        ]
-        }
-        }
-        }
+      ]
+    }
+  }
+}
 ```
 
-> Response status: 409
->
-> Response body: N/A
+- Response status: `409`
+- Response body: N/A
 
-HTTP 503 Service Unavailable Error
+##### HTTP 503 Service Unavailable Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "timestamp": "2016-08-23T18:15:41Z",
-        "correlationId": "",
-        "errorCode": "503",
-        "errorMessage": "Send timeout",
-        "source": "Back End",
-        "sourceFaultDetail": {
-        "detail": ["101504 - Timeout "]
-        }
-        }
-        }
+  "errorDetail": {
+    "timestamp": "2016-08-23T18:15:41Z",
+    "correlationId": "",
+    "errorCode": "503",
+    "errorMessage": "Send timeout",
+    "source": "Back End",
+    "sourceFaultDetail": {
+      "detail": ["101504 - Timeout "]
+    }
+  }
+}
 ```
 
-> Response status: 503
->
-> Response body: N/A
+- Response status: `503`
+- Response body: N/A
 
-HTTP 404 Record Not Found Error
+##### HTTP 404 Record Not Found Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "source": "Back End",
-        "timestamp": "2020-11-23T13:19:52.307Z",
-        "errorMessage": "Record not found",
-        "errorCode": "404",
-        "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
-        "sourceFaultDetail": {
-        "detail": [
+  "errorDetail": {
+    "source": "Back End",
+    "timestamp": "2020-11-23T13:19:52.307Z",
+    "errorMessage": "Record not found",
+    "errorCode": "404",
+    "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
+    "sourceFaultDetail": {
+      "detail": [
         "Detail cannot be found"
-        ]
-        }
-        }
-        }
+      ]
+    }
+  }
+}
 ```
 
-> Response status: 404
->
-> Response body: N/A
+- Response status: `404`
+- Response body: N/A
 
 ---
 
-```
-GET /pillar2/subscription/:plrReference
-```
+### Retrieve Subscription Details
 
-Retrieves the Subscription details for the specific plrReference
+**Endpoint**: `GET /pillar2/subscription/:plrReference`
 
-| plrReference    | Status Code | Status                | Description                                                                                          |
-|-----------------|-------------|-----------------------|------------------------------------------------------------------------------------------------------|
-| XEPLR0000000001 | 422/200     | VARIABLE              | Registration in progress test - Returns 422 for first 3 polls, then 200 success                     |
-| XEPLR0000000002 | 422/200     | VARIABLE              | Registration in progress test - Returns 422 for first 8 polls, then 200 success                     |                           |
-| XEPLR0123456400 | 400         | BAD_REQUEST           | Submission has not passed validation. Invalid plrReference.                                          |
-| XEPLR0123456404 | 404         | NOT_FOUND             | Submission has not passed validation. Record not found.                                              |
-| XEPLR0123456422 | 422         | CANNOT_COMPLETE_REQUEST  | Request could not be completed because the subscription is being created or amended.               |
-| XEPLR0123456500 | 500         | INTERNAL_SERVER_ERROR | Internal Server error.                                                                               |
-| XEPLR0123456503 | 503         | SERVICE_UNAVAILABLE   | Dependent systems are currently not responding.                                                      |
-| XEPLR5555555555 | 200         | OK                    | Returns read success response with accountStatus.inactive set to true.                               |
-| XEPLR6666666666 | 200         | OK                    | Returns read success response with upe registration year of 2011.                                    |
-| XEPLR1066196600 | 200         | OK                    | Returns read success response with domesticOnly set to true. Use this for one AP in obligation data  |
-| XEPLR1066196602 | 200         | OK                    | Returns read success response with domesticOnly set to true. Use this for two AP's in obligation data |
-| XEPLR__________ | 200         | OK                    | Returns read success response .                                                                      |
+**Description**: Retrieves the Subscription details for the specific plrReference
 
-#### Happy Path:
+| plrReference    | Status Code | Status                  | Description                                                                                           |
+|-----------------|-------------|-------------------------|-------------------------------------------------------------------------------------------------------|
+| XEPLR0000000001 | 422/200     | VARIABLE                | Registration in progress test - Returns 422 for first 3 polls, then 200 success                       |
+| XEPLR0000000002 | 422/200     | VARIABLE                | Registration in progress test - Returns 422 for first 8 polls, then 200 success                       | 
+| XEPLR0123456400 | 400         | BAD_REQUEST             | Submission has not passed validation. Invalid plrReference.                                           |
+| XEPLR0123456404 | 404         | NOT_FOUND               | Submission has not passed validation. Record not found.                                               |
+| XEPLR0123456422 | 422         | CANNOT_COMPLETE_REQUEST | Request could not be completed because the subscription is being created or amended.                  |
+| XEPLR0123456500 | 500         | INTERNAL_SERVER_ERROR   | Internal Server error.                                                                                |
+| XEPLR0123456503 | 503         | SERVICE_UNAVAILABLE     | Dependent systems are currently not responding.                                                       |
+| XEPLR5555555555 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
+| XEPLR6666666666 | 200         | OK                      | Returns read success response with upe registration year of 2011.                                     |
+| XEPLR1066196600 | 200         | OK                      | Returns read success response with domesticOnly set to true. Use this for one AP in obligation data   |
+| XEPLR1066196602 | 200         | OK                      | Returns read success response with domesticOnly set to true. Use this for two AP's in obligation data |
+| XEPLR__________ | 200         | OK                      | Returns read success response .                                                                       |
 
-To trigger the happy path, ensure you provide a valid plrReference
+#### Happy Path
 
-The below is the expected success response:
+To trigger the happy path, ensure you provide a valid plrReference. The below is the expected success response: 
 
-> Response status: 200
->
-> Response body:
-
-```dtd
+```json
 {
-        "success": {
-        "plrReference": "[pillar2Reference]",
-        "processingDate": "2010-12-12",
-        "formBundleNumber": "119000004320",
-        "upeDetails": {
-        "domesticOnly": false,
-        "organisationName": "International Organisation Inc.",
-        "customerIdentification1": "12345678",
-        "customerIdentification2": "12345678",
-        "registrationDate": "2022-01-31",
-        "filingMember": false
-        },
-        "upeCorrespAddressDetails": {
-        "addressLine1": "1 High Street",
-        "addressLine2": "Egham",
-        "addressLine3": "Surrey",
-        "postCode": "HP13 6TT",
-        "countryCode": "GB"
-        },
-        "primaryContactDetails": {
-        "name": "Fred Flintstone",
-        "telepphone": "0115 9700 700",
-        "emailAddress": "fred.flintstone@aol.com"
-        },
-        "secondaryContactDetails": {
-        "name": "Donald Trump",
-        "telepphone": "0115 9700 700",
-        "emailAddress": "fred.flintstone@potus.com"
-        },
-        "filingMemberDetails": {
-        "safeId": "XL6967739016188",
-        "organisationName": "Domestic Operations Ltd",
-        "customerIdentification1": "1234Z678",
-        "customerIdentification2": "1234567Y"
-        },
-        "accountingPeriod": {
-        "startDate": "2024-01-06",
-        "endDate": "2025-04-06",
-        "dueDate": "2024-04-06"
-        },
-        "accountStatus": {
-        "inactive": true
-        }
-        }
-        }
+  "success": {
+    "plrReference": "[pillar2Reference]",
+    "processingDate": "2010-12-12",
+    "formBundleNumber": "119000004320",
+    "upeDetails": {
+      "domesticOnly": false,
+      "organisationName": "International Organisation Inc.",
+      "customerIdentification1": "12345678",
+      "customerIdentification2": "12345678",
+      "registrationDate": "2022-01-31",
+      "filingMember": false
+    },
+    "upeCorrespAddressDetails": {
+      "addressLine1": "1 High Street",
+      "addressLine2": "Egham",
+      "addressLine3": "Surrey",
+      "postCode": "HP13 6TT",
+      "countryCode": "GB"
+    },
+    "primaryContactDetails": {
+      "name": "Fred Flintstone",
+      "telepphone": "0115 9700 700",
+      "emailAddress": "fred.flintstone@aol.com"
+    },
+    "secondaryContactDetails": {
+      "name": "Donald Trump",
+      "telepphone": "0115 9700 700",
+      "emailAddress": "fred.flintstone@potus.com"
+    },
+      "filingMemberDetails": {
+      "safeId": "XL6967739016188",
+      "organisationName": "Domestic Operations Ltd",
+      "customerIdentification1": "1234Z678",
+      "customerIdentification2": "1234567Y"
+    },
+    "accountingPeriod": {
+      "startDate": "2024-01-06",
+      "endDate": "2025-04-06",
+      "duetDate": "2024-04-06"
+    },
+    "accountStatus": {
+      "inactive": true
+    }
+  }
+}
 ```
 
-#### Unhappy Path:
+- Response status: `200`
+- Response body:
 
-To trigger the unhappy paths, ensure you provide a valid request body.
-The below error responses can be expected:
+#### Unhappy Path
 
-HTTP 500 Internal Server Error
+To trigger the unhappy paths, ensure you provide a valid request body. The below error responses can be expected:
 
-```dtd
+##### HTTP 500 Internal Server Error
+
+```json
 {
-        "errorDetail": {
-        "timestamp": "2016-08-23T18:15:41Z",
-        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-        "errorCode": "500",
-        "errorMessage": "Internal error",
-        "source": "Internal Server error"
-        }
-        }
+  "errorDetail": {
+    "timestamp": "2016-08-23T18:15:41Z",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "errorCode": "500",
+    "errorMessage": "Internal error",
+    "source": "Internal Server error"
+  }
+}
 ```
+- Response status: `500`
+- Response body: N/A
 
-> Response status: 500
->
-> Response body: N/A
+##### HTTP 400 Bad Request Error
 
-HTTP 400 Bad Request Error
-
-```dtd
+```json
 {
-        "errorDetail": {
-        "timestamp" : "2023-02-14T12:58:44Z",
-        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-        "errorCode": "400",
-        "errorMessage": "Invalid ID",
-        "source": "Back End",
-        "sourceFaultDetail":{
-        "detail":[
+  "errorDetail": {
+    "timestamp" : "2023-02-14T12:58:44Z",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "errorCode": "400",
+    "errorMessage": "Invalid ID",
+    "source": "Back End",
+    "sourceFaultDetail": {
+      "detail":[
         "001 - Invalid Regime"
-        ]
-        }
-        }
-        }
+      ]
+    }
+  }
+}
 ```
 
-> Response status: 400
->
-> Response body: N/A
+- Response status: `400`
+- Response body: N/A
 
-HTTP 503 Service Unavailable Error
+##### HTTP 503 Service Unavailable Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "timestamp": "2016-08-23T18:15:41Z",
-        "correlationId": "",
-        "errorCode": "503",
-        "errorMessage": "Send timeout",
-        "source": "Back End",
-        "sourceFaultDetail": {
-        "detail": ["101504 - Timeout "]
-        }
-        }
-        }
+  "errorDetail": {
+    "timestamp": "2016-08-23T18:15:41Z",
+    "correlationId": "",
+    "errorCode": "503",
+    "errorMessage": "Send timeout",
+    "source": "Back End",
+    "sourceFaultDetail": {
+      "detail": ["101504 - Timeout"]
+    }
+  }
+}
 ```
 
-> Response status: 503
->
-> Response body: N/A
+- Response status: `503`
+- Response body: N/A
 
-HTTP 503 Request Could not be processed Error
+##### HTTP 503 Request Could not be processed Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "source": "Back End",
-        "timestamp": "2020-11-11T13:19:52.307Z",
-        "errorMessage": "Request could not be processed",
-        "errorCode": "503",
-        "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
-        "sourceFaultDetail": {
-        "detail": [
+  "errorDetail": {
+    "source": "Back End",
+    "timestamp": "2020-11-11T13:19:52.307Z",
+    "errorMessage": "Request could not be processed",
+    "errorCode": "503",
+    "correlationId": "c182e731-2386-4359-8ee6-f911d6e5f4bc",
+    "sourceFaultDetail": {
+      "detail": [
         "001 - Request Cannot be processed"
-        ]
-        }
-        }
-        }
+      ]
+    }
+  }
+}
 ```
 
-> Response status: 503
->
-> Response body: N/A
+- Response status: `503`
+- Response body: N/A
 
-HTTP 404 Record Not Found Error
+##### HTTP 404 Record Not Found Error
 
-```dtd
+```json
 {
-        "errorDetail": {
-        "source": "Back End",
-        "timestamp": "2020-11-23T13:19:52.307Z",
-        "errorMessage": "Record not found",
-        "errorCode": "404",
-        "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
-        "sourceFaultDetail": {
-        "detail": [
+  "errorDetail": {
+    "source": "Back End",
+    "timestamp": "2020-11-23T13:19:52.307Z",
+    "errorMessage": "Record not found",
+    "errorCode": "404",
+    "correlationId": "36147652-e594-94a4-a229-23f28e20e841",
+    "sourceFaultDetail": {
+      "detail": [
         "Detail cannot be found"
-        ]
-        }
-        }
-        }
+      ]
+    }
+  }
+}
 ```
 
-> Response status: 404
->
-> Response body: N/A
+- Response status: `404`
+- Response body: N/A
+
 ---
 
-```
-GET /pillar2/subscription/read-subscription/:id/:plrReference
-```
+### Retrieve Subscription Details (Cache)
 
-Reads the Subscription details and caches them for the specific PLR reference and ID. This endpoint is used by the DashboardController for testing registration in progress scenarios.
+**Endpoint**: `GET /pillar2/subscription/read-subscription/:id/:plrReference`
 
-| plrReference    | Status Code | Status                | Description                                                                                          |
-|-----------------|-------------|-----------------------|------------------------------------------------------------------------------------------------------|
-| XEPLR0000000001 | 404/200     | VARIABLE              | Registration in progress test - Returns 404 for first 3 polls, then 200 success                     |
-| XEPLR0000000002 | 404/200     | VARIABLE              | Registration in progress test - Returns 404 for first 8 polls, then 200 success                     |                             |
-| Any other PLR   | 200         | OK                    | Returns read success response for any other valid PLR reference                                      |
+**Description**: Reads the Subscription details and caches them for the specific PLR reference and ID. This endpoint is used by the DashboardController for testing registration in progress scenarios.
 
-#### Happy Path:
+| plrReference    | Status Code | Status   | Description                                                                     |
+|-----------------|-------------|----------|---------------------------------------------------------------------------------|
+| XEPLR0000000001 | 404/200     | VARIABLE | Registration in progress test - Returns 404 for first 3 polls, then 200 success |
+| XEPLR0000000002 | 404/200     | VARIABLE | Registration in progress test - Returns 404 for first 8 polls, then 200 success |
+| Any other PLR   | 200         | OK       | Returns read success response for any other valid PLR reference                 |
+
+#### Happy Path
 
 To trigger the happy path, provide a valid `id` and `plrReference`.
 
 The response format is identical to the `GET /pillar2/subscription/:plrReference` endpoint.
 
-#### Registration In Progress Testing:
-
-This endpoint uses the same polling logic as the `retrieveSubscription` endpoint for the special test PLR references:
-- **XEPLR0000000001**: Quick processing scenario - succeeds after 3 attempts
-- **XEPLR0000000002**: Medium processing scenario - succeeds after 8 attempts  
-
 ---
 
-```
-PUT /pillar2/subscription
-```
+### Amend Existing Subscription
 
-Amends an existing Subscription. The outcome of the request can be controlled by the `name` field within the `primaryContactDetails` of the request body.
+**Endpoint**: `PUT /pillar2/subscription`
 
-| primaryContactDetails.name | Status Code | Status                | Description                                  |
-|----------------------------|-------------|-----------------------|----------------------------------------------|
-| "400"                      | 400         | BAD_REQUEST           | Triggers a Bad Request response.             |
-| "409"                      | 409         | CONFLICT              | Triggers a Duplicate Submission error.       |
-| "422"                      | 422         | UNPROCESSABLE_ENTITY  | Triggers an Unprocessable Entity error.    |
-| "500"                      | 500         | INTERNAL_SERVER_ERROR | Triggers an Internal Server Error.           |
-| "503"                      | 503         | SERVICE_UNAVAILABLE   | Triggers a Service Unavailable error.        |
-| "10 seconds"               | 200         | OK                    | Returns a success response after a 10-second delay. |
+**Description**: Amends an existing Subscription. The outcome of the request can be controlled by the `name` field within the `primaryContactDetails` of the request body.
+
+| primaryContactDetails.name | Status Code | Status                | Description                                                                             |
+|----------------------------|-------------|-----------------------|-----------------------------------------------------------------------------------------|
+| "400"                      | 400         | BAD_REQUEST           | Triggers a Bad Request response.                                                        |
+| "409"                      | 409         | CONFLICT              | Triggers a Duplicate Submission error.                                                  |
+| "422"                      | 422         | UNPROCESSABLE_ENTITY  | Triggers an Unprocessable Entity error.                                                 |
+| "500"                      | 500         | INTERNAL_SERVER_ERROR | Triggers an Internal Server Error.                                                      |
+| "503"                      | 503         | SERVICE_UNAVAILABLE   | Triggers a Service Unavailable error.                                                   |
+| "10 seconds"               | 200         | OK                    | Returns a success response after a 10-second delay.                                     |
 | "timeout"                  | 200         | OK                    | Returns a success response after a 30-second delay (will induce a client-side timeout). |
-| Any other value            | 200         | OK                    | Returns a success response.                  |
+| Any other value            | 200         | OK                    | Returns a success response.                                                             |
 
-#### Happy Path:
+#### Happy Path
 
 To trigger the happy path, provide a valid request body with a `primaryContactDetails.name` that does not match any of the error triggers (e.g., "Default Contact Name").
 
 Example Request Body:
-```dtd
+```json
 {
   "upeDetails": {
     "safeId": "XE6666666666666",
@@ -624,89 +692,100 @@ Example Request Body:
 }
 ```
 
-> Response status: 200
->
-> Response body:
-```json
-{
-  "success": {
-    "processingDate": "2024-01-31T09:26:17Z",
-    "plrReference": "XMPLR0012345674",
-    "formBundleNumber": "119000004320",
-    "customerIdentification1": "XACBC0000123456",
-    "customerIdentification2": "XACBC0000123457"
-  }
-}
-```
+- Response status: `200`
+- Response body:
+    ```json
+    {
+      "success": {
+        "processingDate": "2024-01-31T09:26:17Z",
+        "plrReference": "XMPLR0012345674",
+        "formBundleNumber": "119000004320",
+        "customerIdentification1": "XACBC0000123456",
+        "customerIdentification2": "XACBC0000123457"
+      }
+    }
+    ```
 
-```
-GET /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups
-```
+---
 
-Retrieves the Enrolment Store Response with and without groupId
+### Retrieve Enrolment Store Response
 
-#### Happy Path:
+**Endpoint**: `GET /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups`
 
-To trigger the happy path, ensure you provide a valid plrReference
+**Description**: Retrieves the Enrolment Store Response with and without groupId.
+
+#### Happy Path
+
+To trigger the happy path, ensure you provide a valid `plrReference`.
 
 The below is the expected success response:
 
-Enrolment Store Response with groupID
-> Response status: 200
->
-> Response body:
-
-```dtd
-{
-        "principalGroupIds": [
+##### Enrolment Store Response with groupID
+- Response status: `200`
+- Response body:
+    ```json
+    {
+      "principalGroupIds": [
         "GHIJKLMIN1234567",
         "GHIJKLMIN1234568"
-        ],
-        "delegatedGroupIds": [
+      ],
+      "delegatedGroupIds": [
         "GHIJKLMIN1234567",
         "GHIJKLMIN1234568"
-        ]
-        }
-```
+      ]
+    }
+    ```
 
-Enrolment Store Response without groupID
-> Response status: 200
->
-> Response body: {}
+##### Enrolment Store Response without groupID
+- Response status: `200`
+- Response body: `{}`
 
-#### Unhappy Path:
+#### Unhappy Path
 
-> Response status: use - XEPLR0444444400
->
-> Response body: NoContent
+To trigger the unhappy paths, use `XEPLR0444444400`.
 
-<br><br>
+- Response status: `204`
+- Response body: `NoContent`
 
-## BARS Business account test data
+---
 
-| Sort code | Account number | Company Name          | Valid | Error Returned                                                                                                                                           |
-|-----------|----------------|-----------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 206705    | 86473611       | Epic Adventure Inc    | Yes   | Successful Response <br/> "Epic Adventure Inc" returns nameMatches = Yes <br/> "Foo" returns nameMatches = No <br/> "Epic" returns nameMatches = Partial |
-| 206705    | 86563612       | Sanguine Skincare     | Yes   | accountNumberIsWellFormatted = No                                                                                                                        |
-| 206705    | 76523611       | Vortex Solar          | Yes   | accountExists = No                                                                                                                                       |
-| 206705    | 56523611       | Innovation Arch       | Yes   | accountExists = inapplicable                                                                                                                             |
-| 206705    | 56945688       | Eco Focus             | Yes   | accountExists = indeterminate                                                                                                                            |
-| 207102    | 86473611       | Flux Water Gear       | Yes   | accountExists = error                                                                                                                                    |
-| 207102    | 86563611       | Lambent Illumination  | Yes   | nameMatches = No                                                                                                                                         |
-| 207102    | 76523611       | Boneféte Fun          | Yes   | nameMatches = inapplicable                                                                                                                               |
-| 207102    | 56523611       | Cogent-Data           | Yes   | nameMatches = indeterminate                                                                                                                              |
-| 207102    | 74597611       | Cipher Publishing     | Yes   | nameMatches = error                                                                                                                                      |
-| 207106    | 86473611       | Security Engima       | Yes   | sortCodeIsPresentOnEISCD = no                                                                                                                            |
-| 207106    | 86563611       | Megacorp              | Yes   | sortCodeIsPresentOnEISCD = error                                                                                                                         |
-| 207106    | 76523611       | Genomics Inc          | Yes   | nonStandardAccountDetailsRequiredForBacs = Yes                                                                                                           |
-| 207106    | 56523611       | Full Force Futures    | Yes   | sortCodeSupportsDirectCredit = error                                                                                                                     |
-| 207106    | 74597611       | Resource Refresh      | Yes   | sortCodeIsPresentOnEISCD = No, nameMatches = No, accountExists = No                                                                                      |
-| 609593    | 96863604       | O'Connor Construction | Yes   | accountNumberIsWellFormatted = indeterminate, but accountExists = Yes                                                                                    |
-| 609593    | 96113600       | Candyland Consulting  | Yes   | accountNumberIsWellFormatted = indeterminate, but accountExists = No                                                                                     |
+### Business Bank Account Reputation Service (BARS)
 
-<br><br>
+**Endpoint**: `POST     /verify/business`
 
-## Financial Data - Get Financial Test Data
+**Description**: This endpoint checks the likely correctness of a given business bank account, and it's likely connection to the given business.
+
+
+#### BARS Test Data
+
+| Sort code | Account number | Company Name          | Valid | Error Returned                                                                                                                                     |
+|-----------|----------------|-----------------------|-------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| 206705    | 86473611       | Epic Adventure Inc    | Yes   | Successful Response<br> "Epic Adventure Inc" returns nameMatches = Yes<br> "Foo" returns nameMatches = No<br> "Epic" returns nameMatches = Partial |
+| 206705    | 86563612       | Sanguine Skincare     | Yes   | accountNumberIsWellFormatted = No                                                                                                                  |
+| 206705    | 76523611       | Vortex Solar          | Yes   | accountExists = No                                                                                                                                 |
+| 206705    | 56523611       | Innovation Arch       | Yes   | accountExists = inapplicable                                                                                                                       |
+| 206705    | 56945688       | Eco Focus             | Yes   | accountExists = indeterminate                                                                                                                      |
+| 207102    | 86473611       | Flux Water Gear       | Yes   | accountExists = error                                                                                                                              |
+| 207102    | 86563611       | Lambent Illumination  | Yes   | nameMatches = No                                                                                                                                   |
+| 207102    | 76523611       | Boneféte Fun          | Yes   | nameMatches = inapplicable                                                                                                                         |
+| 207102    | 56523611       | Cogent-Data           | Yes   | nameMatches = indeterminate                                                                                                                        |
+| 207102    | 74597611       | Cipher Publishing     | Yes   | nameMatches = error                                                                                                                                |
+| 207106    | 86473611       | Security Engima       | Yes   | sortCodeIsPresentOnEISCD = no                                                                                                                      |
+| 207106    | 86563611       | Megacorp              | Yes   | sortCodeIsPresentOnEISCD = error                                                                                                                   |
+| 207106    | 76523611       | Genomics Inc          | Yes   | nonStandardAccountDetailsRequiredForBacs = Yes                                                                                                     |
+| 207106    | 56523611       | Full Force Futures    | Yes   | sortCodeSupportsDirectCredit = error                                                                                                               |
+| 207106    | 74597611       | Resource Refresh      | Yes   | sortCodeIsPresentOnEISCD = No, nameMatches = No, accountExists = No                                                                                |
+| 609593    | 96863604       | O'Connor Construction | Yes   | accountNumberIsWellFormatted = indeterminate, but accountExists = Yes                                                                              |
+| 609593    | 96113600       | Candyland Consulting  | Yes   | accountNumberIsWellFormatted = indeterminate, but accountExists = No                                                                               |
+
+---
+
+### Financial Data - Get Financial Test Data
+
+**Endpoint**: `GET  /enterprise/financial-data/ZPLR/:idNumber/PLR`
+
+**Description**: This endpoint provides the ability to get financial data (charges, estimates and payments).
+
 
 | idNumber (PLR Reference Number)                                          | Response Returned                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 |--------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -718,68 +797,74 @@ Enrolment Store Response without groupID
 | XEPLR2000000000                                                          | Outstanding payments (ETMP QA Test Data)                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                               
 | XEPLR2000000001                                                          | Outstanding payments - UKTR single AP                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                               
 | XEPLR2000000002                                                          | Outstanding payments - UKTR two APs                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                               
+| XEPLR2000000010                                                          | Repayment Interest (RPI)                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | Any valid ID                                                             | Will return 10 transactions these values are consistent                                                                                                                                                                                                                                                                                                                                                                                                                        |
 
-### Test last seven years of transactions
+#### Test last seven years of transactions
 As it currently stands the end date is always set to today's date, this means that it will generate transactions from the registration date to today's date.
-<br/>
+
 In the stubs the registration date is always 2024-01-31 therefore to override this date you need to override the config value set in the `pillar2-frontend` service.
-<br/>
+
 Example:
-```sbt "-Dapplication.router=testOnlyDoNotUseInAppConf.Routes" "-Dfeatures.transactionHistoryEndDate=2044-01-31" run```
-<br/>
-This will set the end date to `2044-01-31` and generate transactions from `2037-01-31 to 2044-01-31`. The last seven years.
-Worth noting this won't happen in any other environment apart unless you override the config.
+```shell
+sbt "-Dapplication.router=testOnlyDoNotUseInAppConf.Routes" "-Dfeatures.transactionHistoryEndDate=2044-01-31" run
+```
+
+This will set the end date to `2044-01-31` and generate transactions from `2037-01-31` to `2044-01-31`. The last seven years.
+Worth noting this won't happen in any other environment unless you override the config.
 
 
-## Get Obligation - Get Obligation Test Data
+#### Get Obligation - Get Obligation Test Data
 
 For now this API has not been developed by ETMP therefore we are making assumptions in order to provide test data and satisfy the requirements of the frontend.
 
-| idNumber (PLR Reference Number)                                          | Response Returned                       |
-|--------------------------------------------------------------------------|-----------------------------------------|
-| XEPLR1000000000                                                          | Obligation with Fulfilled status        |
-| XEPLR4040000000                                                          | NOT_FOUND Error Response                |
-| Any valid ID                                                             | Will return a response with Open status |
+| idNumber (PLR Reference Number) | Response Returned                       |
+|---------------------------------|-----------------------------------------|
+| XEPLR1000000000                 | Obligation with Fulfilled status        |
+| XEPLR4040000000                 | NOT_FOUND Error Response                |
+| Any valid ID                    | Will return a response with Open status |
 
-## Obligations and Submissions API
+---
 
-GET /RESTAdapter/plr/obligations-and-submissions?fromDate={fromDate}&toDate={toDate}
+### Obligations and Submissions API
 
-This API retrieves obligations and submissions for a given period based on the Pillar2 ID. The fromDate and toDate parameters are required and must be valid date strings in the format YYYY-MM-DD. The toDate must be after the fromDate, or the API will return an error.
+**Endpoint**: `GET /RESTAdapter/plr/obligations-and-submissions?fromDate={fromDate}&toDate={toDate}`
 
-### Test Data for Different Responses
+**Description**: This API retrieves obligations and submissions for a given period based on the Pillar2 ID. The `fromDate` and `toDate` parameters are required and must be valid date strings in the format `YYYY-MM-DD`. The `toDate` must be after the `fromDate`, or the API will return an error.
+
+#### Test Data for Different Responses
 
 The API returns different responses based on the Pillar2 ID provided in the X-Pillar2-Id header:
 
-| Pillar2 ID         | Response Type                                            | Description                                                                                         |
-|--------------------|----------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
-| XEPLR1111111111    | Multiple Accounting Periods all open                     | Returns 4 accounting periods with different dates, obligation types, and statuses                   |
-| XMPLR0012345675    | UKTR Due                                                 | Returns two accounting periods with UKTR and GIR obligations (due and overdue periods)             |
+| Pillar2 ID         | Response Type                                            | Description                                                                                                                                       |
+|--------------------|----------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| XEPLR1111111111    | Multiple Accounting Periods all open                     | Returns 4 accounting periods with different dates, obligation types, and statuses                                                                 |
+| XMPLR0012345675    | UKTR Due                                                 | Returns two accounting periods with UKTR and GIR obligations (due and overdue periods)                                                            |
 | XMPLR0012345676    | UKTR Overdue                                             | Returns two accounting periods (one due, one overdue) with both UKTR and GIR obligations - should trigger Overdue banner despite having due items |
-| XMPLR0012345677    | UKTR Incomplete                                          | Returns two accounting periods matching prototype - Period 1: both UKTR/GIR with UKTR submitted, Period 2: only GIR with no submissions |
-
-
-| XEPLR2222222222    | No Accounting Periods                                    | Returns a success response with no accounting periods                                               |
-| XEPLR3333333333    | Single Accounting Period                                 | Returns a single accounting period (same as default)                                                |
-| XEPLR4444444444    | All Fulfilled                                            | Returns Multiple accounting periods with all obligations fulfilled                                  |
-| XEPLR5555555555    | Multiple accounting periods with some fulfilled          | Returns Multiple accounting periods with some obligations fulfilled                                 |
-| XEPLR9999999991    | Single active accounting period with no submission       | Returns a single active accounting period with no submission                                        |
-| XEPLR9999999992    | Two active accounting periods with no submissions        | Returns two active accounting periods with no submissions                                           |
-| XEPLR9999999993    | Three active accounting periods with different scenarios | Returns three active accounting periods with UKTR and two no submission scenarios                   |
-| XEPLR9999999994    | Four active accounting periods with different scenarios  | Returns four active accounting periods with UKTR, BTN and two no submission scenarios               |
-| XEPLR1066196602    | Two active accounting periods with no submissions        | Returns two active accounting periods with no submission. Use this for UK only in subscription data |
-| XEPLR0200000422    | Error - Missing/Invalid Pillar2 ID                       | Returns a 422 error with code 002                                                                   |
-| XEPLR0300000422    | Error - Request Processing Failure                       | Returns a 422 error with code 003                                                                   |
-| XEPLR0400000422    | Error - Duplicate Submission                             | Returns a 422 error with code 004                                                                   |
-| XEPLR2500000422    | Error - No Data Found                                    | Returns a 422 error with code 025                                                                   |
-| XEPLR0000000400    | Error - Invalid JSON                                     | Returns a 400 error                                                                                 |
-| XEPLR0000000500    | Error - Internal Server Error                            | Returns a 500 error                                                                                 |
-| Any other valid ID | Single Accounting Period (Default)                       | Returns a single accounting period for the current tax year                                         |
+| XMPLR0012345677    | UKTR Incomplete                                          | Returns two accounting periods matching prototype - Period 1: both UKTR/GIR with UKTR submitted, Period 2: only GIR with no submissions           |
+| XEPLR2222222222    | No Accounting Periods                                    | Returns a success response with no accounting periods                                                                                             |
+| XEPLR3333333333    | Single Accounting Period                                 | Returns a single accounting period (same as default)                                                                                              |
+| XEPLR4444444444    | All Fulfilled                                            | Returns Multiple accounting periods with all obligations fulfilled                                                                                |
+| XEPLR4444444445    | All Fulfilled with Received Flag                         | Returns Multiple accounting periods with all obligations fulfilled with received flag                                                             |
+| XEPLR5555555555    | Multiple accounting periods with some fulfilled          | Returns Multiple accounting periods with some obligations fulfilled                                                                               |
+| XEPLR9999999991    | Single active accounting period with no submission       | Returns a single active accounting period with no submission                                                                                      |
+| XEPLR9999999992    | Two active accounting periods with no submissions        | Returns two active accounting periods with no submissions                                                                                         |
+| XEPLR9999999993    | Three active accounting periods with different scenarios | Returns three active accounting periods with UKTR and two no submission scenarios                                                                 |
+| XEPLR9999999994    | Four active accounting periods with different scenarios  | Returns four active accounting periods with UKTR, BTN and two no submission scenarios                                                             |
+| XEPLR1066196602    | Two active accounting periods with no submissions        | Returns two active accounting periods with no submission. Use this for UK only in subscription data                                               |
+| XEPLR0200000422    | Error - Missing/Invalid Pillar2 ID                       | Returns a 422 error with code 002                                                                                                                 |
+| XEPLR0300000422    | Error - Request Processing Failure                       | Returns a 422 error with code 003                                                                                                                 |
+| XEPLR0400000422    | Error - Duplicate Submission                             | Returns a 422 error with code 004                                                                                                                 |
+| XEPLR2500000422    | Error - No Data Found                                    | Returns a 422 error with code 025                                                                                                                 |
+| XEPLR0000000400    | Error - Invalid JSON                                     | Returns a 400 error                                                                                                                               |
+| XEPLR0000000500    | Error - Internal Server Error                            | Returns a 500 error                                                                                                                               |
+| Any other valid ID | Single Accounting Period (Default)                       | Returns a single accounting period for the current tax year                                                                                       |
 
 **Note:** All successful responses require valid date parameters. If the toDate is not after the fromDate, a 422 error with code 001 will be returned regardless of which Pillar2 ID is used.
 
-### Sample Response (Multiple Accounting Periods)
+#### Happy Path
+
+##### Sample Response (Multiple Accounting Periods)
 
 ```json
 {
@@ -876,7 +961,7 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 }
 ```
 
-### Sample Response (No Accounting Periods)
+##### Sample Response (No Accounting Periods)
 
 ```json
 {
@@ -887,7 +972,9 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 }
 ```
 
-### Sample Error Response (Invalid Date Range)
+#### Unhappy Path
+
+##### Sample Error Response (Invalid Date Range)
 
 ```json
 {
@@ -899,7 +986,7 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 }
 ```
 
-### Sample Error Response (Invalid Pillar2 ID)
+##### Sample Error Response (Invalid Pillar2 ID)
 
 ```json
 {
@@ -911,22 +998,24 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 }
 ```
 
-## Submit UKTR
+---
 
-POST           /RESTAdapter/plr/uk-tax-return
+### Submit UKTR (Liability Detail Submission)
 
-Liability Detail Submission
+**Endpoint**: `POST     /RESTAdapter/plr/uk-tax-return`
 
-This endpoint allows submission of liability details based on a provided idNumber (PLR Reference Number). There are two main types of submissions supported:
-•	Liability Submission: A detailed submission of liability amounts.
-•	Nil Return Submission: A minimal submission indicating no liability for the period.
+**Description**: This endpoint allows submission of liability details based on a provided `idNumber` (PLR Reference Number). There are two main types of submissions supported:
 
-Request Types and Expected Payloads
+- **Liability Submission**: A detailed submission of liability amounts.
+- **Nil Return Submission**: A minimal submission indicating no liability for the period.
 
-Liability Submission
+
+#### Request Types and Expected Payloads
+
+##### Liability Submission
 
 A valid liability submission includes details about the total liabilities and entities liable for the tax period. Here's the expected structure for a successful liability submission:
-```
+```json
 {
   "accountingPeriodFrom": "2024-08-14",
   "accountingPeriodTo": "2024-12-14",
@@ -955,10 +1044,10 @@ A valid liability submission includes details about the total liabilities and en
 }
 ```
 
-Nil Return Submission
+##### Nil Return Submission
 
 A Nil Return submission is used when there is no liability for the specified period. The returnType field in liabilities should be set to "NIL_RETURN":
-```
+```json
 {
   "accountingPeriodFrom": "2024-08-14",
   "accountingPeriodTo": "2024-09-14",
@@ -972,86 +1061,88 @@ A Nil Return submission is used when there is no liability for the specified per
 }
 ```
 
-Response Codes and Conditions
+#### Response Codes and Conditions
 
-| Status          | Description                                                                               |
-|-----------------|-------------------------------------------------------------------------------------------|
-| 201 CREATED     | Success response for a valid liability or Nil Return submission when idNumber is correct. |
-| 400 BAD_REQUEST | Submission did not pass validation (e.g., invalid JSON format or required fields missing).    |
-| 400 BAD_REQUEST | Non-JSON data received, expecting a valid JSON object.                                    |
-| 404 NOT_FOUND   | No liabilities found for the provided idNumber (PLR Reference Number is incorrect).     |
+| Status          | Description                                                                                |
+|-----------------|--------------------------------------------------------------------------------------------|
+| 201 CREATED     | Success response for a valid liability or Nil Return submission when idNumber is correct.  |
+| 400 BAD_REQUEST | Submission did not pass validation (e.g., invalid JSON format or required fields missing). |
+| 400 BAD_REQUEST | Non-JSON data received, expecting a valid JSON object.                                     |
+| 404 NOT_FOUND   | No liabilities found for the provided idNumber (PLR Reference Number is incorrect).        |
 
-Examples of Invalid Requests
+#### Examples of Invalid Requests
 
-Invalid JSON
+##### Invalid JSON
 
 A request with invalid JSON syntax will return a 400 BAD_REQUEST response:
+```json
+{
+  "accountingPeriod": "2024-08-1",
+  "accountingPeriod": "2024-12-14"
+}
+```
 
-        ```json
-        {
-        "accountingPeriod": "2024-08-1",
-        "accountingPeriod": "2024-12-14"
-        }
-        ```
-
-Non-JSON Body
+##### Non-JSON Body
 
 If a non-JSON body is submitted, a 400 BAD_REQUEST response will be returned:
 
-            ```
-            This is not a JSON body
-            ```
+- Response status: `400`
+- Response body: `This is not a JSON body`
+
+
 Details of Expected Fields
 
-	•	idNumber (PLR Reference Number): Only the idNumber "XTC01234123412" will result in a successful 201 CREATED response.
-	•	Valid idNumber: Returns 201 CREATED with the liability success details for valid liability submissions.
-	•	Invalid idNumber: Returns 404 NOT_FOUND, indicating no matching liability data for other idNumbers.
-	•	Liability Fields: In a liability submission, totalLiability, totalLiabilityDTT, totalLiabilityIIR, and totalLiabilityUTPR are expected fields. Additionally, liableEntities should be a non-empty array.
-	•	Nil Return Field: In a Nil Return submission, liabilities.returnType should be "NIL_RETURN", indicating no liability.
+- idNumber (PLR Reference Number): Only the idNumber "XTC01234123412" will result in a successful 201 CREATED response.
+- Valid idNumber: Returns 201 CREATED with the liability success details for valid liability submissions.
+- Invalid idNumber: Returns 404 NOT_FOUND, indicating no matching liability data for other idNumbers.
+- Liability Fields: In a liability submission, totalLiability, totalLiabilityDTT, totalLiabilityIIR, and totalLiabilityUTPR are expected fields. Additionally, liableEntities should be a non-empty array.
+- Nil Return Field: In a Nil Return submission, liabilities.returnType should be "NIL_RETURN", indicating no liability.
 
-Response Examples
+#### Response Examples
 
-Successful Liability Submission Response
+##### Successful Liability Submission Response
 
 If the idNumber is valid and the payload is correct, a 201 CREATED response will be returned with liability details:
-    ```
-        {
-        "success": {
-        "processingDate": "2024-08-14T09:26:17Z",
-        "formBundleNumber": "119000004320",
-        "chargeReference": "XTC01234123412"
-        }
-        }
-    ```
+```json
+{
+  "success": {
+    "processingDate": "2024-08-14T09:26:17Z",
+    "formBundleNumber": "119000004320",
+    "chargeReference": "XTC01234123412"
+  }
+}
+```
 
-Successful Nil Return Response
+##### Successful Nil Return Response
 
 If the idNumber is valid and the payload indicates a Nil Return, a 201 CREATED response will be returned with the Nil Return details:
-    ```
-        {
-        "success": {
-        "processingDate": "2024-08-14T09:26:17Z",
-        "message": "Nil return received and processed successfully"
-        }
-        }
-    ```
+```json
+{
+  "success": {
+    "processingDate": "2024-08-14T09:26:17Z",
+    "message": "Nil return received and processed successfully"
+  }
+}
+```
 
-## Amend UKTR
+---
 
-PUT           /RESTAdapter/plr/uk-tax-return
+### Amend UKTR
 
-The request format is the same as the UKTaxReturn POST request, but it uses a PUT method instead. In the real world this would be used to amend a UKTR that has already been submitted but we are not implementing this functionality in the stubs.
+**Endpoint**: `PUT  /RESTAdapter/plr/uk-tax-return`
 
-### Special PLR Reference Numbers for Testing
+**Description**: The request format is the same as the UKTaxReturn `POST` request, but it uses a `PUT` method instead. In the real world this would be used to amend a UKTR that has already been submitted, but we are not implementing this functionality in the stubs.
 
-| PLR Reference Number | Response                                                |
-|---------------------|--------------------------------------------------------|
-| XEPLR0422044000     | 422 Error - Tax obligation already met                  |
-| XEPLR0400000000     | 400 Error - Bad Request                                |
-| XEPLR0500000000     | 500 Error - Internal Server Error                      |
-| Any other valid ID  | 200 Success - Returns successful amendment response     |
+#### Special PLR Reference Numbers for Testing
 
-### Success Response (200 OK)
+| PLR Reference Number | Response                                            |
+|----------------------|-----------------------------------------------------|
+| XEPLR0422044000      | 422 Error - Tax obligation already met              |
+| XEPLR0400000000      | 400 Error - Bad Request                             |
+| XEPLR0500000000      | 500 Error - Internal Server Error                   |
+| Any other valid ID   | 200 Success - Returns successful amendment response |
+
+#### Happy Path
 
 ```json
 {
@@ -1063,7 +1154,14 @@ The request format is the same as the UKTaxReturn POST request, but it uses a PU
 }
 ```
 
-### Error Response - Tax Obligation Already Met (422)
+- Response status: `200`
+- Response body: N/A
+
+#### Unhappy Path
+
+To trigger the unhappy paths, ensure you provide a valid request body. The below error responses can be expected:
+
+##### Error Response - Tax Obligation Already Met (422)
 
 ```json
 {
@@ -1075,7 +1173,7 @@ The request format is the same as the UKTaxReturn POST request, but it uses a PU
 }
 ```
 
-### Error Response - Bad Request (400)
+##### HTTP 400 Bad Request Error
 
 ```json
 {
@@ -1087,7 +1185,7 @@ The request format is the same as the UKTaxReturn POST request, but it uses a PU
 }
 ```
 
-### Error Response - Internal Server Error (500)
+##### HTTP 500 Internal Server Error
 
 ```json
 {
@@ -1099,20 +1197,25 @@ The request format is the same as the UKTaxReturn POST request, but it uses a PU
 }
 ```
 
-## Below Threshold Notification
+---
 
-This endpoint allows submission of a below threshold notification, which defines an organisation as earning below the threshold
-that makes them eligible for submitting pillar2 UKTR.
+### Below-Threshold Notification (BTN)
 
-For this API, the payload is rather simple, so responses are limited in their scope
+**Endpoint**: `POST     /RESTAdapter/plr/below-threshold-notification`
 
-| Pillar2Id | Response Returned |
-| ---------- | ---------------- |
-| XEPLR4000000000 | BadRequest response |
+**Description**: This endpoint allows submission of a Below-Threshold Notification (BTN), which defines an organisation
+as earning below the threshold that makes them eligible for submitting Pillar2 UKTR.
+
+For this API, the payload is rather simple, so responses are limited in their scope.
+
+| Pillar2Id       | Response Returned            |
+|-----------------|------------------------------|
+| XEPLR4000000000 | BadRequest response          |
 | XEPLR5000000000 | InternalServerError response |
-| Any valid ID    | Successful response |
+| Any valid ID    | Successful response          |
 
-### License
+
+## License
 
 This code is open source software licensed under
 the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").

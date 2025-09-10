@@ -21,8 +21,8 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.{HIP, HoD}
+import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes._
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -57,6 +57,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XEPLR2222222222" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
           case "XEPLR3333333333" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
           case "XEPLR4444444444" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilled()))
+          case "XEPLR4444444445" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilledAndReceived()))
           case "XEPLR5555555555" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withMultipleAccountingPeriodsWithSubmissions()))
           case "XEPLR7777777777" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withOneAccountingPeriodAndOneSubmission()))
           case "XEPLR9999999991" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.singleActiveAccountingPeriodWithNoSubmission()))
