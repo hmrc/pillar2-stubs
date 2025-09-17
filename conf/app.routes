@@ -1,14 +1,13 @@
 # microservice specific routes
 
 POST          /registration/02.00.00/organisation                                          uk.gov.hmrc.pillar2stubs.controllers.RegisterWithoutIdController.registerWithoutId
+
 POST          /pillar2/subscription                                                        uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.createSubscription
 GET           /pillar2/subscription/:plrReference                                          uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscription(plrReference: String)
-GET           /pillar2/subscription/read-subscription/:id/:plrReference                   uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSubscriptionAndCache(id: String, plrReference: String)
+GET           /pillar2/subscription/read-subscription/:id/:plrReference                    uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSubscriptionAndCache(id: String, plrReference: String)
 PUT           /pillar2/subscription                                                        uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.amendSubscription
 
-
 POST          /pillar2/repayment                                                           uk.gov.hmrc.pillar2stubs.controllers.RepaymentController.submitRepaymentDetails
-
 
 GET           /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups        uk.gov.hmrc.pillar2stubs.controllers.EnrolmentStoreProxyController.status(serviceName)
 
@@ -21,7 +20,5 @@ GET           /enterprise/financial-data/ZPLR/:idNumber/PLR                     
 
 POST          /RESTAdapter/plr/uk-tax-return                                               uk.gov.hmrc.pillar2stubs.controllers.UKTRSubmitController.submitUKTR
 PUT           /RESTAdapter/plr/uk-tax-return                                               uk.gov.hmrc.pillar2stubs.controllers.UKTRAmendController.amendUKTR
-
 POST          /RESTAdapter/plr/below-threshold-notification                                uk.gov.hmrc.pillar2stubs.controllers.BTNController.submitBTN
-
 GET           /RESTAdapter/plr/obligations-and-submissions                                 uk.gov.hmrc.pillar2stubs.controllers.ObligationAndSubmissionsController.retrieveData(fromDate: String, toDate: String)

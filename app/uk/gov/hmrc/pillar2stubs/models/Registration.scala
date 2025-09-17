@@ -27,7 +27,6 @@ object NoIdOrganisation {
 case class Registration(regime: String, organisation: NoIdOrganisation)
 
 object Registration {
-
   implicit lazy val reads: Reads[Registration] = {
     import play.api.libs.functional.syntax._
     (
