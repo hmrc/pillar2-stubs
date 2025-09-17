@@ -24,7 +24,7 @@ sealed trait UKTRSubmission {
   val accountingPeriodFrom: LocalDate
   val accountingPeriodTo:   LocalDate
   val obligationMTT:        Boolean
-  val electionUKGAAP:       Boolean
+  val electionUKGAAP:       Option[Boolean]
   val liabilities:          Liability
 
   def accountingPeriodValid: Boolean =
@@ -35,7 +35,7 @@ case class UKTRSubmissionData(
   accountingPeriodFrom: LocalDate,
   accountingPeriodTo:   LocalDate,
   obligationMTT:        Boolean,
-  electionUKGAAP:       Boolean,
+  electionUKGAAP:       Option[Boolean],
   liabilities:          LiabilityData
 ) extends UKTRSubmission {}
 
@@ -47,7 +47,7 @@ case class UKTRSubmissionNilReturn(
   accountingPeriodFrom: LocalDate,
   accountingPeriodTo:   LocalDate,
   obligationMTT:        Boolean,
-  electionUKGAAP:       Boolean,
+  electionUKGAAP:       Option[Boolean],
   liabilities:          LiabilityNilReturn
 ) extends UKTRSubmission
 
