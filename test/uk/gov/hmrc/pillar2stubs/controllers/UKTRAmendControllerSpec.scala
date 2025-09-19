@@ -52,7 +52,7 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       accountingPeriodFrom = accountingPeriodFrom,
       accountingPeriodTo = accountingPeriodTo,
       obligationMTT = true,
-      electionUKGAAP = true,
+      electionUKGAAP = Some(true),
       liabilities = LiabilityData(
         electionDTTSingleMember = false,
         electionUTPRSingleMember = false,
