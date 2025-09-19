@@ -62,7 +62,7 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
         accountingPeriodFrom = LocalDate.of(2024, 8, 14),
         accountingPeriodTo = LocalDate.of(2024, 12, 14),
         obligationMTT = true,
-        electionUKGAAP = Some(true),
+        electionUKGAAP = true,
         liabilities = LiabilityData(
           electionDTTSingleMember = false,
           electionUTPRSingleMember = false,
@@ -147,7 +147,7 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
           LocalDate.of(2024, 8, 14),
           LocalDate.of(2024, 12, 14),
           obligationMTT = true,
-          electionUKGAAP = Some(false),
+          electionUKGAAP = false,
           liabilities = LiabilityData(electionDTTSingleMember = false, electionUTPRSingleMember = false, 0, 0, 0, 0, 0, 0, List.empty)
         )
       )
@@ -261,7 +261,7 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
             accountingPeriodFrom = LocalDate.of(2024, 8, 14),
             accountingPeriodTo = LocalDate.of(2024, 12, 14),
             obligationMTT = true,
-            electionUKGAAP = Some(true),
+            electionUKGAAP = true,
             liabilities = LiabilityData(
               electionDTTSingleMember = false,
               electionUTPRSingleMember = false,
@@ -295,7 +295,7 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
           accountingPeriodFrom = LocalDate.of(2024, 12, 14),
           accountingPeriodTo = LocalDate.of(2024, 8, 14),
           obligationMTT = true,
-          electionUKGAAP = Some(true),
+          electionUKGAAP = true,
           liabilities = LiabilityData(
             electionDTTSingleMember = false,
             electionUTPRSingleMember = false,
