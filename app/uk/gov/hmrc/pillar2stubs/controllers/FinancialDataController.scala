@@ -44,6 +44,7 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         case "XEPLR2000000001" => Ok(Json.parse(oneAccountingPeriod(idNumber)))
         case "XEPLR2000000002" => Ok(Json.parse(twoAccountingPeriods(idNumber)))
         case "XEPLR2000000003" => Ok(Json.parse(overdueUktr(idNumber)))
+        case "XEPLR2000000004" => Ok(Json.parse(oneAccountingPeriodWithPaidStatus(idNumber)))
         case "XEPLR2000000010" => Ok(Json.parse(repaymentInterest(idNumber)))
         case v @ yearsAndTransactionPattern(numberOfTransactions) =>
           Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
@@ -495,6 +496,85 @@ object FinancialDataController {
     |          "paymentLot":"C00125",
     |          "paymentLotItem":"000001",
     |          "clearingSAPDocument":"294000000145"
+    |        }
+    |      ]
+    |    }
+    |  ]
+    |}
+    |""".stripMargin
+
+  def oneAccountingPeriodWithPaidStatus(idNumber: String, processingDate: String = LocalDateTime.now.toString): String = s"""
+    |{
+    |  "idType":"ZPLR",
+    |  "idNumber":"$idNumber",
+    |  "regimeType":"PLR",
+    |  "processingDate":"$processingDate",
+    |  "financialTransactions":[
+    |    {
+    |      "chargeType":"Pillar 2 MTT IIR",
+    |      "mainType":"OECD Pillar 2 UK Tax Return",
+    |      "taxPeriodFrom":"2024-01-01",
+    |      "taxPeriodTo":"2024-12-31",
+    |      "businessPartner":"0100007961",
+    |      "contractAccountCategory":"53",
+    |      "contractAccount":"002100001302",
+    |      "contractObjectType":"PLR",
+    |      "contractObject":"00000300000000000682",
+    |      "sapDocumentNumber":"003540024920",
+    |      "sapDocumentNumberItem":"0002",
+    |      "chargeReference":"XD002610233120",
+    |      "mainTransaction":"6500",
+    |      "subTransaction":"6234",
+    |      "originalAmount":200000.0,
+    |      "clearedAmount":200000.0,
+    |      "items":[
+    |        {
+    |          "subItem":"000",
+    |          "dueDate":"2025-08-01",
+    |          "amount":100000.0
+    |        },
+    |        {
+    |          "subItem":"000",
+    |          "dueDate":"2025-10-01",
+    |          "amount":100000.0,
+    |          "clearingDate":"2025-10-14",
+    |          "clearingReason":"Incoming Payment",
+    |          "paymentReference":"XD002610233120",
+    |          "paymentAmount":100000.0,
+    |          "paymentMethod":"PAYMENTS MADE BY CHEQUE",
+    |          "paymentLot":"C00125",
+    |          "paymentLotItem":"000001",
+    |          "clearingSAPDocument":"294000000145"
+    |        }
+    |      ]
+    |    },
+    |    {
+    |      "chargeType": "Pillar 2 (Payment on Account)",
+    |      "mainType": "On Account",
+    |      "businessPartner": "0100457514",
+    |      "contractAccountCategory": "53",
+    |      "contractAccount": "002100000827",
+    |      "contractObjectType": "PLR",
+    |      "contractObject": "00000300000000000407",
+    |      "sapDocumentNumber": "341000000125",
+    |      "sapDocumentNumberItem": "0001",
+    |      "mainTransaction": "0060",
+    |      "subTransaction": "0400",
+    |      "originalAmount": -100000.0,
+    |      "clearedAmount": -100000.0,
+    |      "items": [
+    |        {
+    |          "subItem": "001",
+    |          "dueDate": "2025-09-07",
+    |          "amount": -100000.0,
+    |          "clearingDate": "2025-09-08",
+    |          "clearingReason": "Allocated to Charge",
+    |          "paymentReference": "XX002610234417",
+    |          "paymentAmount": 100000.0,
+    |          "paymentMethod": "PAYMENTS MADE BY CHEQUE",
+    |          "paymentLot": "SM09",
+    |          "paymentLotItem": "000001",
+    |          "clearingSAPDocument": "361000000157"
     |        }
     |      ]
     |    }
