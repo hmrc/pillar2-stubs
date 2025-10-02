@@ -24,12 +24,12 @@ import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.{FinancialDataResponse, FinancialItem, FinancialTransaction}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{Clock, LocalDate, LocalDateTime}
 import javax.inject.Inject
 import scala.util.Random
 import scala.util.matching.Regex
 
-class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) {
+class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter, clock: Clock) extends BackendController(cc) {
 
   def retrieveFinancialData(idNumber: String, dateFrom: String, dateTo: String): Action[AnyContent] =
     (Action andThen authFilter) { _ =>
@@ -47,27 +47,27 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         case "XEPLR2000000004" => Ok(Json.parse(oneAccountingPeriodWithPaidStatus(idNumber)))
         case "XEPLR2000000010" => Ok(Json.parse(repaymentInterest(idNumber)))
         // Payment due, no Return
-        case "XEPLR2000000101" => Ok(paymentDue(idNumber))
+        case "XEPLR2000000101" => Ok(paymentDue(idNumber, clock))
         // Payment overdue, no Return
-        case "XEPLR2000000102" => Ok(paymentOverdue(idNumber))
+        case "XEPLR2000000102" => Ok(paymentOverdue(idNumber, clock))
         // Payment due, Return due
-        case "XEPLR2000000103" => Ok(paymentDue(idNumber))
+        case "XEPLR2000000103" => Ok(paymentDue(idNumber, clock))
         // Payment due, Return overdue
-        case "XEPLR2000000104" => Ok(paymentDue(idNumber))
+        case "XEPLR2000000104" => Ok(paymentDue(idNumber, clock))
         // Payment overdue, Return due
-        case "XEPLR2000000105" => Ok(paymentOverdue(idNumber))
+        case "XEPLR2000000105" => Ok(paymentOverdue(idNumber, clock))
         // Payment overdue, Return overdue
-        case "XEPLR2000000106" => Ok(paymentOverdue(idNumber))
+        case "XEPLR2000000106" => Ok(paymentOverdue(idNumber, clock))
         // Payment due, Return received
-        case "XEPLR2000000107" => Ok(paymentDue(idNumber))
+        case "XEPLR2000000107" => Ok(paymentDue(idNumber, clock))
         // Payment paid, no Return
         case "XEPLR2000000108" => Ok(Json.parse(oneAccountingPeriodWithPaidStatus(idNumber)))
         // No payments, no Return, BTN
-        case "XEPLR2000000109" => Ok(Json.parse(noTransactions(idNumber)))
+        case "XEPLR2000000109" => Ok(Json.parse(noTransactions(idNumber, clock)))
         // Payment due, Return overdue, BTN
-        case "XEPLR2000000110" => Ok(paymentDue(idNumber))
+        case "XEPLR2000000110" => Ok(paymentDue(idNumber, clock))
         // Payment due, no Return, with BTN
-        case "XEPLR2000000111" => Ok(paymentDue(idNumber))
+        case "XEPLR2000000111" => Ok(paymentDue(idNumber, clock))
         case v @ yearsAndTransactionPattern(numberOfTransactions) =>
           Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
         case _ => Ok(Json.parse(successfulResponse(idNumber)))
@@ -952,21 +952,22 @@ object FinancialDataController {
     |}
     |""".stripMargin
 
-  private def paymentDue(idNumber: String) =
-    Json.parse(paymentExpected(idNumber, paymentDueDate = LocalDate.now().plusDays(30)))
+  private def paymentDue(idNumber: String, clock: Clock) =
+    Json.parse(paymentExpected(idNumber, paymentDueDate = LocalDate.now(clock).plusDays(30), clock))
 
-  private def paymentOverdue(idNumber: String) =
-    Json.parse(paymentExpected(idNumber, paymentDueDate = LocalDate.now().minusDays(30)))
+  private def paymentOverdue(idNumber: String, clock: Clock) =
+    Json.parse(paymentExpected(idNumber, paymentDueDate = LocalDate.now(clock).minusDays(30), clock))
 
-  private def paymentExpected(
+  def paymentExpected(
     idNumber:       String,
-    paymentDueDate: LocalDate
+    paymentDueDate: LocalDate,
+    clock:          Clock
   ): String = s"""
     |{
     |  "idType":"ZPLR",
     |  "idNumber":"$idNumber",
     |  "regimeType":"PLR",
-    |  "processingDate":"${LocalDateTime.now().toString}",
+    |  "processingDate":"${LocalDateTime.now(clock).toString}",
     |  "financialTransactions":[
     |    {
     |      "chargeType":"Pillar 2 MTT IIR",
@@ -1011,12 +1012,12 @@ object FinancialDataController {
     |}
     |""".stripMargin
 
-  private def noTransactions(idNumber: String): String = s"""
+  def noTransactions(idNumber: String, clock: Clock): String = s"""
     |{
     |  "idType":"ZPLR",
     |  "idNumber":"$idNumber",
     |  "regimeType":"PLR",
-    |  "processingDate":"${LocalDateTime.now().toString}",
+    |  "processingDate":"${LocalDateTime.now(clock).toString}",
     |  "financialTransactions":[]
     |}
     |""".stripMargin
