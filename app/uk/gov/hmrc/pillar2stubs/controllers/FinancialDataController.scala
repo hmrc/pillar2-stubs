@@ -46,6 +46,28 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         case "XEPLR2000000003" => Ok(Json.parse(overdueUktr(idNumber)))
         case "XEPLR2000000004" => Ok(Json.parse(oneAccountingPeriodWithPaidStatus(idNumber)))
         case "XEPLR2000000010" => Ok(Json.parse(repaymentInterest(idNumber)))
+        // Payment due, no Return
+        case "XEPLR2000000101" => Ok(paymentDue(idNumber))
+        // Payment overdue, no Return
+        case "XEPLR2000000102" => Ok(paymentOverdue(idNumber))
+        // Payment due, Return due
+        case "XEPLR2000000103" => Ok(paymentDue(idNumber))
+        // Payment due, Return overdue
+        case "XEPLR2000000104" => Ok(paymentDue(idNumber))
+        // Payment overdue, Return due
+        case "XEPLR2000000105" => Ok(paymentOverdue(idNumber))
+        // Payment overdue, Return overdue
+        case "XEPLR2000000106" => Ok(paymentOverdue(idNumber))
+        // Payment due, Return received
+        case "XEPLR2000000107" => Ok(paymentDue(idNumber))
+        // Payment paid, no Return
+        case "XEPLR2000000108" => Ok(Json.parse(oneAccountingPeriodWithPaidStatus(idNumber)))
+        // No payments, no Return, BTN
+        case "XEPLR2000000109" => Ok(Json.parse(noTransactions(idNumber)))
+        // Payment due, Return overdue, BTN
+        case "XEPLR2000000110" => Ok(paymentDue(idNumber))
+        // Payment due, no Return, with BTN
+        case "XEPLR2000000111" => Ok(paymentDue(idNumber))
         case v @ yearsAndTransactionPattern(numberOfTransactions) =>
           Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
         case _ => Ok(Json.parse(successfulResponse(idNumber)))
@@ -927,6 +949,75 @@ object FinancialDataController {
     |      ]
     |    }
     |  ]
+    |}
+    |""".stripMargin
+
+  private def paymentDue(idNumber: String) =
+    Json.parse(paymentExpected(idNumber, paymentDueDate = LocalDate.now().plusDays(30)))
+
+  private def paymentOverdue(idNumber: String) =
+    Json.parse(paymentExpected(idNumber, paymentDueDate = LocalDate.now().minusDays(30)))
+
+  private def paymentExpected(
+    idNumber:       String,
+    paymentDueDate: LocalDate
+  ): String = s"""
+    |{
+    |  "idType":"ZPLR",
+    |  "idNumber":"$idNumber",
+    |  "regimeType":"PLR",
+    |  "processingDate":"${LocalDateTime.now().toString}",
+    |  "financialTransactions":[
+    |    {
+    |      "chargeType":"Pillar 2 MTT IIR",
+    |      "mainType":"OECD Pillar 2 UK Tax Return",
+    |      "taxPeriodFrom":"2024-01-01",
+    |      "taxPeriodTo":"2024-12-31",
+    |      "businessPartner":"0100007961",
+    |      "contractAccountCategory":"53",
+    |      "contractAccount":"002100001302",
+    |      "contractObjectType":"PLR",
+    |      "contractObject":"00000300000000000682",
+    |      "sapDocumentNumber":"003540024920",
+    |      "sapDocumentNumberItem":"0002",
+    |      "chargeReference":"XD002610233120",
+    |      "mainTransaction":"6500",
+    |      "subTransaction":"6234",
+    |      "originalAmount":200000.3,
+    |      "outstandingAmount":100000.3,
+    |      "clearedAmount":100000.0,
+    |      "items":[
+    |        {
+    |          "subItem":"000",
+    |          "dueDate":"${paymentDueDate.toString}",
+    |          "amount":100000.3
+    |        },
+    |        {
+    |          "subItem":"000",
+    |          "dueDate":"${paymentDueDate.toString}",
+    |          "amount":100000.0,
+    |          "clearingDate":"2024-10-14",
+    |          "clearingReason":"Incoming Payment",
+    |          "paymentReference":"XD002610233120",
+    |          "paymentAmount":900000.0,
+    |          "paymentMethod":"PAYMENTS MADE BY CHEQUE",
+    |          "paymentLot":"C00125",
+    |          "paymentLotItem":"000001",
+    |          "clearingSAPDocument":"294000000145"
+    |        }
+    |      ]
+    |    }
+    |  ]
+    |}
+    |""".stripMargin
+
+  private def noTransactions(idNumber: String): String = s"""
+    |{
+    |  "idType":"ZPLR",
+    |  "idNumber":"$idNumber",
+    |  "regimeType":"PLR",
+    |  "processingDate":"${LocalDateTime.now().toString}",
+    |  "financialTransactions":[]
     |}
     |""".stripMargin
 
