@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSuccessResponse
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionSuccess, Subscription}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
@@ -94,116 +95,65 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
   }
 
   def retrieveSubscription(plrReference: String): Action[AnyContent] =
-    (Action andThen authFilter).async {
+    (Action andThen authFilter) {
       logger.info(s"retrieveSubscription Request received \n $plrReference \n")
       plrReference match {
 
-        case "XEPLR0000000001" =>
+        case ref @ "XEPLR0000000001" =>
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
           if (count <= 3) {
-            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
+            UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
           } else {
-            Future.successful(
-              Ok(
-                resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                  .map(replacePillar2Id(_, plrReference))
-                  .get
-              )
-            )
+            Ok(readSuccessResponseWithRef(ref))
           }
 
-        case "XEPLR0000000002" =>
+        case ref @ "XEPLR0000000002" =>
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
           if (count <= 8) {
-            Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
+            UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
           } else {
-            Future.successful(
-              Ok(
-                resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                  .map(replacePillar2Id(_, plrReference))
-                  .get
-              )
-            )
+            Ok(readSuccessResponseWithRef(ref))
           }
 
         case "XEPLR0123456400" =>
-          Future.successful(BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get))
+          BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
         case "XEPLR0123456404" =>
-          Future.successful(NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get))
+          NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get)
         case "XEPLR0123456422" =>
-          Future.successful(UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get))
+          UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
         case "XEPLR0123456500" =>
-          Future.successful(InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get))
+          InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get)
         case "XEPLR0123456503" =>
-          Future.successful(ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get))
-        case "XEPLR5555555555" =>
-          Future.successful(
-            Ok(
-              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                .map(replacePillar2Id(_, "XMPLR0012345674"))
-                .map(_.replace("\"inactive\": false", "\"inactive\": true"))
-                .get
-            )
-          )
+          ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
+        case ref @ "XEPLR5555555555" => Ok(makeActive(readSuccessResponseWithRef(ref)))
 
-        case "XEPLR5555551111" =>
-          val currentDate = LocalDate.now()
+        case "XEPLR5555551111" => Ok(replaceDate(readSuccessResponse, LocalDate.now().toString))
 
-          Future.successful(
-            Ok(
-              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                .map(replaceDate(_, currentDate.toString))
-                .get
-            )
-          )
+        case ref @ "XEPLR6666666666" =>
+          Ok(readSuccessResponseWithRef(ref).replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
 
-        case "XEPLR6666666666" =>
-          Future.successful(
-            Ok(
-              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                .map(replacePillar2Id(_, "XEPLR6666666666"))
-                .map(_.replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
-                .get
-            )
-          )
+        case ref @ "XEPLR1066196600" => Ok(readSuccessResponseWithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
 
-        case "XEPLR1066196600" =>
-          Future.successful(
-            Ok(
-              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                .map(replacePillar2Id(_, "XEPLR1066196600"))
-                .map(_.replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
-                .get
-            )
-          )
+        case ref @ "XEPLR1066196602" => Ok(readSuccessResponseWithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
 
-        case "XEPLR1066196602" =>
-          Future.successful(
-            Ok(
-              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                .map(replacePillar2Id(_, "XEPLR1066196602"))
-                .map(_.replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
-                .get
-            )
-          )
+        // No payments, no Return, BTN
+        case ref @ "XEPLR2000000109" => Ok(makeActive(readSuccessResponseWithRef(ref)))
+        // Payment due, Return overdue, BTN
+        case ref @ "XEPLR2000000110" => Ok(makeActive(readSuccessResponseWithRef(ref)))
+        // Payment due, no Return, BTN
+        case ref @ "XEPLR2000000111" => Ok(makeActive(readSuccessResponseWithRef(ref)))
 
         case _ =>
-          Future.successful {
-            Ok(
-              resourceAsString("/resources/subscription/ReadSuccessResponse.json")
-                .map(replacePillar2Id(_, "plrReference"))
-                .map {
-                  _.replace("\"startDate\": \"2024-01-06\"", s"\"startDate\": \"${LocalDate.of(currentYear - 1, 1, 1)}\"")
-                    .replace("\"endDate\": \"2025-04-06\"", s"\"endDate\": \"${LocalDate.of(currentYear - 1, 12, 31)}\"")
-                    .replace("\"dueDate\": \"2024-04-06\"", s"\"dueDate\": \"${LocalDate.now()}\"")
-                }
-                .get
-            )
-          }
+          Ok(
+            readSuccessResponseWithRef("plrReference")
+              .replace("\"startDate\": \"2024-01-06\"", s"\"startDate\": \"${LocalDate.of(currentYear - 1, 1, 1)}\"")
+              .replace("\"endDate\": \"2025-04-06\"", s"\"endDate\": \"${LocalDate.of(currentYear - 1, 12, 31)}\"")
+              .replace("\"dueDate\": \"2024-04-06\"", s"\"dueDate\": \"${LocalDate.now()}\"")
+          )
       }
     }
 
@@ -246,9 +196,21 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     }
   }
 
+  private def readSuccessResponseWithRef(reference: String): String = replacePillar2Id(readSuccessResponse, reference)
+
   private def replacePillar2Id(response: String, pillar2Reference: String): String =
     response.replace("[pillar2Reference]", pillar2Reference)
 
   private def replaceDate(response: String, registrationDate: String): String =
     response.replace("2024-01-31", registrationDate)
+
+  private def makeActive(response: String): String = response.replace("\"inactive\": false", "\"inactive\": true")
+}
+
+object SubscriptionController {
+
+  private val readSuccessResponse: String = resourceAsString("/resources/subscription/ReadSuccessResponse.json").getOrElse(
+    throw new IllegalStateException("ReadSuccessResponse.json is missing.")
+  )
+
 }
