@@ -142,9 +142,9 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
         // No payments, no Return, BTN
         case ref @ "XEPLR2000000109" => Ok(makeActive(readSuccessResponseWithRef(ref)))
-        // Payment due, Return overdue, BTN
+        // Payment overdue, Return overdue, BTN
         case ref @ "XEPLR2000000110" => Ok(makeActive(readSuccessResponseWithRef(ref)))
-        // Payment due, no Return, BTN
+        // Payment overdue, no Return, BTN
         case ref @ "XEPLR2000000111" => Ok(makeActive(readSuccessResponseWithRef(ref)))
 
         case _ =>

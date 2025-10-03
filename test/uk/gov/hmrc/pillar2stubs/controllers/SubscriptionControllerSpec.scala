@@ -16,9 +16,9 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
-import org.scalatest.{Inspectors, OptionValues}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.{Inspectors, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest

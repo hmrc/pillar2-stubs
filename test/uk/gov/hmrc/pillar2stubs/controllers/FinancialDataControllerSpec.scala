@@ -23,8 +23,8 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.http.Status.BAD_REQUEST
-import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
@@ -32,7 +32,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController._
 
-import java.time.{Clock, Instant, LocalDate, ZoneId}
+import java.time.{Clock, Instant, LocalDateTime, ZoneId}
 import scala.concurrent.Future
 
 class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues with TableDrivenPropertyChecks {
@@ -143,25 +143,30 @@ class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOn
       contentAsJson(result) mustBe Json.parse(repaymentInterest(validIdNumber, processingDateTime))
     }
 
-    "must return OK with payment expected data for the given IDs" in forAll(
+    "must return OK with overdue payment data for the given IDs" in forAll(
       Table(
-        "id"              -> "payment due date",
-        "XEPLR2000000101" -> LocalDate.now(fixedClock).plusDays(30),
-        "XEPLR2000000102" -> LocalDate.now(fixedClock).minusDays(30),
-        "XEPLR2000000103" -> LocalDate.now(fixedClock).plusDays(30),
-        "XEPLR2000000104" -> LocalDate.now(fixedClock).plusDays(30),
-        "XEPLR2000000105" -> LocalDate.now(fixedClock).minusDays(30),
-        "XEPLR2000000106" -> LocalDate.now(fixedClock).minusDays(30),
-        "XEPLR2000000107" -> LocalDate.now(fixedClock).plusDays(30),
-        "XEPLR2000000110" -> LocalDate.now(fixedClock).plusDays(30),
-        "XEPLR2000000111" -> LocalDate.now(fixedClock).plusDays(30)
+        "id"              -> "interest due",
+        "XEPLR2000000101" -> false,
+        "XEPLR2000000102" -> true,
+        "XEPLR2000000103" -> false,
+        "XEPLR2000000104" -> true,
+        "XEPLR2000000105" -> true,
+        "XEPLR2000000106" -> true,
+        "XEPLR2000000107" -> false,
+        "XEPLR2000000110" -> false,
+        "XEPLR2000000111" -> false
       )
-    ) { (id, paymentDueDate) =>
+    ) { (id, interestDue) =>
       val request: FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(id)
       val result:  Future[Result]                      = route(app, request).value
 
       status(result) mustBe OK
-      contentAsJson(result) mustBe Json.parse(paymentExpected(id, paymentDueDate, fixedClock))
+      if (interestDue) {
+        contentAsJson(result) mustBe paymentOverdueWithInterest(id, fixedClock)
+      } else {
+        contentAsJson(result) mustBe paymentOverdueNoInterest(id, fixedClock)
+      }
+
     }
 
     "must return OK with a single accounting period and paid status" in {
@@ -181,7 +186,7 @@ class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOn
       val result:        Future[Result]                      = route(app, request).value
 
       status(result) mustBe OK
-      contentAsJson(result) mustBe Json.parse(noTransactions(validIdNumber, fixedClock))
+      contentAsJson(result) mustBe Json.parse(baseResponse(validIdNumber, processingDate = LocalDateTime.now(fixedClock), transactions = Seq.empty))
     }
 
     "must return OK with default response when the ID does not match a pattern" in {
