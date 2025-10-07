@@ -19,7 +19,9 @@ package uk.gov.hmrc.pillar2stubs.controllers
 import org.scalatest.OptionValues
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -33,7 +35,12 @@ import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 import java.time.LocalDate
 import scala.util.Random
 
-class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
+class ObligationsAndSubmissionsControllerSpec
+    extends AnyFunSuite
+    with Matchers
+    with GuiceOneAppPerSuite
+    with OptionValues
+    with TableDrivenPropertyChecks {
 
   val validHeaders: List[(String, String)] =
     (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation)).map(_ -> Random.nextString(10))
@@ -330,6 +337,31 @@ class ObligationsAndSubmissionsControllerSpec extends AnyFunSuite with Matchers 
     val period = response.success.accountingPeriodDetails.head
     period.obligations.head.obligationType shouldEqual ObligationType.UKTR
     period.obligations.head.status shouldEqual ObligationStatus.Open
+  }
+
+  test("Returns expected responses for Pillar2-Ids") {
+    forAll(
+      Table(
+        "id"              -> "expected response",
+        "XEPLR2000000101" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods(),
+        "XEPLR2000000102" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods(),
+        "XEPLR2000000103" -> ObligationsAndSubmissionsSuccessResponse.uktrDueScenario(),
+        "XEPLR2000000104" -> ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario(),
+        "XEPLR2000000105" -> ObligationsAndSubmissionsSuccessResponse(),
+        "XEPLR2000000106" -> ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario(),
+        "XEPLR2000000107" -> ObligationsAndSubmissionsSuccessResponse.withAllFulfilledAndReceived(),
+        "XEPLR2000000108" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods(),
+        "XEPLR2000000109" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods(),
+        "XEPLR2000000110" -> ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario(),
+        "XEPLR2000000111" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()
+      )
+    ) { (id, expectedResponse) =>
+      val result = route(app, request(id)).value
+
+      status(result) shouldEqual 200
+      contentAsJson(result) shouldBe Json.toJson(expectedResponse)
+    }
+
   }
 
 }

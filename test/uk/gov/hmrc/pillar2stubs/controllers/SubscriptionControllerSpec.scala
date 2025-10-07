@@ -16,16 +16,16 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
-import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
+import org.scalatest.{Inspectors, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 
-class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
+class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues with Inspectors {
 
   "POST " - {
     "createSubscription" - {
@@ -532,6 +532,17 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         val result  = route(app, request).value
 
         status(result) shouldBe UNPROCESSABLE_ENTITY
+      }
+
+      "must return a OK with an inactive subscription for the given IDs" in {
+        val ids      = Seq("XEPLR2000000109", "XEPLR2000000110", "XEPLR2000000111")
+        val requests = ids.map(id => FakeRequest(GET, routes.SubscriptionController.retrieveSubscription(id).url).withHeaders(authHeader))
+        val results  = requests.map(route(app, _).value)
+        forAll(results) { result =>
+          (contentAsJson(result) \ "success" \ "accountStatus" \ "inactive").as[Boolean] shouldBe true
+          status(result)                                                                 shouldBe OK
+        }
+
       }
 
     }

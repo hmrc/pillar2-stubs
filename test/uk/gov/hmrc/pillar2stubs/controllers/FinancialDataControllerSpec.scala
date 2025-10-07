@@ -19,8 +19,12 @@ package uk.gov.hmrc.pillar2stubs.controllers
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
+import play.api.Application
 import play.api.http.Status.BAD_REQUEST
+import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
@@ -28,9 +32,15 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController._
 
+import java.time.{Clock, Instant, LocalDateTime, ZoneId}
 import scala.concurrent.Future
 
-class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
+class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues with TableDrivenPropertyChecks {
+
+  private val fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+
+  override def fakeApplication(): Application =
+    new GuiceApplicationBuilder().overrides(bind[Clock].to(fixedClock)).build()
 
   private val authHeader: (String, String) = HeaderNames.authorisation -> "token"
 
@@ -131,6 +141,52 @@ class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOn
 
       status(result) mustBe OK
       contentAsJson(result) mustBe Json.parse(repaymentInterest(validIdNumber, processingDateTime))
+    }
+
+    "must return OK with overdue payment data for the given IDs" in forAll(
+      Table(
+        "id"              -> "interest due",
+        "XEPLR2000000101" -> false,
+        "XEPLR2000000102" -> true,
+        "XEPLR2000000103" -> false,
+        "XEPLR2000000104" -> true,
+        "XEPLR2000000105" -> true,
+        "XEPLR2000000106" -> true,
+        "XEPLR2000000107" -> false,
+        "XEPLR2000000110" -> false,
+        "XEPLR2000000111" -> false
+      )
+    ) { (id, interestDue) =>
+      val request: FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(id)
+      val result:  Future[Result]                      = route(app, request).value
+
+      status(result) mustBe OK
+      if (interestDue) {
+        contentAsJson(result) mustBe paymentOverdueWithInterest(id, fixedClock)
+      } else {
+        contentAsJson(result) mustBe paymentOverdueNoInterest(id, fixedClock)
+      }
+
+    }
+
+    "must return OK with a single accounting period and paid status" in {
+      val validIdNumber: String                              = "XEPLR2000000108"
+      val request:       FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(validIdNumber)
+      val result:        Future[Result]                      = route(app, request).value
+
+      val processingDateTime: String = (contentAsJson(result) \ "processingDate").as[String]
+
+      status(result) mustBe OK
+      contentAsJson(result) mustBe Json.parse(oneAccountingPeriodWithPaidStatus(validIdNumber, processingDateTime))
+    }
+
+    "must return OK with no transactions" in {
+      val validIdNumber: String                              = "XEPLR2000000109"
+      val request:       FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(validIdNumber)
+      val result:        Future[Result]                      = route(app, request).value
+
+      status(result) mustBe OK
+      contentAsJson(result) mustBe Json.parse(baseResponse(validIdNumber, processingDate = LocalDateTime.now(fixedClock), transactions = Seq.empty))
     }
 
     "must return OK with default response when the ID does not match a pattern" in {

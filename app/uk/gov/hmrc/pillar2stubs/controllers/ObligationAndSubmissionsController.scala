@@ -69,8 +69,29 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XMPLR0012345676" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
           case "XMPLR0012345677" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrIncompleteScenario()))
           case "XEPLR0000000504" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilled()))
-
-          case _ => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
+          // Payment overdue w/o interest, no Return
+          case "XEPLR2000000101" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
+          // Payment overdue w/ interest, no Return
+          case "XEPLR2000000102" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
+          // Payment overdue w/o interest, Return due
+          case "XEPLR2000000103" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrDueScenario()))
+          // Payment overdue w/ interest, Return overdue
+          case "XEPLR2000000104" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
+          // Payment overdue w/ interest, Return due
+          case "XEPLR2000000105" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
+          // Payment overdue w/ interest, Return overdue
+          case "XEPLR2000000106" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
+          // Payment overdue w/o interest, Return received
+          case "XEPLR2000000107" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilledAndReceived()))
+          // Payment paid, no Return
+          case "XEPLR2000000108" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
+          // No payments, no Return, BTN
+          case "XEPLR2000000109" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
+          // Payment overdue, Return overdue, BTN
+          case "XEPLR2000000110" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
+          // Payment overdue, no Return, BTN
+          case "XEPLR2000000111" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
+          case _                 => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
         }
       }
     }.recover { case e: Throwable =>
