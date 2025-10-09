@@ -649,6 +649,42 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
   )
+
+  def btnUnderEnquiryScenario(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.of(currentYear + 1, 1, 31),
+          underEnquiry = true,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = false,
+              submissions = Seq.empty
+            )
+          )
+        ),
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear - 1, 1, 1),
+          endDate = LocalDate.of(currentYear - 1, 12, 31),
+          dueDate = LocalDate.now().minusDays(1),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
 }
 
 case class ObligationsAndSubmissionsSuccess(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])
