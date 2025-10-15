@@ -49,6 +49,8 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
             UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(PILLAR_2_ID_MISSING_OR_INVALID_002)))
           case "XEPLR0300000422" =>
             UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(REQUEST_COULD_NOT_BE_PROCESSED_003)))
+          case "XEPLR0300000404" =>
+            NotFound(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(RECORD_NOT_FOUND_004)))
           case "XEPLR0400000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(DUPLICATE_SUBMISSION_004)))
           case "XEPLR2500000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(NO_DATA_FOUND_025)))
           case "XEPLR0000000400" => BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json"))))))
