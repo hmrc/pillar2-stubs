@@ -19,7 +19,8 @@ package uk.gov.hmrc.pillar2stubs.controllers
 import play.api.Logging
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, ResponseHeader, Result}
+import org.apache.pekko.util.ByteString
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.{HIP, HoD}
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
@@ -51,6 +52,16 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
             UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(REQUEST_COULD_NOT_BE_PROCESSED_003)))
           case "XEPLR0300000404" =>
             NotFound(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(RECORD_NOT_FOUND_004)))
+          case "XEPLR0300000499" =>
+            // Wait 20 seconds then return 499 timeout error
+            Thread.sleep(20000)
+            Result(
+              header = ResponseHeader(499),
+              body = play.api.http.HttpEntity.Strict(
+                ByteString(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(TIMEOUT_ERROR_499)).toString),
+                Some("application/json")
+              )
+            )
           case "XEPLR0400000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(DUPLICATE_SUBMISSION_004)))
           case "XEPLR2500000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(NO_DATA_FOUND_025)))
           case "XEPLR0000000400" => BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json"))))))

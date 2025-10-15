@@ -269,6 +269,15 @@ class ObligationsAndSubmissionsControllerSpec
     contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.text shouldEqual "Record not found"
   }
 
+  test("Timeout - request timeout after 2 seconds (test version)") {
+    implicit val pillar2Id: String = "XEPLR0300000498"
+    val result = route(app, request).value
+    status(result) shouldEqual 499
+    contentAsJson(result).validate[ObligationsAndSubmissionsDetailedErrorResponse].asEither.isRight shouldBe true
+    contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.code shouldEqual "499"
+    contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.text shouldEqual "Request timeout"
+  }
+
   test("UnprocessableEntity - no data found") {
     implicit val pillar2Id: String = "XEPLR2500000422"
     val result = route(app, request).value

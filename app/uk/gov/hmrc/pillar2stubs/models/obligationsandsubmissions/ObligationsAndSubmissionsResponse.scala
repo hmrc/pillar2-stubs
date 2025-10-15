@@ -733,6 +733,7 @@ object ObligationsAndSubmissionsErrorCodes {
   val DUPLICATE_SUBMISSION_004:           (String, String) = ("004", "Duplicate Submission")
   val NO_DATA_FOUND_025:                  (String, String) = ("025", "No associated data found")
   val RECORD_NOT_FOUND_004:               (String, String) = ("004", "Record not found")
+  val TIMEOUT_ERROR_499:                  (String, String) = ("499", "Request timeout")
   val BAD_REQUEST_400           = "400"
   val INTERNAL_SERVER_ERROR_500 = "500"
 }
