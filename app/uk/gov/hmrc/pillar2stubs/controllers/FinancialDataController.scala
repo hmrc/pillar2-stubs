@@ -55,8 +55,8 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         case "XEPLR2000000104" => Ok(paymentOverdueWithInterest(idNumber, clock))
         // Payment overdue w/ interest, Return due
         case "XEPLR2000000105" => Ok(paymentOverdueWithInterest(idNumber, clock))
-        // Payment overdue w/ interest, Return overdue
-        case "XEPLR2000000106" => Ok(paymentOverdueWithInterest(idNumber, clock))
+        // Payment overdue w/o interest, Return overdue
+        case "XEPLR2000000106" => Ok(paymentOverdueNoInterest(idNumber, clock))
         // Payment overdue w/o interest, Return received
         case "XEPLR2000000107" => Ok(paymentOverdueNoInterest(idNumber, clock))
         // Payment paid, no Return
@@ -65,8 +65,10 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         case "XEPLR2000000109" => Ok(Json.parse(baseResponse(idNumber, processingDate = LocalDateTime.now(clock), transactions = Seq.empty)))
         // Payment overdue, Return overdue, BTN
         case "XEPLR2000000110" => Ok(paymentOverdueNoInterest(idNumber, clock))
-        // Payment overdue, no Return, with BTN
+        // Payment overdue, no Return, BTN
         case "XEPLR2000000111" => Ok(paymentOverdueNoInterest(idNumber, clock))
+        // Payment overdue w/ interest, no Return, BTN
+        case "XEPLR2000000112" => Ok(paymentOverdueWithInterest(idNumber, clock))
         case v @ yearsAndTransactionPattern(numberOfTransactions) =>
           Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
         case _ => Ok(Json.parse(successfulResponse(idNumber)))
