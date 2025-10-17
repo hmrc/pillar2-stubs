@@ -129,7 +129,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get)
         case "XEPLR0123456503" =>
           ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
-        case ref @ "XEPLR5555555555" => Ok(makeActive(readSuccessResponseWithRef(ref)))
+        case ref @ "XEPLR5555555555" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
 
         case "XEPLR5555551111" => Ok(replaceDate(readSuccessResponse, LocalDate.now().toString))
 
@@ -141,11 +141,13 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         case ref @ "XEPLR1066196602" => Ok(readSuccessResponseWithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
 
         // No payments, no Return, BTN
-        case ref @ "XEPLR2000000109" => Ok(makeActive(readSuccessResponseWithRef(ref)))
+        case ref @ "XEPLR2000000109" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
         // Payment overdue, Return overdue, BTN
-        case ref @ "XEPLR2000000110" => Ok(makeActive(readSuccessResponseWithRef(ref)))
+        case ref @ "XEPLR2000000110" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
         // Payment overdue, no Return, BTN
-        case ref @ "XEPLR2000000111" => Ok(makeActive(readSuccessResponseWithRef(ref)))
+        case ref @ "XEPLR2000000111" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
+        // Payment overdue w/ interest, no Return, BTN
+        case ref @ "XEPLR2000000112" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
 
         case _ =>
           Ok(
@@ -204,7 +206,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
   private def replaceDate(response: String, registrationDate: String): String =
     response.replace("2024-01-31", registrationDate)
 
-  private def makeActive(response: String): String = response.replace("\"inactive\": false", "\"inactive\": true")
+  private def makeInactive(response: String): String = response.replace("\"inactive\": false", "\"inactive\": true")
 }
 
 object SubscriptionController {
