@@ -260,6 +260,15 @@ class ObligationsAndSubmissionsControllerSpec
     contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.text shouldEqual "Duplicate Submission"
   }
 
+  test("NotFound - record not found") {
+    implicit val pillar2Id: String = "XEPLR0300000404"
+    val result = route(app, request).value
+    status(result) shouldEqual 404
+    contentAsJson(result).validate[ObligationsAndSubmissionsDetailedErrorResponse].asEither.isRight shouldBe true
+    contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.code shouldEqual "004"
+    contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.text shouldEqual "Record not found"
+  }
+
   test("UnprocessableEntity - no data found") {
     implicit val pillar2Id: String = "XEPLR2500000422"
     val result = route(app, request).value
