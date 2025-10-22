@@ -151,10 +151,11 @@ class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOn
         "XEPLR2000000103" -> false,
         "XEPLR2000000104" -> true,
         "XEPLR2000000105" -> true,
-        "XEPLR2000000106" -> true,
+        "XEPLR2000000106" -> false,
         "XEPLR2000000107" -> false,
         "XEPLR2000000110" -> false,
-        "XEPLR2000000111" -> false
+        "XEPLR2000000111" -> false,
+        "XEPLR2000000112" -> true
       )
     ) { (id, interestDue) =>
       val request: FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(id)

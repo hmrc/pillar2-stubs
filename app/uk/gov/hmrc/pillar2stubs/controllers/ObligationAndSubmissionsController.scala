@@ -93,7 +93,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XEPLR2000000104" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
           // Payment overdue w/ interest, Return due
           case "XEPLR2000000105" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
-          // Payment overdue w/ interest, Return overdue
+          // Payment overdue w/o interest, Return overdue
           case "XEPLR2000000106" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
           // Payment overdue w/o interest, Return received
           case "XEPLR2000000107" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilledAndReceived()))
@@ -105,6 +105,8 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XEPLR2000000110" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
           // Payment overdue, no Return, BTN
           case "XEPLR2000000111" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
+          // Payment overdue w/ interest, no Return, BTN
+          case "XEPLR2000000112" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
           case _                 => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))
         }
       }
