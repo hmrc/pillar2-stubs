@@ -77,6 +77,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XEPLR9999999992" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.twoActiveAccountingPeriodsWithNoSubmissions()))
           case "XEPLR9999999993" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.threeActiveAccountingPeriodsWithDifferentScenarios()))
           case "XEPLR9999999994" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.fourActiveAccountingPeriodsWithDifferentScenarios()))
+          case "XEPLR9999999995" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.btnUnderEnquiryScenario()))
           case "XEPLR1066196602" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.twoActiveAccountingPeriodsWithNoSubmissions()))
           case "XMPLR0012345675" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrDueScenario()))
           case "XMPLR0012345676" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
