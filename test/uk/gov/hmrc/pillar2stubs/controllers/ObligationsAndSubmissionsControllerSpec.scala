@@ -49,7 +49,7 @@ class ObligationsAndSubmissionsControllerSpec
     val fromDate = "2024-01-31"
     val toDate   = "2025-01-31"
     FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData(fromDate, toDate).url)
-      .withHeaders(Headers(validHeaders: _*))
+      .withHeaders(Headers(validHeaders*))
       .withHeaders("X-Pillar2-Id" -> pillar2Id)
   }
 
@@ -66,7 +66,7 @@ class ObligationsAndSubmissionsControllerSpec
 
     val invalidRequest =
       FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData("2024-01-31", "2023-01-31").url)
-        .withHeaders(Headers(validHeaders: _*))
+        .withHeaders(Headers(validHeaders*))
         .withHeaders("X-Pillar2-Id" -> pillar2Id)
 
     val result = route(app, invalidRequest).value
@@ -216,7 +216,7 @@ class ObligationsAndSubmissionsControllerSpec
     implicit val pillar2Id: String = "XEPLR4220000000"
     val invalidRequest =
       FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData("2024-01-31", "2023-01-31").url)
-        .withHeaders(Headers(validHeaders: _*))
+        .withHeaders(Headers(validHeaders*))
         .withHeaders("X-Pillar2-Id" -> pillar2Id)
 
     val result = route(app, invalidRequest).value
@@ -367,8 +367,8 @@ class ObligationsAndSubmissionsControllerSpec
     ) { (id, expectedResponse) =>
       val result = route(app, request(id)).value
 
-      status(result) shouldEqual 200
-      contentAsJson(result) shouldBe Json.toJson(expectedResponse)
+      status(result).shouldEqual(200)
+      contentAsJson(result).shouldBe(Json.toJson(expectedResponse))
     }
 
   }

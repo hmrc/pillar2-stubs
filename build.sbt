@@ -2,7 +2,7 @@ import org.typelevel.scalacoptions.ScalacOptions
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.7.3"
 ThisBuild / majorVersion := 0
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
@@ -16,7 +16,10 @@ lazy val microservice = Project("pillar2-stubs", file("."))
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
     // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
     // suppress warnings in generated routes files
-    scalacOptions += "-Wconf:src=routes/.*:s"
+    scalacOptions += "-Wconf:src=routes/.*:s",
+    scalacOptions += "-Wconf:src=conf/.*:s",
+    scalacOptions += "-Wconf:msg=Flag.*set repeatedly:s",
+    scalacOptions += "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s"
   )
   .settings(CodeCoverageSettings.settings *)
   .settings(tpolecatExcludeOptions += ScalacOptions.warnNonUnitStatement)

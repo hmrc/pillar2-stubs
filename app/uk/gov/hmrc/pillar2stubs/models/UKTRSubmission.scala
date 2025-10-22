@@ -40,7 +40,7 @@ case class UKTRSubmissionData(
 ) extends UKTRSubmission {}
 
 object UKTRSubmissionData {
-  implicit val uktrSubmissionDataFormat: OFormat[UKTRSubmissionData] = Json.format[UKTRSubmissionData]
+  given OFormat[UKTRSubmissionData] = Json.format[UKTRSubmissionData]
 }
 
 case class UKTRSubmissionNilReturn(
@@ -52,18 +52,18 @@ case class UKTRSubmissionNilReturn(
 ) extends UKTRSubmission
 
 object UKTRSubmissionNilReturn {
-  implicit val uktrSubmissionNilReturnFormat: OFormat[UKTRSubmissionNilReturn] = Json.format[UKTRSubmissionNilReturn]
+  given OFormat[UKTRSubmissionNilReturn] = Json.format[UKTRSubmissionNilReturn]
 }
 
 object UKTRSubmission {
-  implicit val uktrSubmissionReads: Reads[UKTRSubmission] = (json: JsValue) =>
+  given Reads[UKTRSubmission] = (json: JsValue) =>
     if ((json \ "liabilities" \ "returnType").isEmpty) {
       json.validate[UKTRSubmissionData]
     } else {
       json.validate[UKTRSubmissionNilReturn]
     }
 
-  implicit val uktrSubmissionWrites: Writes[UKTRSubmission] = (sub: UKTRSubmission) =>
+  given Writes[UKTRSubmission] = (sub: UKTRSubmission) =>
     sub match {
       case submission @ UKTRSubmissionData(_, _, _, _, _) =>
         Json.toJson(submission)

@@ -21,8 +21,8 @@ import play.api.libs.json._
 import java.time.LocalDate
 
 object LocalDateImplicits {
-  implicit val localDateReads: Reads[LocalDate] = Reads.localDateReads("yyyy-MM-dd")
-  implicit val localDateWrites: Writes[LocalDate] = Writes.temporalWrites[LocalDate, java.time.format.DateTimeFormatter](
+  given Reads[LocalDate] = Reads.localDateReads("yyyy-MM-dd")
+  given Writes[LocalDate] = Writes.temporalWrites[LocalDate, java.time.format.DateTimeFormatter](
     java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
   )
 }
@@ -30,7 +30,7 @@ object LocalDateImplicits {
 case class SubscriptionResponse(success: SubscriptionSuccess)
 
 object SubscriptionResponse {
-  implicit val format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
+  given OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
 }
 
 case class SubscriptionSuccess(
@@ -55,19 +55,19 @@ case class AmendSubscriptionSuccess(
 
 object AmendSubscriptionSuccess {
 
-  implicit val reads: Reads[AmendSubscriptionSuccess] = Reads { js =>
+  given Reads[AmendSubscriptionSuccess] = Reads { js =>
     if (js.asInstanceOf[JsObject].value.contains("replaceFilingMember"))
       JsError("AdditionalProperty")
     else JsSuccess(js)
   }.andThen(Json.reads[AmendSubscriptionSuccess])
 
-  implicit val format: OFormat[AmendSubscriptionSuccess] = OFormat(reads, Json.writes[AmendSubscriptionSuccess])
+  given OFormat[AmendSubscriptionSuccess] = OFormat(summon[Reads[AmendSubscriptionSuccess]], Json.writes[AmendSubscriptionSuccess])
 }
 
 case class AmendSubscriptionResponse(value: AmendSubscriptionSuccess)
 
 object AmendSubscriptionResponse {
-  implicit val format: OFormat[AmendSubscriptionResponse] = Json.format[AmendSubscriptionResponse]
+  given OFormat[AmendSubscriptionResponse] = Json.format[AmendSubscriptionResponse]
 }
 
 case class UpeDetails(
@@ -81,7 +81,7 @@ case class UpeDetails(
 )
 
 object UpeDetails {
-  implicit val format: OFormat[UpeDetails] = Json.format[UpeDetails]
+  given OFormat[UpeDetails] = Json.format[UpeDetails]
 }
 
 final case class UpeCorrespAddressDetails(
@@ -94,7 +94,7 @@ final case class UpeCorrespAddressDetails(
 )
 
 object UpeCorrespAddressDetails {
-  implicit val format: OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
+  given OFormat[UpeCorrespAddressDetails] = Json.format[UpeCorrespAddressDetails]
 }
 
 final case class UpeDetailsAmend(
@@ -108,7 +108,7 @@ final case class UpeDetailsAmend(
 )
 
 object UpeDetailsAmend {
-  implicit val format: OFormat[UpeDetailsAmend] = Json.format[UpeDetailsAmend]
+  given OFormat[UpeDetailsAmend] = Json.format[UpeDetailsAmend]
 }
 
 final case class FilingMemberAmendDetails(
@@ -120,11 +120,11 @@ final case class FilingMemberAmendDetails(
 )
 
 object FilingMemberAmendDetails {
-  implicit val format: OFormat[FilingMemberAmendDetails] = Json.format[FilingMemberAmendDetails]
+  given OFormat[FilingMemberAmendDetails] = Json.format[FilingMemberAmendDetails]
 }
 
 object SubscriptionSuccess {
-  implicit val format: OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
+  given OFormat[SubscriptionSuccess] = Json.format[SubscriptionSuccess]
 }
 
 final case class ContactDetailsType(
@@ -134,7 +134,7 @@ final case class ContactDetailsType(
 )
 
 object ContactDetailsType {
-  implicit val format: OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
+  given OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
 }
 
 final case class FilingMemberDetails(
@@ -145,7 +145,7 @@ final case class FilingMemberDetails(
 )
 
 object FilingMemberDetails {
-  implicit val format: OFormat[FilingMemberDetails] = Json.format[FilingMemberDetails]
+  given OFormat[FilingMemberDetails] = Json.format[FilingMemberDetails]
 }
 
 final case class AccountingPeriod(
@@ -155,7 +155,7 @@ final case class AccountingPeriod(
 )
 
 object AccountingPeriod {
-  implicit val format: OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
+  given OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
 }
 
 final case class AccountStatus(
@@ -163,17 +163,17 @@ final case class AccountStatus(
 )
 
 object AccountStatus {
-  implicit val format: OFormat[AccountStatus] = Json.format[AccountStatus]
+  given OFormat[AccountStatus] = Json.format[AccountStatus]
 
-  implicit val optionWrites: Writes[Option[AccountStatus]] = new Writes[Option[AccountStatus]] {
+  given Writes[Option[AccountStatus]] = new Writes[Option[AccountStatus]] {
     def writes(option: Option[AccountStatus]): JsValue = option match {
-      case Some(accountStatus) => Json.toJson(accountStatus)(format)
+      case Some(accountStatus) => Json.toJson(accountStatus)(using summon[OFormat[AccountStatus]])
       case None                => JsNull
     }
   }
-  implicit val writes: Writes[AccountStatus] = Json.writes[AccountStatus]
+  given Writes[AccountStatus] = Json.writes[AccountStatus]
 
   type AccountStatusOpt = Option[AccountStatus]
-  implicit val accountStatusOptWrites: Writes[AccountStatusOpt] = optionWrites
+  given Writes[AccountStatusOpt] = summon[Writes[Option[AccountStatus]]]
 
 }

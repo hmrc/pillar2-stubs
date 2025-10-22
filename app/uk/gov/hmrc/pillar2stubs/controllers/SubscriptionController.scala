@@ -88,7 +88,6 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Conflict(resourceAsString("/resources/error/subscription/Conflict.json").map(replacePillar2Id(_, "XMPLR0009999999")).get)
           case (_, _, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
-          case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
         }
       case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
     }
