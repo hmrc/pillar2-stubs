@@ -32,7 +32,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController._
 
-import java.time.{Clock, Instant, LocalDateTime, ZoneId}
+import java.time._
 import scala.concurrent.Future
 
 class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues with TableDrivenPropertyChecks {

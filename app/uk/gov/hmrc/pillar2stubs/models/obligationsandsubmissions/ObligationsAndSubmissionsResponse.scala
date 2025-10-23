@@ -274,7 +274,7 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
 
-  //All obligations fulfilled and also received flag
+  // All obligations fulfilled and also received flag
   def withAllFulfilledAndReceived(): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
       ObligationsAndSubmissionsSuccess(
@@ -327,7 +327,7 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
 
-  //single active accounting period (start date is no later than today and a due date not before today) with no submission
+  // single active accounting period (start date is no later than today and a due date not before today) with no submission
   def singleActiveAccountingPeriodWithNoSubmission(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
       processingDate = now,
@@ -350,7 +350,7 @@ object ObligationsAndSubmissionsSuccessResponse {
     )
   )
 
-  //two active accounting periods (start date is no later than today and a due date not before today) with no submissions
+  // two active accounting periods (start date is no later than today and a due date not before today) with no submissions
   def twoActiveAccountingPeriodsWithNoSubmissions(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
       processingDate = now,
@@ -387,7 +387,7 @@ object ObligationsAndSubmissionsSuccessResponse {
     )
   )
 
-  //three active accounting periods (start date is no later than today and a due date not before today) with UKTR and two no submission scenarios
+  // three active accounting periods (start date is no later than today and a due date not before today) with UKTR and two no submission scenarios
   def threeActiveAccountingPeriodsWithDifferentScenarios(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
       processingDate = now,
@@ -440,7 +440,7 @@ object ObligationsAndSubmissionsSuccessResponse {
     )
   )
 
-  //four active accounting periods (start date is no later than today and a due date not before today) with UKTR, BTN and no submission scenarios
+  // four active accounting periods (start date is no later than today and a due date not before today) with UKTR, BTN and no submission scenarios
   def fourActiveAccountingPeriodsWithDifferentScenarios(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
       processingDate = now,

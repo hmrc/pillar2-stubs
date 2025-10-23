@@ -20,7 +20,7 @@ import org.apache.pekko.util.ByteString
 import play.api.Logging
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents, ResponseHeader, Result}
+import play.api.mvc._
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.{HIP, HoD}
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}

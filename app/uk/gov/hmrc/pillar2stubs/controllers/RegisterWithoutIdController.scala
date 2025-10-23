@@ -46,7 +46,7 @@ class RegisterWithoutIdController @Inject() (cc: ControllerComponents, authFilte
       case (`regimeName`, "regNoIDNotProcessed")      => ServiceUnavailable(resourceAsString(s"/resources/error/RequestCouldNotBeProcessed.json").get)
       case (`regimeName`, "regNoIDRecordNotFound")    => NotFound(resourceAsString(s"/resources/error/RecordNotFound.json").get)
       case (`regimeName`, "regNoIDInvalidSubmission") => Forbidden(resourceAsString(s"/resources/error/Forbidden.json").get)
-      case (`regimeName`, data) =>
+      case (`regimeName`, data)                       =>
         val safeId = data match {
           case "duplicate"    => "XD3333333333333"
           case "enrolment"    => "XE4444444444444"

@@ -34,8 +34,8 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class UKTRAmendController @Inject() (
-  cc:             ControllerComponents,
-  authFilter:     AuthActionFilter
+  cc:         ControllerComponents,
+  authFilter: AuthActionFilter
 )(implicit clock: Clock)
     extends BackendController(cc)
     with Logging {

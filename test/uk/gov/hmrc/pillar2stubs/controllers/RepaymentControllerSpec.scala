@@ -28,8 +28,8 @@ import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models._
 
 class RepaymentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
-  private val authHeader: (String, String) = HeaderNames.authorisation -> "token"
-  val validPayload: SendRepaymentDetails = SendRepaymentDetails(
+  private val authHeader: (String, String)     = HeaderNames.authorisation -> "token"
+  val validPayload:       SendRepaymentDetails = SendRepaymentDetails(
     repaymentDetails = RepaymentDetails(plrReference = "plrReference", name = "name", utr = None, reasonForRepayment = "???", refundAmount = 10000.1),
     bankDetails = BankDetails(
       nameOnBankAccount = "Paddington",

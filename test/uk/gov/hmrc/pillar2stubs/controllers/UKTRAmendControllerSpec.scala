@@ -105,7 +105,7 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         "obligationDTT"        -> true,
         "obligationMTT"        -> true,
         "electionUKGAAP"       -> true,
-        "liabilities" -> Json.obj(
+        "liabilities"          -> Json.obj(
           "returnType" -> "NIL_RETURN"
         )
       )

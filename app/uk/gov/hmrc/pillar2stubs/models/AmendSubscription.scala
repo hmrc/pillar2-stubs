@@ -21,7 +21,7 @@ import play.api.libs.json._
 import java.time.LocalDate
 
 object LocalDateImplicits {
-  given Reads[LocalDate] = Reads.localDateReads("yyyy-MM-dd")
+  given Reads[LocalDate]  = Reads.localDateReads("yyyy-MM-dd")
   given Writes[LocalDate] = Writes.temporalWrites[LocalDate, java.time.format.DateTimeFormatter](
     java.time.format.DateTimeFormatter.ISO_LOCAL_DATE
   )

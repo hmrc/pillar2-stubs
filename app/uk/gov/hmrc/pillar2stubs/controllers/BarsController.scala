@@ -38,7 +38,7 @@ class BarsController @Inject() (cc: ControllerComponents, authFilter: AuthAction
     (value.account.sortCode, value.account.accountNumber) match {
       case ("206705", "86473611") =>
         val businessAccountName = "Epic Adventure Inc"
-        val matchedName =
+        val matchedName         =
           if (businessAccountName == value.business.companyName) NameMatches.Yes
           else if (businessAccountName.contains(value.business.companyName)) NameMatches.Partial
           else NameMatches.No

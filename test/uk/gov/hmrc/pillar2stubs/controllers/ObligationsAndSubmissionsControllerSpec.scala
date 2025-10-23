@@ -71,7 +71,6 @@ class ObligationsAndSubmissionsControllerSpec
 
     val result = route(app, invalidRequest).value
 
-    // Should return 422 for invalid date range, not 200 with multiple accounting periods
     status(result) shouldEqual 422
     contentAsJson(result).validate[ObligationsAndSubmissionsDetailedErrorResponse].asEither.isRight shouldBe true
     contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.code shouldEqual "001"
@@ -88,19 +87,15 @@ class ObligationsAndSubmissionsControllerSpec
     val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
     response.success.accountingPeriodDetails.size shouldEqual 4
 
-    // Check first period (most recent)
     response.success.accountingPeriodDetails.head.startDate.getYear shouldEqual currentYear
     response.success.accountingPeriodDetails.head.obligations.head.status shouldEqual ObligationStatus.Open
 
-    // Check second period
     response.success.accountingPeriodDetails(1).startDate.getYear shouldEqual currentYear - 1
     response.success.accountingPeriodDetails(1).underEnquiry shouldEqual true
 
-    // Check third period
     response.success.accountingPeriodDetails(2).startDate.getYear shouldEqual currentYear - 2
     response.success.accountingPeriodDetails(2).obligations.head.obligationType shouldEqual ObligationType.GIR
 
-    // Check fourth period (earliest)
     response.success.accountingPeriodDetails(3).startDate.getYear shouldEqual currentYear - 3
   }
 
@@ -183,13 +178,11 @@ class ObligationsAndSubmissionsControllerSpec
     val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
     response.success.accountingPeriodDetails.size should be > 1
 
-    // Check that at least one obligation has submissions
     val hasSubmissions = response.success.accountingPeriodDetails.exists { period =>
       period.obligations.exists(_.submissions.nonEmpty)
     }
     hasSubmissions shouldBe true
 
-    // Check first period has a fulfilled obligation with a submission
     val firstPeriod = response.success.accountingPeriodDetails.head
     firstPeriod.obligations.head.status shouldEqual ObligationStatus.Fulfilled
     firstPeriod.obligations.head.submissions.nonEmpty shouldBe true
@@ -418,11 +411,9 @@ class ObligationsAndSubmissionsControllerSpec
     response.success.accountingPeriodDetails.size shouldEqual 3
 
     val periods = response.success.accountingPeriodDetails
-    // First period should have fulfilled obligation with submission
     periods.head.obligations.head.status shouldEqual ObligationStatus.Fulfilled
     periods.head.obligations.head.submissions.nonEmpty shouldBe true
 
-    // Second and third periods should have open obligations with no submissions
     periods(1).obligations.head.status shouldEqual ObligationStatus.Open
     periods(1).obligations.head.submissions shouldBe empty
     periods(2).obligations.head.status shouldEqual ObligationStatus.Open
@@ -440,17 +431,14 @@ class ObligationsAndSubmissionsControllerSpec
     response.success.accountingPeriodDetails.size shouldEqual 4
 
     val periods = response.success.accountingPeriodDetails
-    // First period should have fulfilled obligation with UKTR_CREATE submission
     periods.head.obligations.head.status shouldEqual ObligationStatus.Fulfilled
     periods.head.obligations.head.submissions.nonEmpty shouldBe true
     periods.head.obligations.head.submissions.head.submissionType shouldEqual SubmissionType.UKTR_CREATE
 
-    // Second period should have fulfilled obligation with BTN submission
     periods(1).obligations.head.status shouldEqual ObligationStatus.Fulfilled
     periods(1).obligations.head.submissions.nonEmpty shouldBe true
     periods(1).obligations.head.submissions.head.submissionType shouldEqual SubmissionType.BTN
 
-    // Third and fourth periods should have open obligations with no submissions
     periods(2).obligations.head.status shouldEqual ObligationStatus.Open
     periods(2).obligations.head.submissions shouldBe empty
     periods(3).obligations.head.status shouldEqual ObligationStatus.Open
@@ -468,11 +456,9 @@ class ObligationsAndSubmissionsControllerSpec
     response.success.accountingPeriodDetails.size shouldEqual 3
 
     val periods = response.success.accountingPeriodDetails
-    // Second period should be under enquiry
     periods(1).underEnquiry              shouldBe true
     periods(1).obligations.head.canAmend shouldBe false
 
-    // Other periods should not be under enquiry
     periods.head.underEnquiry shouldBe false
     periods(2).underEnquiry   shouldBe false
   }
@@ -490,12 +476,10 @@ class ObligationsAndSubmissionsControllerSpec
     val period = response.success.accountingPeriodDetails.head
     period.obligations.size shouldEqual 2
 
-    // First obligation should be fulfilled with submission
     period.obligations.head.obligationType shouldEqual ObligationType.UKTR
     period.obligations.head.status shouldEqual ObligationStatus.Fulfilled
     period.obligations.head.submissions.nonEmpty shouldBe true
 
-    // Second obligation should be open with no submissions
     period.obligations(1).obligationType shouldEqual ObligationType.GIR
     period.obligations(1).status shouldEqual ObligationStatus.Open
     period.obligations(1).submissions shouldBe empty
