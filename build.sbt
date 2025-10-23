@@ -2,7 +2,7 @@ import org.typelevel.scalacoptions.ScalacOptions
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 
-ThisBuild / scalaVersion := "3.7.3"
+ThisBuild / scalaVersion := "3.3.5"
 ThisBuild / majorVersion := 0
 
 val scalafixSettings = Seq(

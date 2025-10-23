@@ -130,7 +130,13 @@ class UKTRAmendController @Inject() (
               case JsError(errors) =>
                 if (errors.exists(_._2.exists(_.messages.contains("liableEntities must not be empty")))) {
                   logger.error("Liable entities array is empty in liability submission")
-                  Future.successful(BadRequest(Json.toJson(HIPErrorWrapper(HoD, Json.obj("error" -> "liableEntities must not be empty")))))
+                  Future.successful(
+                    BadRequest(
+                      Json.toJson(HIPErrorWrapper(HoD, Json.obj("error" -> "liableEntities must not be empty")))(using
+                        summon[OFormat[HIPErrorWrapper[JsObject]]]
+                      )
+                    )
+                  )
                 } else {
                   logger.error(s"JSON validation failed with errors: $errors")
                   Future.successful(BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json")))))))

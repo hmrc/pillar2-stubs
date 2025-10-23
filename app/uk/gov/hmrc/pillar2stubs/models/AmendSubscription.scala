@@ -61,7 +61,7 @@ object AmendSubscriptionSuccess {
     else JsSuccess(js)
   }.andThen(Json.reads[AmendSubscriptionSuccess])
 
-  given OFormat[AmendSubscriptionSuccess] = OFormat(summon[Reads[AmendSubscriptionSuccess]], Json.writes[AmendSubscriptionSuccess])
+  given OFormat[AmendSubscriptionSuccess] = Json.format[AmendSubscriptionSuccess]
 }
 
 case class AmendSubscriptionResponse(value: AmendSubscriptionSuccess)
@@ -174,6 +174,5 @@ object AccountStatus {
   given Writes[AccountStatus] = Json.writes[AccountStatus]
 
   type AccountStatusOpt = Option[AccountStatus]
-  given Writes[AccountStatusOpt] = summon[Writes[Option[AccountStatus]]]
 
 }
