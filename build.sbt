@@ -17,18 +17,29 @@ lazy val microservice = Project("pillar2-stubs", file("."))
     // https://www.scala-lang.org/2021/01/12/configuring-and-suppressing-warnings.html
     // suppress warnings in generated routes files
     scalacOptions += "-Wconf:src=routes/.*:s",
-    scalacOptions += "-Wconf:src=conf/.*:s",
     scalacOptions += "-Wconf:msg=Flag.*set repeatedly:s",
     scalacOptions += "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s"
   )
-  .settings(CodeCoverageSettings.settings *)
-  .settings(tpolecatExcludeOptions += ScalacOptions.warnNonUnitStatement)
+  .settings(CodeCoverageSettings.settings*)
+  .settings(
+    Compile / tpolecatExcludeOptions ++= Set(
+      ScalacOptions.warnNonUnitStatement,
+      ScalacOptions.warnValueDiscard,
+      ScalacOptions.warnUnusedImports
+    )
+  )
 
 lazy val it = project
   .enablePlugins(play.sbt.PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
-  .settings(tpolecatExcludeOptions += ScalacOptions.warnNonUnitStatement)
+  .settings(
+    Compile / tpolecatExcludeOptions ++= Set(
+      ScalacOptions.warnNonUnitStatement,
+      ScalacOptions.warnValueDiscard,
+      ScalacOptions.warnUnusedImports
+    )
+  )
   .settings(libraryDependencies ++= AppDependencies.it)
 
 addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")
