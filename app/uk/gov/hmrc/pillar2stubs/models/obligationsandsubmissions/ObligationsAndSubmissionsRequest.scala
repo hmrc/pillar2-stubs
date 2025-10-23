@@ -25,5 +25,5 @@ case class ObligationsAndSubmissionsRequest(fromDate: LocalDate, toDate: LocalDa
 }
 
 object ObligationsAndSubmissionsRequest {
-  implicit val format: OFormat[ObligationsAndSubmissionsRequest] = Json.format[ObligationsAndSubmissionsRequest]
+  given OFormat[ObligationsAndSubmissionsRequest] = Json.format[ObligationsAndSubmissionsRequest]
 }

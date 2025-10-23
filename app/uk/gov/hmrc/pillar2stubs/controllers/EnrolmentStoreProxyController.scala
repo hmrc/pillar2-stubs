@@ -32,7 +32,7 @@ class EnrolmentStoreProxyController @Inject() (cc: ControllerComponents, authFil
 
   def status(serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     serviceName match {
-      case `badService` => NoContent
+      case `badService`                           => NoContent
       case `plrServiceEmpty` | `plrServiceEmpty2` =>
         val path = "/resources/groupsES1/enrolment-response-with-no-groupid.json"
         Ok(resourceAsString(path).get)

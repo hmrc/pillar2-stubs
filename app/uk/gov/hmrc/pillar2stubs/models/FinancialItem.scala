@@ -29,5 +29,5 @@ final case class FinancialItem(
 )
 
 object FinancialItem {
-  implicit val format: OFormat[FinancialItem] = Json.format[FinancialItem]
+  given OFormat[FinancialItem] = Json.format[FinancialItem]
 }

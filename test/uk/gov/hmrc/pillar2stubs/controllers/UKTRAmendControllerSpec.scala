@@ -18,7 +18,8 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustBe
+import org.scalatest.matchers.must.Matchers.mustEqual
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -104,7 +105,7 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         "obligationDTT"        -> true,
         "obligationMTT"        -> true,
         "electionUKGAAP"       -> true,
-        "liabilities" -> Json.obj(
+        "liabilities"          -> Json.obj(
           "returnType" -> "NIL_RETURN"
         )
       )

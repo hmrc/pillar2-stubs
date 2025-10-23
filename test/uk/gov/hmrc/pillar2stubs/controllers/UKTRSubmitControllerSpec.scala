@@ -18,7 +18,8 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.mustBe
+import org.scalatest.matchers.must.Matchers.mustEqual
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
@@ -97,7 +98,7 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
         "obligationDTT"        -> true,
         "obligationMTT"        -> true,
         "electionUKGAAP"       -> true,
-        "liabilities" -> Json.obj(
+        "liabilities"          -> Json.obj(
           "returnType" -> "NIL_RETURN"
         )
       )
@@ -171,12 +172,12 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
         "qualifyingGroup"      -> true,
         "obligationDTT"        -> true,
         "obligationMTT"        -> true,
-        "liabilities" -> Json.obj(
+        "liabilities"          -> Json.obj(
           "totalLiability"     -> 10000.99,
           "totalLiabilityDTT"  -> 5000.99,
           "totalLiabilityIIR"  -> 4000,
           "totalLiabilityUTPR" -> 10000.99,
-          "liableEntities" -> Json.arr(
+          "liableEntities"     -> Json.arr(
             Json.obj(
               "ukChargeableEntityName" -> "Newco PLC",
               "idValue"                -> "12345678", // Missing "idType"
@@ -210,7 +211,7 @@ class UKTRSubmitControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAp
         "qualifyingGroup"      -> true,
         "obligationDTT"        -> true,
         "obligationMTT"        -> true,
-        "liabilities" -> Json.obj(
+        "liabilities"          -> Json.obj(
           "totalLiability"     -> 10000.99,
           "totalLiabilityDTT"  -> 5000.99,
           "totalLiabilityIIR"  -> 4000,

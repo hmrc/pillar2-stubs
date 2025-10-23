@@ -39,7 +39,7 @@ class BTNControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSui
 
   def request(implicit pillar2Id: String): FakeRequest[JsValue] =
     FakeRequest(POST, routes.BTNController.submitBTN.url)
-      .withHeaders(Headers(validHeaders: _*))
+      .withHeaders(Headers(validHeaders*))
       .withHeaders("X-PILLAR2-ID" -> pillar2Id)
       .withBody(Json.toJson(BTNRequest(LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1))))
 

@@ -38,7 +38,7 @@ class ETMPHeaderFilterTest extends AnyFunSuite {
 
   test("All headers are present") {
     val headers = ETMPHeaderFilter.mandatoryHeaders.map(_ -> Random.nextString(10))
-    val request = FakeRequest().withHeaders(headers: _*)
+    val request = FakeRequest().withHeaders(headers*)
     classUnderTest.runTest(request).await shouldEqual None
   }
 
@@ -53,7 +53,7 @@ class ETMPHeaderFilterTest extends AnyFunSuite {
         val headers = ETMPHeaderFilter.mandatoryHeaders
           .filterNot(str => combo.contains(str))
           .map(_ -> Random.nextString(10))
-        val request = FakeRequest().withHeaders(headers: _*)
+        val request = FakeRequest().withHeaders(headers*)
         val response: Future[Result] = classUnderTest
           .runTest(request)
           .map {

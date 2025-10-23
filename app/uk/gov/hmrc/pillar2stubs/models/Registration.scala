@@ -21,17 +21,17 @@ import play.api.libs.json._
 case class NoIdOrganisation(organisationName: String)
 
 object NoIdOrganisation {
-  implicit val reads: Reads[NoIdOrganisation] = Json.reads[NoIdOrganisation]
+  given Reads[NoIdOrganisation] = Json.reads[NoIdOrganisation]
 }
 
 case class Registration(regime: String, organisation: NoIdOrganisation)
 
 object Registration {
-  implicit lazy val reads: Reads[Registration] = {
+  given Reads[Registration] = {
     import play.api.libs.functional.syntax._
     (
       (__ \ "regime").read[String] and
         (__ \ "organisation").read[NoIdOrganisation]
-    )(Registration.apply _)
+    )(Registration.apply)
   }
 }

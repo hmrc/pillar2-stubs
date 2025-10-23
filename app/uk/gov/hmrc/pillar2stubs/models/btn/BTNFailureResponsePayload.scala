@@ -21,5 +21,5 @@ import play.api.libs.json.{Json, OFormat}
 case class BTNFailureResponsePayload(errors: BTNFailure)
 
 object BTNFailureResponsePayload {
-  implicit val format: OFormat[BTNFailureResponsePayload] = Json.format[BTNFailureResponsePayload]
+  given OFormat[BTNFailureResponsePayload] = Json.format[BTNFailureResponsePayload]
 }
