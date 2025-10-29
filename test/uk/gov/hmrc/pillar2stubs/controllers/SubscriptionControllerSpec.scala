@@ -535,7 +535,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       }
 
       "must return a OK with an inactive subscription for the given IDs" in {
-        val ids      = Seq("XEPLR2000000109", "XEPLR2000000110", "XEPLR2000000111")
+        val ids      = Seq("XEPLR2000000109", "XEPLR2000000110", "XEPLR2000000111", "XEPLR2000000111")
         val requests = ids.map(id => FakeRequest(GET, routes.SubscriptionController.retrieveSubscription(id).url).withHeaders(authHeader))
         val results  = requests.map(route(app, _).value)
         forAll(results) { result =>

@@ -355,7 +355,8 @@ class ObligationsAndSubmissionsControllerSpec
         "XEPLR2000000108" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods(),
         "XEPLR2000000109" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods(),
         "XEPLR2000000110" -> ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario(),
-        "XEPLR2000000111" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()
+        "XEPLR2000000111" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods(),
+        "XEPLR2000000112" -> ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()
       )
     ) { (id, expectedResponse) =>
       val result = route(app, request(id)).value
