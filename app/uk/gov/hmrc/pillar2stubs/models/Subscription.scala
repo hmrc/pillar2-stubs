@@ -28,7 +28,7 @@ case class Subscription(
 object Subscription {
 
   given Reads[Subscription] = {
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
     (
       (__ \ "upeDetails" \ "safeId").read[String] and
         (__ \ "upeDetails" \ "organisationName").read[String] and

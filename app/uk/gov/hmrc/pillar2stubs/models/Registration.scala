@@ -28,7 +28,7 @@ case class Registration(regime: String, organisation: NoIdOrganisation)
 
 object Registration {
   given Reads[Registration] = {
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
     (
       (__ \ "regime").read[String] and
         (__ \ "organisation").read[NoIdOrganisation]

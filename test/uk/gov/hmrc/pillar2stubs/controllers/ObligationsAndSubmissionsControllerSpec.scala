@@ -506,7 +506,7 @@ class ObligationsAndSubmissionsControllerSpec
 
   test("JSON Writes for ObligationsAndSubmissionsResponse covers all response types") {
     import play.api.libs.json.Json
-    import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
+    import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 
     val successResponse = ObligationsAndSubmissionsSuccessResponse()
     val successJson     = Json.toJson(successResponse)
@@ -523,7 +523,7 @@ class ObligationsAndSubmissionsControllerSpec
 
   test("JSON serialization and deserialization for ObligationsAndSubmissionsSuccessResponse") {
     import play.api.libs.json.Json
-    import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
+    import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 
     val response = ObligationsAndSubmissionsSuccessResponse()
 
@@ -537,7 +537,7 @@ class ObligationsAndSubmissionsControllerSpec
 
   test("JSON serialization covers all response builder methods") {
     import play.api.libs.json.Json
-    import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
+    import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 
     val responses = Seq(
       ObligationsAndSubmissionsSuccessResponse(),
@@ -580,7 +580,7 @@ class ObligationsAndSubmissionsControllerSpec
 
   test("JSON serialization covers all case classes and their OFormat instances") {
     import play.api.libs.json.Json
-    import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
+    import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
     import java.time.LocalDate
     import java.time.ZonedDateTime
 

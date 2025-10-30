@@ -5,25 +5,20 @@ import uk.gov.hmrc.DefaultBuildSettings
 ThisBuild / scalaVersion := "3.3.5"
 ThisBuild / majorVersion := 0
 
-val scalafixSettings = Seq(
-  semanticdbEnabled := true,
-  semanticdbVersion := scalafixSemanticdb.revision
+val commonExcludedTpolecat = Set(
+  ScalacOptions.warnNonUnitStatement,
+  ScalacOptions.warnValueDiscard,
+  ScalacOptions.warnUnusedImports
 )
 
 lazy val microservice = Project("pillar2-stubs", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(
-    majorVersion := 0,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
     PlayKeys.playDefaultPort := 10052,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    Compile / tpolecatExcludeOptions ++= Set(
-      ScalacOptions.warnNonUnitStatement,
-      ScalacOptions.warnValueDiscard,
-      ScalacOptions.warnUnusedImports
-    ),
-    scalafixSettings
+    Compile / tpolecatExcludeOptions ++= commonExcludedTpolecat,
   )
   .settings(CodeCoverageSettings.settings *)
 
@@ -32,19 +27,15 @@ lazy val it = project
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
   .settings(
-    Compile / tpolecatExcludeOptions ++= Set(
-      ScalacOptions.warnNonUnitStatement,
-      ScalacOptions.warnValueDiscard,
-      ScalacOptions.warnUnusedImports
-    )
+    Compile / tpolecatExcludeOptions ++= commonExcludedTpolecat
   )
   .settings(libraryDependencies ++= AppDependencies.it)
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 ThisBuild / scalacOptions ++= Seq(
-  "-Wconf:src=routes/.*:s",
   "-Wconf:msg=Flag.*set repeatedly:s",
-  "-Wconf:msg=Setting -Wunused set to all redundantly:s",
-  "-Wconf:msg=Implicit parameters should be provided with a `using` clause:s"
+  "-Wconf:src=routes/.*:s"
 )
 
 addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")
