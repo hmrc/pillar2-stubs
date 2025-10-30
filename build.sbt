@@ -18,7 +18,7 @@ lazy val microservice = Project("pillar2-stubs", file("."))
     Test / scalafmtOnCompile := true,
     PlayKeys.playDefaultPort := 10052,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    Compile / tpolecatExcludeOptions ++= commonExcludedTpolecat,
+    Compile / tpolecatExcludeOptions ++= commonExcludedTpolecat
   )
   .settings(CodeCoverageSettings.settings *)
 

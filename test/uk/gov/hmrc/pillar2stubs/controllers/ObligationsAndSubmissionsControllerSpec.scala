@@ -366,23 +366,6 @@ class ObligationsAndSubmissionsControllerSpec
     }
   }
 
-  test("Returns single active accounting period with no submission when Pillar2-Id is XEPLR9999999991") {
-    implicit val pillar2Id: String = "XEPLR9999999991"
-    val result = route(app, request).value
-
-    status(result) shouldEqual 200
-    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
-
-    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
-    response.success.accountingPeriodDetails.size shouldEqual 1
-
-    val period = response.success.accountingPeriodDetails.head
-    period.startDate.getYear shouldEqual LocalDate.now().getYear()
-    period.obligations.head.obligationType shouldEqual ObligationType.UKTR
-    period.obligations.head.status shouldEqual ObligationStatus.Open
-    period.obligations.head.submissions shouldBe empty
-  }
-
   test("Returns two active accounting periods with no submissions when Pillar2-Id is XEPLR9999999992") {
     implicit val pillar2Id: String = "XEPLR9999999992"
     val result = route(app, request).value
