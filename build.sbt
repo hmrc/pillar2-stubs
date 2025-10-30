@@ -35,6 +35,9 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 ThisBuild / scalacOptions ++= Seq(
   "-Wconf:msg=Flag.*set repeatedly:s",
+  "-Wconf:msg=Flag -unchecked set repeatedly:s",
+  "-Wconf:msg=Flag -deprecation set repeatedly:s",
+  "-Wconf:msg=Flag -encoding set repeatedly:s",
   "-Wconf:src=routes/.*:s"
 )
 
