@@ -113,5 +113,24 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
       status(result) shouldBe Status.BAD_REQUEST
     }
 
+    "must return Ok response with generated SafeId for an unknown organisation name" in {
+      val jsonPayload: String = s"""
+                                   |{
+                                   |    "regime": "PLR",
+                                   |       "organisation": {
+                                   |          "organisationName": "UnknownOrg"
+                                   |       }
+                                   |
+                                   |}""".stripMargin
+      val json: JsValue = Json.parse(jsonPayload)
+
+      val request = FakeRequest(POST, routes.RegisterWithoutIdController.registerWithoutId.url).withBody(json).withHeaders(authHeader)
+      val result: Future[Result] = route(app, request).value
+
+      status(result)        shouldBe Status.OK
+      contentAsString(result) should include("XE")
+      contentAsString(result) should include("safeId")
+    }
+
   }
 }

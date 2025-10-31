@@ -30,14 +30,22 @@ lazy val it = project
     Compile / tpolecatExcludeOptions ++= commonExcludedTpolecat
   )
   .settings(libraryDependencies ++= AppDependencies.it)
+
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
+// Minimal Wconf suppressions only for warnings that tpolecat cannot handle:
+// - Plugin conflicts (flags set by both tpolecat and other plugins)
+// - Generated routes files
+// - @nowarn annotation validation (Scala 3 compiler check)
+// - Unreachable case (intentional pattern match exhaustiveness)
 ThisBuild / scalacOptions ++= Seq(
   "-Wconf:msg=Flag.*set repeatedly:s",
   "-Wconf:msg=Flag -unchecked set repeatedly:s",
   "-Wconf:msg=Flag -deprecation set repeatedly:s",
   "-Wconf:msg=Flag -encoding set repeatedly:s",
+  "-Wconf:msg=Unreachable case:s",
+  "-Wconf:msg=@nowarn annotation does not suppress any warnings:s",
   "-Wconf:src=routes/.*:s"
 )
 

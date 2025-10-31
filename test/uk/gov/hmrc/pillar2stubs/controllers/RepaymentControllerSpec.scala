@@ -49,7 +49,7 @@ class RepaymentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
         FakeRequest(POST, routes.RepaymentController.submitRepaymentDetails.url).withBody(Json.toJson(validPayload)).withHeaders(authHeader)
       val result = route(app, request).value
 
-      status(result) shouldBe play.api.http.Status.CREATED
+      status(result) shouldBe CREATED
     }
 
     "must return NoContent for a valid json payload with a bad actor" in {
@@ -57,7 +57,7 @@ class RepaymentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       val request = FakeRequest(POST, routes.RepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
       val result  = route(app, request).value
 
-      status(result) shouldBe play.api.http.Status.NO_CONTENT
+      status(result) shouldBe NO_CONTENT
     }
 
     "must return BAD_REQUEST for an invalid json payload" in {
@@ -65,7 +65,7 @@ class RepaymentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       val request = FakeRequest(POST, routes.RepaymentController.submitRepaymentDetails.url).withBody(json).withHeaders(authHeader)
       val result  = route(app, request).value
 
-      status(result) shouldBe play.api.http.Status.BAD_REQUEST
+      status(result) shouldBe BAD_REQUEST
     }
 
   }
