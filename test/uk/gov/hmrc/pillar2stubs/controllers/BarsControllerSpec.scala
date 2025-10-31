@@ -48,22 +48,22 @@ class BarsControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSu
 
     "must return FORBIDDEN response when 'Authorization' header is missing" in {
       val json: JsValue = Json.obj()
-      val request       = FakeRequest(POST, routes.BarsController.verify.url).withBody(json)
-      val result        = route(app, request).value
+      val request = FakeRequest(POST, routes.BarsController.verify.url).withBody(json)
+      val result  = route(app, request).value
 
       status(result) shouldBe Status.FORBIDDEN
     }
 
     "must return BAD_REQUEST for invalid JSON structure" in {
       val json: JsValue = Json.obj("invalid" -> "payload")
-      val request       = FakeRequest(POST, routes.BarsController.verify.url).withBody(json).withHeaders(authHeader)
-      val result        = route(app, request).value
+      val request = FakeRequest(POST, routes.BarsController.verify.url).withBody(json).withHeaders(authHeader)
+      val result  = route(app, request).value
 
       status(result) shouldBe Status.BAD_REQUEST
     }
 
     "must return OK with matched account for 206705/86473611" in {
-      val json   = barsRequest("206705", "86473611", "Epic Adventure Inc")
+      val json    = barsRequest("206705", "86473611", "Epic Adventure Inc")
       val request = FakeRequest(POST, routes.BarsController.verify.url).withBody(json).withHeaders(authHeader)
       val result: Future[Result] = route(app, request).value
 
@@ -74,7 +74,7 @@ class BarsControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSu
     }
 
     "must return OK with partial name match for 206705/86473611 with different company name" in {
-      val json   = barsRequest("206705", "86473611", "Epic")
+      val json    = barsRequest("206705", "86473611", "Epic")
       val request = FakeRequest(POST, routes.BarsController.verify.url).withBody(json).withHeaders(authHeader)
       val result: Future[Result] = route(app, request).value
 
@@ -84,7 +84,7 @@ class BarsControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSu
     }
 
     "must return OK with no name match for 206705/86473611 with unrelated company name" in {
-      val json   = barsRequest("206705", "86473611", "Different Company")
+      val json    = barsRequest("206705", "86473611", "Different Company")
       val request = FakeRequest(POST, routes.BarsController.verify.url).withBody(json).withHeaders(authHeader)
       val result: Future[Result] = route(app, request).value
 
@@ -114,7 +114,7 @@ class BarsControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSu
       )
 
       testCases.foreach { case (sortCode, accountNumber) =>
-        val json   = barsRequest(sortCode, accountNumber)
+        val json    = barsRequest(sortCode, accountNumber)
         val request = FakeRequest(POST, routes.BarsController.verify.url).withBody(json).withHeaders(authHeader)
         val result: Future[Result] = route(app, request).value
 
@@ -125,15 +125,14 @@ class BarsControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSu
     }
 
     "must return INTERNAL_SERVER_ERROR for unmatched account combination" in {
-      val json   = barsRequest("000000", "00000000")
+      val json    = barsRequest("000000", "00000000")
       val request = FakeRequest(POST, routes.BarsController.verify.url).withBody(json).withHeaders(authHeader)
       val result: Future[Result] = route(app, request).value
 
-      status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+      status(result)          shouldBe Status.INTERNAL_SERVER_ERROR
       contentAsString(result) shouldBe "Unable to match"
     }
 
   }
 
 }
-
