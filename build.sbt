@@ -2,14 +2,10 @@ import org.typelevel.scalacoptions.ScalacOptions
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 
-ThisBuild / scalaVersion := "3.3.5"
+ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
 
-val commonExcludedTpolecat = Set(
-  ScalacOptions.warnNonUnitStatement,
-  ScalacOptions.warnValueDiscard,
-  ScalacOptions.warnUnusedImports
-)
+
 
 lazy val microservice = Project("pillar2-stubs", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
