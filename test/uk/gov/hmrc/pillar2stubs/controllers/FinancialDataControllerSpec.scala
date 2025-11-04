@@ -56,7 +56,7 @@ class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOn
       val request:         FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(invalidIdNumber)
       val result:          Future[Result]                      = route(app, request).value
 
-      status(result) mustBe play.api.http.Status.BAD_REQUEST
+      status(result) mustBe BAD_REQUEST
       contentAsJson(result) mustBe invalidIdNumberJson
     }
 

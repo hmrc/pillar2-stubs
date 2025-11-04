@@ -18,9 +18,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.mustBe
-import org.scalatest.matchers.must.Matchers.mustEqual
-import org.scalatest.matchers.should.Matchers
+import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
 import play.api.inject.bind
@@ -135,9 +133,9 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
       val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
-      response.response.failures should have size 1
-      response.response.failures.head.reason shouldEqual "invalid json"
-      response.origin shouldEqual HIP
+      response.response.failures must have size 1
+      response.response.failures.head.reason mustEqual "invalid json"
+      response.origin mustEqual HIP
     }
 
     "return INTERNAL_SERVER_ERROR for specific Pillar2Id" in {
@@ -157,9 +155,9 @@ class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneApp
       val result = route(app, request).value
       status(result) mustBe BAD_REQUEST
       val response = contentAsJson(result).as[HIPErrorWrapper[HIPFailure]]
-      response.response.failures should have size 1
-      response.response.failures.head.reason shouldEqual "invalid json"
-      response.origin shouldEqual HIP
+      response.response.failures must have size 1
+      response.response.failures.head.reason mustEqual "invalid json"
+      response.origin mustEqual HIP
     }
 
     "return BAD_REQUEST for non-JSON data" in {
