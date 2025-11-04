@@ -18,7 +18,7 @@ lazy val microservice = Project("pillar2-stubs", file("."))
     Test / scalafmtOnCompile := true,
     PlayKeys.playDefaultPort := 10052,
     libraryDependencies ++= AppDependencies.compile ++ AppDependencies.test,
-    Compile / tpolecatExcludeOptions ++= commonExcludedTpolecat
+     compilerSettings
   )
   .settings(CodeCoverageSettings.settings *)
 
@@ -27,7 +27,7 @@ lazy val it = project
   .dependsOn(microservice % "test->test")
   .settings(DefaultBuildSettings.itSettings())
   .settings(
-    Compile / tpolecatExcludeOptions ++= commonExcludedTpolecat
+   compilerSettings
   )
   .settings(libraryDependencies ++= AppDependencies.it)
 
@@ -35,14 +35,15 @@ ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 
-ThisBuild / scalacOptions ++= Seq(
-  "-Wconf:src=routes/.*:s",
-  "-Wconf:msg=Flag.*set repeatedly:s",
-  "-Wconf:msg=Setting -Wunused set to all redundantly:s",
-  "-Wconf:msg=Unreachable case:s",
-  "-Wconf:msg=@nowarn annotation does not suppress any warnings:s"
-)
+
 
 addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")
 addCommandAlias("checkCodeCoverage", "; clean; coverage; test; it/test; coverageReport")
 addCommandAlias("lint", "; scalafmtAll; scalafmtSbt; scalafixAll")
+
+lazy val compilerSettings = Seq(
+  scalacOptions ~= (_.distinct),
+  tpolecatCiModeOptions += ScalacOptions.warnOption("conf:src=routes/.*:s"),
+   Compile / tpolecatExcludeOptions ++= commonExcludedTpolecat
+
+)

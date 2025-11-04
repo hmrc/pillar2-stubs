@@ -23,13 +23,12 @@ import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
-import scala.annotation.nowarn
 
 class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
   private val badGroupId = "0000"
 
-  def allocate(groupId: String, @nowarn("msg=unused") serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
+  def allocate(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     groupId match {
       case `badGroupId` =>
         val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"
@@ -39,7 +38,7 @@ class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: Au
     }
   }
 
-  def revoke(groupId: String, @nowarn("msg=unused") serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
+  def revoke(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     groupId match {
       case `badGroupId` =>
         val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"
