@@ -35,8 +35,6 @@ ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 
-
-
 addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")
 addCommandAlias("checkCodeCoverage", "; clean; coverage; test; it/test; coverageReport")
 addCommandAlias("lint", "; scalafmtAll; scalafmtSbt; scalafixAll")
@@ -44,6 +42,6 @@ addCommandAlias("lint", "; scalafmtAll; scalafmtSbt; scalafixAll")
 lazy val compilerSettings = Seq(
   scalacOptions ~= (_.distinct),
   tpolecatCiModeOptions += ScalacOptions.warnOption("conf:src=routes/.*:s"),
-   Compile / tpolecatExcludeOptions ++= commonExcludedTpolecat
+  Test/tpolecatExcludeOptions += ScalacOptions.warnNonUnitStatement
 
 )
