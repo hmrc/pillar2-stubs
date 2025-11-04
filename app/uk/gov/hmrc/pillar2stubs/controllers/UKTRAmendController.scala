@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.Logging
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionResponse.{successfulLiabilityResponse, successfulNilResponse}

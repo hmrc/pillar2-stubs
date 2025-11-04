@@ -20,12 +20,12 @@ import org.apache.pekko.util.ByteString
 import play.api.Logging
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.{HIP, HoD}
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes._
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes.*
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.LocalDate
@@ -82,7 +82,6 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XMPLR0012345675" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrDueScenario()))
           case "XMPLR0012345676" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrOverdueScenario()))
           case "XMPLR0012345677" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.uktrIncompleteScenario()))
-          case "XEPLR9999999996" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withEmptyObligations()))
           case "XEPLR0000000504" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withAllFulfilled()))
           // Payment overdue w/o interest, no Return
           case "XEPLR2000000101" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))

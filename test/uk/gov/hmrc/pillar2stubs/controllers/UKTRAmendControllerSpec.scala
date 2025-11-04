@@ -27,13 +27,13 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.{LiabilityData, LiableEntity, UKTRSubmissionData}
 
-import java.time._
+import java.time.*
 
 class UKTRAmendControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
 

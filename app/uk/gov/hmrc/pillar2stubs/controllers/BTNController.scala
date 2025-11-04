@@ -20,7 +20,7 @@ import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.btn._
+import uk.gov.hmrc.pillar2stubs.models.btn.*
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController

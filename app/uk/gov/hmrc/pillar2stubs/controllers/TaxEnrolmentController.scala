@@ -29,8 +29,7 @@ class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: Au
 
   private val badGroupId = "0000"
 
-  @nowarn("msg=unused")
-  def allocate(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
+  def allocate(groupId: String, @nowarn("msg=unused") serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     groupId match {
       case `badGroupId` =>
         val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"
@@ -40,8 +39,7 @@ class TaxEnrolmentController @Inject() (cc: ControllerComponents, authFilter: Au
     }
   }
 
-  @nowarn("msg=unused")
-  def revoke(groupId: String, serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
+  def revoke(groupId: String, @nowarn("msg=unused") serviceName: String): Action[AnyContent] = (Action andThen authFilter) { _ =>
     groupId match {
       case `badGroupId` =>
         val path = "/resources/taxEnrolmentES8/tax-enrolment-failure.json"

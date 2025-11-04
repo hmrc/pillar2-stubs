@@ -16,7 +16,7 @@
 
 package uk.gov.hmrc.pillar2stubs.models.obligation
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 sealed trait ObligationStatus
 object ObligationStatus {

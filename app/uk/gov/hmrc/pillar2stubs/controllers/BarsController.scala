@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models._
+import uk.gov.hmrc.pillar2stubs.models.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject

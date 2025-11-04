@@ -24,13 +24,13 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.now
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.SubmissionType.{GIR, UKTR_CREATE}
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 
 import java.time.LocalDate
 import scala.util.Random

@@ -22,7 +22,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.GroupIds
 

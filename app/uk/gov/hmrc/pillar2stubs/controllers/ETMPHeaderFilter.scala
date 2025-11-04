@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import cats.Semigroup
 import cats.data.Validated
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.pillar2stubs.controllers.ETMPHeaderFilter.{mandatoryHeaders, validateHeaderExists}
 
 import javax.inject.Inject

@@ -16,8 +16,8 @@
 
 package uk.gov.hmrc.pillar2stubs.models.error
 
-import enumeratum._
-import play.api.libs.json._
+import enumeratum.*
+import play.api.libs.json.*
 
 case class HIPErrorWrapper[T](origin: Origin, response: T)
 

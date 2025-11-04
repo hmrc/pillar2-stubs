@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController._
+import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.*
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.{FinancialDataResponse, FinancialItem, FinancialTransaction}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController

@@ -27,11 +27,11 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
-import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController._
+import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.*
 
-import java.time._
+import java.time.*
 import scala.concurrent.Future
 
 class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues with TableDrivenPropertyChecks {

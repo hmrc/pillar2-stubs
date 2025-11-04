@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions
 
 import enumeratum.{Enum, EnumEntry, PlayJsonEnum}
-import play.api.libs.json._
+import play.api.libs.json.*
 
 import java.time.ZonedDateTime
 
