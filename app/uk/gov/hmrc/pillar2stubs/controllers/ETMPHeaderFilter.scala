@@ -18,17 +18,17 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import cats.Semigroup
 import cats.data.Validated
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.pillar2stubs.controllers.ETMPHeaderFilter.{mandatoryHeaders, validateHeaderExists}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-case class ETMPHeaderFilter @Inject() ()(implicit ec: ExecutionContext) extends ActionFilter[Request] {
+case class ETMPHeaderFilter @Inject() ()(using ec: ExecutionContext) extends ActionFilter[Request] {
 
-  implicit val booleanSemiGroup: Semigroup[Boolean] = (x: Boolean, _: Boolean) => x
+  given Semigroup[Boolean] = (x: Boolean, _: Boolean) => x
 
-  implicit val stringSemiGroup: Semigroup[String] = (x, y) => s"$x || $y"
+  given Semigroup[String] = (x, y) => s"$x || $y"
 
   override protected def filter[A](request: Request[A]): Future[Option[Result]] =
     mandatoryHeaders

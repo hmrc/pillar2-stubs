@@ -27,13 +27,13 @@ case class Subscription(
 
 object Subscription {
 
-  implicit lazy val reads: Reads[Subscription] = {
-    import play.api.libs.functional.syntax._
+  given Reads[Subscription] = {
+    import play.api.libs.functional.syntax.*
     (
       (__ \ "upeDetails" \ "safeId").read[String] and
         (__ \ "upeDetails" \ "organisationName").read[String] and
         (__ \ "primaryContactDetails" \ "name").readNullable[String] and
         (__ \ "upeCapturePhone").readNullable[String]
-    )(Subscription.apply _)
+    )(Subscription.apply)
   }
 }

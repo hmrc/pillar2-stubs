@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.Logging
-import play.api.libs.json._
+import play.api.libs.json.{JsError, JsSuccess, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionResponse.{successfulLiabilityResponse, successfulNilResponse}
@@ -34,8 +34,8 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class UKTRSubmitController @Inject() (
-  cc:             ControllerComponents,
-  authFilter:     AuthActionFilter
+  cc:         ControllerComponents,
+  authFilter: AuthActionFilter
 )(implicit clock: Clock)
     extends BackendController(cc)
     with Logging {

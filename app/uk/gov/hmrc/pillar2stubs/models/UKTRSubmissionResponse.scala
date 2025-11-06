@@ -24,7 +24,7 @@ import java.time.{Clock, LocalDateTime, ZonedDateTime}
 case class UKTRSubmissionResponse(success: UKTRSubmissionSuccess)
 
 object UKTRSubmissionResponse {
-  implicit val format: OFormat[UKTRSubmissionResponse] = Json.format[UKTRSubmissionResponse]
+  given OFormat[UKTRSubmissionResponse] = Json.format[UKTRSubmissionResponse]
 
   def successfulLiabilityResponse(implicit clock: Clock): JsObject =
     successfulNilResponse.deepMerge(Json.obj("success" -> Json.obj("chargeReference" -> "XTC01234123412")))
@@ -37,5 +37,5 @@ object UKTRSubmissionResponse {
 case class UKTRSubmissionSuccess(processingDate: LocalDateTime, formBundleNumber: String, chargeReference: Option[String])
 
 object UKTRSubmissionSuccess {
-  implicit val format: OFormat[UKTRSubmissionSuccess] = Json.format[UKTRSubmissionSuccess]
+  given OFormat[UKTRSubmissionSuccess] = Json.format[UKTRSubmissionSuccess]
 }

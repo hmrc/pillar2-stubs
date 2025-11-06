@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.Logging
-import play.api.libs.json._
+import play.api.libs.json.*
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.UKTRSubmissionResponse.{successfulLiabilityResponse, successfulNilResponse}
@@ -34,8 +34,8 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class UKTRAmendController @Inject() (
-  cc:             ControllerComponents,
-  authFilter:     AuthActionFilter
+  cc:         ControllerComponents,
+  authFilter: AuthActionFilter
 )(implicit clock: Clock)
     extends BackendController(cc)
     with Logging {
@@ -130,7 +130,13 @@ class UKTRAmendController @Inject() (
               case JsError(errors) =>
                 if (errors.exists(_._2.exists(_.messages.contains("liableEntities must not be empty")))) {
                   logger.error("Liable entities array is empty in liability submission")
-                  Future.successful(BadRequest(Json.toJson(HIPErrorWrapper(HoD, Json.obj("error" -> "liableEntities must not be empty")))))
+                  Future.successful(
+                    BadRequest(
+                      Json.toJson(HIPErrorWrapper(HoD, Json.obj("error" -> "liableEntities must not be empty")))(using
+                        summon[OFormat[HIPErrorWrapper[JsObject]]]
+                      )
+                    )
+                  )
                 } else {
                   logger.error(s"JSON validation failed with errors: $errors")
                   Future.successful(BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json")))))))

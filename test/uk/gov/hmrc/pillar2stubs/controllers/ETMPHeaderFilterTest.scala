@@ -17,13 +17,13 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import org.scalatest.funsuite.AnyFunSuite
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import play.api.mvc.{Request, Result}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.pillar2stubs.controllers.ETMPHeaderFilterTest.FutureAwait
 
-import scala.concurrent.ExecutionContext.Implicits._
+import scala.concurrent.ExecutionContext.Implicits.*
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 import scala.util.Random
@@ -38,7 +38,7 @@ class ETMPHeaderFilterTest extends AnyFunSuite {
 
   test("All headers are present") {
     val headers = ETMPHeaderFilter.mandatoryHeaders.map(_ -> Random.nextString(10))
-    val request = FakeRequest().withHeaders(headers: _*)
+    val request = FakeRequest().withHeaders(headers*)
     classUnderTest.runTest(request).await shouldEqual None
   }
 
@@ -53,7 +53,7 @@ class ETMPHeaderFilterTest extends AnyFunSuite {
         val headers = ETMPHeaderFilter.mandatoryHeaders
           .filterNot(str => combo.contains(str))
           .map(_ -> Random.nextString(10))
-        val request = FakeRequest().withHeaders(headers: _*)
+        val request = FakeRequest().withHeaders(headers*)
         val response: Future[Result] = classUnderTest
           .runTest(request)
           .map {

@@ -22,7 +22,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.GroupIds
 
@@ -54,9 +54,9 @@ class EnrolmentStoreProxyControllerSpec extends AnyFreeSpec with Matchers with G
     }
 
     "must return Ok response with no groupid" in {
-      val plrService = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
-      val request    = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
-      val result     = route(app, request).value
+      val plrService   = "HMRC-PILLAR2-ORG~PLRID~XMPLR0012345674"
+      val request      = FakeRequest(GET, routes.EnrolmentStoreProxyController.status(plrService).url).withHeaders(authHeader)
+      val result       = route(app, request).value
       val expectedJson =
         Json.parse("""{}""".stripMargin)
       status(result)        shouldBe OK

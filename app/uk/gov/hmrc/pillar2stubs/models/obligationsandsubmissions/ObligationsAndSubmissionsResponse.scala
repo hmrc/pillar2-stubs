@@ -29,7 +29,7 @@ object ObligationsAndSubmissionsResponse {
   def now:         ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
   def currentYear: Int           = now.getYear()
 
-  implicit val writes: Writes[ObligationsAndSubmissionsResponse] = Writes {
+  given Writes[ObligationsAndSubmissionsResponse] = Writes {
     case s: ObligationsAndSubmissionsSuccessResponse       => Json.obj("success" -> s.success)
     case e: ObligationsAndSubmissionsSimpleErrorResponse   => Json.obj("errors" -> e.error)
     case d: ObligationsAndSubmissionsDetailedErrorResponse => Json.obj("errors" -> d.errors)
@@ -39,7 +39,7 @@ object ObligationsAndSubmissionsResponse {
 case class ObligationsAndSubmissionsSuccessResponse(success: ObligationsAndSubmissionsSuccess) extends ObligationsAndSubmissionsResponse
 
 object ObligationsAndSubmissionsSuccessResponse {
-  implicit val format: OFormat[ObligationsAndSubmissionsSuccessResponse] = Json.format[ObligationsAndSubmissionsSuccessResponse]
+  given OFormat[ObligationsAndSubmissionsSuccessResponse] = Json.format[ObligationsAndSubmissionsSuccessResponse]
 
   // Default single accounting period with no submissions
   def apply(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
@@ -274,7 +274,7 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
 
-  //All obligations fulfilled and also received flag
+  // All obligations fulfilled and also received flag
   def withAllFulfilledAndReceived(): ObligationsAndSubmissionsSuccessResponse =
     ObligationsAndSubmissionsSuccessResponse(
       ObligationsAndSubmissionsSuccess(
@@ -327,7 +327,7 @@ object ObligationsAndSubmissionsSuccessResponse {
       )
     )
 
-  //single active accounting period (start date is no later than today and a due date not before today) with no submission
+  // single active accounting period (start date is no later than today and a due date not before today) with no submission
   def singleActiveAccountingPeriodWithNoSubmission(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
       processingDate = now,
@@ -350,7 +350,7 @@ object ObligationsAndSubmissionsSuccessResponse {
     )
   )
 
-  //two active accounting periods (start date is no later than today and a due date not before today) with no submissions
+  // two active accounting periods (start date is no later than today and a due date not before today) with no submissions
   def twoActiveAccountingPeriodsWithNoSubmissions(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
       processingDate = now,
@@ -387,7 +387,7 @@ object ObligationsAndSubmissionsSuccessResponse {
     )
   )
 
-  //three active accounting periods (start date is no later than today and a due date not before today) with UKTR and two no submission scenarios
+  // three active accounting periods (start date is no later than today and a due date not before today) with UKTR and two no submission scenarios
   def threeActiveAccountingPeriodsWithDifferentScenarios(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
       processingDate = now,
@@ -440,7 +440,7 @@ object ObligationsAndSubmissionsSuccessResponse {
     )
   )
 
-  //four active accounting periods (start date is no later than today and a due date not before today) with UKTR, BTN and no submission scenarios
+  // four active accounting periods (start date is no later than today and a due date not before today) with UKTR, BTN and no submission scenarios
   def fourActiveAccountingPeriodsWithDifferentScenarios(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
     ObligationsAndSubmissionsSuccess(
       processingDate = now,
@@ -704,7 +704,7 @@ object ObligationsAndSubmissionsSuccessResponse {
 case class ObligationsAndSubmissionsSuccess(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])
 
 object ObligationsAndSubmissionsSuccess {
-  implicit val format: OFormat[ObligationsAndSubmissionsSuccess] = Json.format[ObligationsAndSubmissionsSuccess]
+  given OFormat[ObligationsAndSubmissionsSuccess] = Json.format[ObligationsAndSubmissionsSuccess]
 }
 
 case class AccountingPeriodDetails(
@@ -716,13 +716,13 @@ case class AccountingPeriodDetails(
 )
 
 object AccountingPeriodDetails {
-  implicit val format: OFormat[AccountingPeriodDetails] = Json.format[AccountingPeriodDetails]
+  given OFormat[AccountingPeriodDetails] = Json.format[AccountingPeriodDetails]
 }
 
 case class ObligationsAndSubmissionsSimpleErrorResponse(error: ObligationsAndSubmissionsSimpleError) extends ObligationsAndSubmissionsResponse
 
 object ObligationsAndSubmissionsSimpleErrorResponse {
-  implicit val format: OFormat[ObligationsAndSubmissionsSimpleErrorResponse] = Json.format[ObligationsAndSubmissionsSimpleErrorResponse]
+  given OFormat[ObligationsAndSubmissionsSimpleErrorResponse] = Json.format[ObligationsAndSubmissionsSimpleErrorResponse]
 
   def InvalidJsonError(errorMessage: String = "Invalid JSON"): ObligationsAndSubmissionsSimpleErrorResponse =
     ObligationsAndSubmissionsSimpleErrorResponse(
@@ -746,13 +746,13 @@ object ObligationsAndSubmissionsSimpleErrorResponse {
 case class ObligationsAndSubmissionsSimpleError(code: String, message: String, logID: String)
 
 object ObligationsAndSubmissionsSimpleError {
-  implicit val format: OFormat[ObligationsAndSubmissionsSimpleError] = Json.format[ObligationsAndSubmissionsSimpleError]
+  given OFormat[ObligationsAndSubmissionsSimpleError] = Json.format[ObligationsAndSubmissionsSimpleError]
 }
 
 case class ObligationsAndSubmissionsDetailedErrorResponse(errors: ObligationsAndSubmissionsDetailedError) extends ObligationsAndSubmissionsResponse
 
 object ObligationsAndSubmissionsDetailedErrorResponse {
-  implicit val format: OFormat[ObligationsAndSubmissionsDetailedErrorResponse] = Json.format[ObligationsAndSubmissionsDetailedErrorResponse]
+  given OFormat[ObligationsAndSubmissionsDetailedErrorResponse] = Json.format[ObligationsAndSubmissionsDetailedErrorResponse]
 
   def apply(errorCode: (String, String)): ObligationsAndSubmissionsDetailedErrorResponse = ObligationsAndSubmissionsDetailedErrorResponse(
     ObligationsAndSubmissionsDetailedError(
@@ -774,7 +774,7 @@ object ObligationsAndSubmissionsDetailedErrorResponse {
 case class ObligationsAndSubmissionsDetailedError(processingDate: ZonedDateTime, code: String, text: String)
 
 object ObligationsAndSubmissionsDetailedError {
-  implicit val format: OFormat[ObligationsAndSubmissionsDetailedError] = Json.format[ObligationsAndSubmissionsDetailedError]
+  given OFormat[ObligationsAndSubmissionsDetailedError] = Json.format[ObligationsAndSubmissionsDetailedError]
 }
 
 object ObligationsAndSubmissionsErrorCodes {

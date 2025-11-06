@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.pillar2stubs.models.error
 
-import enumeratum._
-import play.api.libs.json._
+import enumeratum.*
+import play.api.libs.json.*
 
 case class HIPErrorWrapper[T](origin: Origin, response: T)
 
 object HIPErrorWrapper {
 
-  implicit def format[T: OFormat]: OFormat[HIPErrorWrapper[T]] = new OFormat[HIPErrorWrapper[T]] {
+  given [T: OFormat]: OFormat[HIPErrorWrapper[T]] = new OFormat[HIPErrorWrapper[T]] {
     override def reads(json: JsValue): JsResult[HIPErrorWrapper[T]] =
       for {
         origin   <- (json \ "origin").validate[Origin]
@@ -37,13 +37,13 @@ object HIPErrorWrapper {
 case class HIPFailure(failures: List[HIPError])
 
 object HIPFailure {
-  implicit val format: OFormat[HIPFailure] = Json.format
+  given OFormat[HIPFailure] = Json.format
 }
 
 case class HIPError(reason: String, `type`: String)
 
 object HIPError {
-  implicit val format: OFormat[HIPError] = Json.format
+  given OFormat[HIPError] = Json.format
 }
 
 sealed trait Origin extends EnumEntry

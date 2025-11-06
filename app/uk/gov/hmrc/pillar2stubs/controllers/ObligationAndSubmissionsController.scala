@@ -16,16 +16,16 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
+import org.apache.pekko.util.ByteString
 import play.api.Logging
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents, ResponseHeader, Result}
-import org.apache.pekko.util.ByteString
+import play.api.mvc.*
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.{HIP, HoD}
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes._
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes.*
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.LocalDate

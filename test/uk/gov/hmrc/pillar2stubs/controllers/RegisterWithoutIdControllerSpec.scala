@@ -20,11 +20,11 @@ import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.Status._
+import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{POST, contentAsString, defaultAwaitTimeout, route, status}
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 
 import scala.concurrent.Future
@@ -34,12 +34,12 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
   private val authHeader: (String, String) = HeaderNames.authorisation -> "token"
 
   private val nameAndErrorStatus: Seq[(String, Int)] = Seq(
-    ("regNoIDInternalError", INTERNAL_SERVER_ERROR),
-    ("regNoIDInvalidRequest", BAD_REQUEST),
-    ("regNoIDServerError", SERVICE_UNAVAILABLE),
-    ("regNoIDNotProcessed", SERVICE_UNAVAILABLE),
-    ("regNoIDRecordNotFound", NOT_FOUND),
-    ("regNoIDInvalidSubmission", FORBIDDEN)
+    ("regNoIDInternalError", Status.INTERNAL_SERVER_ERROR),
+    ("regNoIDInvalidRequest", Status.BAD_REQUEST),
+    ("regNoIDServerError", Status.SERVICE_UNAVAILABLE),
+    ("regNoIDNotProcessed", Status.SERVICE_UNAVAILABLE),
+    ("regNoIDRecordNotFound", Status.NOT_FOUND),
+    ("regNoIDInvalidSubmission", Status.FORBIDDEN)
   )
 
   private val nameSafeId: Seq[(String, String)] = Seq(
@@ -56,7 +56,7 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
       val request = FakeRequest(POST, routes.RegisterWithoutIdController.registerWithoutId.url).withBody(json)
       val result  = route(app, request).value
 
-      status(result) shouldBe FORBIDDEN
+      status(result) shouldBe Status.FORBIDDEN
     }
 
     for ((name, errorStatus) <- nameAndErrorStatus)
@@ -92,7 +92,7 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
         val request = FakeRequest(POST, routes.RegisterWithoutIdController.registerWithoutId.url).withBody(json).withHeaders(authHeader)
         val result: Future[Result] = route(app, request).value
 
-        status(result)        shouldBe OK
+        status(result)        shouldBe Status.OK
         contentAsString(result) should include(safeId)
       }
 
@@ -110,7 +110,26 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
       val request = FakeRequest(POST, routes.RegisterWithoutIdController.registerWithoutId.url).withBody(json).withHeaders(authHeader)
       val result  = route(app, request).value
 
-      status(result) shouldBe BAD_REQUEST
+      status(result) shouldBe Status.BAD_REQUEST
+    }
+
+    "must return Ok response with generated SafeId for an unknown organisation name" in {
+      val jsonPayload: String = s"""
+                                   |{
+                                   |    "regime": "PLR",
+                                   |       "organisation": {
+                                   |          "organisationName": "UnknownOrg"
+                                   |       }
+                                   |
+                                   |}""".stripMargin
+      val json: JsValue = Json.parse(jsonPayload)
+
+      val request = FakeRequest(POST, routes.RegisterWithoutIdController.registerWithoutId.url).withBody(json).withHeaders(authHeader)
+      val result: Future[Result] = route(app, request).value
+
+      status(result)        shouldBe Status.OK
+      contentAsString(result) should include("XE")
+      contentAsString(result) should include("safeId")
     }
 
   }

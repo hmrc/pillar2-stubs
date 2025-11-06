@@ -22,7 +22,7 @@ import org.scalatest.{Inspectors, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 
 class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues with Inspectors {
@@ -554,7 +554,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       val authHeader: (String, String) = HeaderNames.authorisation -> "token"
 
       "must return OK response with valid data when subscription exists" in {
-        val json: JsValue = Json.parse((""" {
+        val json: JsValue = Json.parse(""" {
                                                        |          "upeDetails": {
                                                        |            "plrReference": "XMPLR0012345678",
                                                        |            "customerIdentification1": "SA7743248",
@@ -594,7 +594,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                                        |            "endDate": "2023-04-05"
                                                        |          }
                                                        |        }
-                                                       |""".stripMargin))
+                                                       |""".stripMargin)
         val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
         val result  = route(app, request).value
 
@@ -602,7 +602,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       }
 
       "must return BAD_REQUEST response for invalid requests" in {
-        val json: JsValue = Json.parse((""" {
+        val json: JsValue = Json.parse(""" {
                                           |          "upeDetails": {
                                           |            "plrReference": "XMPLR0012345678",
                                           |            "customerIdentification1": "SA7743248",
@@ -642,7 +642,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "endDate": "2023-04-05"
                                           |          }
                                           |        }
-                                          |""".stripMargin))
+                                          |""".stripMargin)
         val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
         val result  = route(app, request).value
 
@@ -650,7 +650,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       }
 
       "must return CONFLICT response when subscription does not exist" in {
-        val json: JsValue = Json.parse((""" {
+        val json: JsValue = Json.parse(""" {
                                           |          "upeDetails": {
                                           |            "plrReference": "XMPLR0012345678",
                                           |            "customerIdentification1": "SA7743248",
@@ -690,7 +690,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "endDate": "2023-04-05"
                                           |          }
                                           |        }
-                                          |""".stripMargin))
+                                          |""".stripMargin)
         val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
         val result  = route(app, request).value
 
@@ -698,7 +698,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       }
 
       "must return UNPROCESSABLE_ENTITY response for unprocessable requests" in {
-        val json: JsValue = Json.parse((""" {
+        val json: JsValue = Json.parse(""" {
                                           |          "upeDetails": {
                                           |            "plrReference": "XMPLR0012345678",
                                           |            "customerIdentification1": "SA7743248",
@@ -738,7 +738,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "endDate": "2023-04-05"
                                           |          }
                                           |        }
-                                          |""".stripMargin))
+                                          |""".stripMargin)
         val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
         val result  = route(app, request).value
 
@@ -746,7 +746,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       }
 
       "must return INTERNAL_SERVER_ERROR response when an unexpected error occurs" in {
-        val json: JsValue = Json.parse((""" {
+        val json: JsValue = Json.parse(""" {
                                           |          "upeDetails": {
                                           |            "plrReference": "XMPLR0012345678",
                                           |            "customerIdentification1": "SA7743248",
@@ -786,7 +786,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "endDate": "2023-04-05"
                                           |          }
                                           |        }
-                                          |""".stripMargin))
+                                          |""".stripMargin)
         val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
 
         val result = route(app, request).value
@@ -796,7 +796,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
       "must return SERVICE_UNAVAILABLE response when the service is down" in {
 
-        val json: JsValue = Json.parse((""" {
+        val json: JsValue = Json.parse(""" {
                                           |          "upeDetails": {
                                           |            "plrReference": "XMPLR0012345678",
                                           |            "customerIdentification1": "SA7743248",
@@ -836,7 +836,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
                                           |            "endDate": "2023-04-05"
                                           |          }
                                           |        }
-                                          |""".stripMargin))
+                                          |""".stripMargin)
         val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
 
         val result = route(app, request).value

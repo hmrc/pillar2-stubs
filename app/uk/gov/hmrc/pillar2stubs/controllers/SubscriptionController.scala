@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.Logging
-import play.api.libs.json._
+import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSuccessResponse
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
@@ -88,9 +88,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Conflict(resourceAsString("/resources/error/subscription/Conflict.json").map(replacePillar2Id(_, "XMPLR0009999999")).get)
           case (_, _, _) =>
             Created(resourceAsString("/resources/subscription/SuccessResponse.json").map(replacePillar2Id(_, "XMPLR0012345674")).get)
-          case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
         }
-      case _ => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
+      case None => BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
     }
   }
 

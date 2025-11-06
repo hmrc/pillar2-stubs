@@ -18,7 +18,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController._
+import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.*
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.{FinancialDataResponse, FinancialItem, FinancialTransaction}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -68,7 +68,7 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         // Payment overdue, no Return, BTN
         case "XEPLR2000000111" => Ok(paymentOverdueNoInterest(idNumber, clock))
         // Payment overdue w/ interest, no Return, BTN
-        case "XEPLR2000000112" => Ok(paymentOverdueWithInterest(idNumber, clock))
+        case "XEPLR2000000112"                                    => Ok(paymentOverdueWithInterest(idNumber, clock))
         case v @ yearsAndTransactionPattern(numberOfTransactions) =>
           Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
         case _ => Ok(Json.parse(successfulResponse(idNumber)))

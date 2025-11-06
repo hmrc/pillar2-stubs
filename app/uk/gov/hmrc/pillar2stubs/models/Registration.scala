@@ -16,22 +16,22 @@
 
 package uk.gov.hmrc.pillar2stubs.models
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class NoIdOrganisation(organisationName: String)
 
 object NoIdOrganisation {
-  implicit val reads: Reads[NoIdOrganisation] = Json.reads[NoIdOrganisation]
+  given Reads[NoIdOrganisation] = Json.reads[NoIdOrganisation]
 }
 
 case class Registration(regime: String, organisation: NoIdOrganisation)
 
 object Registration {
-  implicit lazy val reads: Reads[Registration] = {
-    import play.api.libs.functional.syntax._
+  given Reads[Registration] = {
+    import play.api.libs.functional.syntax.*
     (
       (__ \ "regime").read[String] and
         (__ \ "organisation").read[NoIdOrganisation]
-    )(Registration.apply _)
+    )(Registration.apply)
   }
 }

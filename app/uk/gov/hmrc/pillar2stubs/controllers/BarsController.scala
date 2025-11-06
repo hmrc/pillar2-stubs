@@ -19,7 +19,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models._
+import uk.gov.hmrc.pillar2stubs.models.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.Inject
@@ -38,7 +38,7 @@ class BarsController @Inject() (cc: ControllerComponents, authFilter: AuthAction
     (value.account.sortCode, value.account.accountNumber) match {
       case ("206705", "86473611") =>
         val businessAccountName = "Epic Adventure Inc"
-        val matchedName =
+        val matchedName         =
           if (businessAccountName == value.business.companyName) NameMatches.Yes
           else if (businessAccountName.contains(value.business.companyName)) NameMatches.Partial
           else NameMatches.No

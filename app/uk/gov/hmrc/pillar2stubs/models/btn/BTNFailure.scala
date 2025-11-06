@@ -23,5 +23,5 @@ import java.time.ZonedDateTime
 case class BTNFailure(processingDate: ZonedDateTime, code: String, text: String)
 
 object BTNFailure {
-  implicit val format: OFormat[BTNFailure] = Json.format[BTNFailure]
+  given OFormat[BTNFailure] = Json.format[BTNFailure]
 }

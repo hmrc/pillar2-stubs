@@ -18,12 +18,11 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 
 class TaxEnrolmentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
@@ -44,7 +43,7 @@ class TaxEnrolmentControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         val request = FakeRequest(POST, routes.TaxEnrolmentController.allocate(badGroupId, "somePlr2Id").url).withBody(json).withHeaders(authHeader)
         val result  = route(app, request).value
         status(result) shouldBe OK
-        contentAsString(result) mustEqual jsonResponse
+        contentAsString(result) shouldEqual jsonResponse
       }
 
       "must return CREATED response for successful tax enrolment" in {
@@ -68,7 +67,7 @@ class TaxEnrolmentControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         val request = FakeRequest(DELETE, routes.TaxEnrolmentController.revoke(badGroupId, "somePlr2Id").url).withBody(json).withHeaders(authHeader)
         val result  = route(app, request).value
         status(result) shouldBe OK
-        contentAsString(result) mustEqual jsonResponse
+        contentAsString(result) shouldEqual jsonResponse
       }
 
       "must return NO_CONTENT response for successful tax de-enrolment" in {

@@ -23,7 +23,7 @@ import uk.gov.hmrc.http.HeaderNames
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthActionFilter @Inject() ()(implicit ec: ExecutionContext) extends ActionFilter[Request] {
+class AuthActionFilter @Inject() ()(using ec: ExecutionContext) extends ActionFilter[Request] {
 
   override protected def filter[A](request: Request[A]): Future[Option[Result]] =
     request.headers.get(HeaderNames.authorisation) match {

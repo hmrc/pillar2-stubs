@@ -24,13 +24,13 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.now
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.SubmissionType.{GIR, UKTR_CREATE}
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 
 import java.time.LocalDate
 import scala.util.Random
@@ -49,7 +49,7 @@ class ObligationsAndSubmissionsControllerSpec
     val fromDate = "2024-01-31"
     val toDate   = "2025-01-31"
     FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData(fromDate, toDate).url)
-      .withHeaders(Headers(validHeaders: _*))
+      .withHeaders(Headers(validHeaders*))
       .withHeaders("X-Pillar2-Id" -> pillar2Id)
   }
 
@@ -66,12 +66,11 @@ class ObligationsAndSubmissionsControllerSpec
 
     val invalidRequest =
       FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData("2024-01-31", "2023-01-31").url)
-        .withHeaders(Headers(validHeaders: _*))
+        .withHeaders(Headers(validHeaders*))
         .withHeaders("X-Pillar2-Id" -> pillar2Id)
 
     val result = route(app, invalidRequest).value
 
-    // Should return 422 for invalid date range, not 200 with multiple accounting periods
     status(result) shouldEqual 422
     contentAsJson(result).validate[ObligationsAndSubmissionsDetailedErrorResponse].asEither.isRight shouldBe true
     contentAsJson(result).as[ObligationsAndSubmissionsDetailedErrorResponse].errors.code shouldEqual "001"
@@ -88,19 +87,15 @@ class ObligationsAndSubmissionsControllerSpec
     val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
     response.success.accountingPeriodDetails.size shouldEqual 4
 
-    // Check first period (most recent)
     response.success.accountingPeriodDetails.head.startDate.getYear shouldEqual currentYear
     response.success.accountingPeriodDetails.head.obligations.head.status shouldEqual ObligationStatus.Open
 
-    // Check second period
     response.success.accountingPeriodDetails(1).startDate.getYear shouldEqual currentYear - 1
     response.success.accountingPeriodDetails(1).underEnquiry shouldEqual true
 
-    // Check third period
     response.success.accountingPeriodDetails(2).startDate.getYear shouldEqual currentYear - 2
     response.success.accountingPeriodDetails(2).obligations.head.obligationType shouldEqual ObligationType.GIR
 
-    // Check fourth period (earliest)
     response.success.accountingPeriodDetails(3).startDate.getYear shouldEqual currentYear - 3
   }
 
@@ -183,13 +178,11 @@ class ObligationsAndSubmissionsControllerSpec
     val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
     response.success.accountingPeriodDetails.size should be > 1
 
-    // Check that at least one obligation has submissions
     val hasSubmissions = response.success.accountingPeriodDetails.exists { period =>
       period.obligations.exists(_.submissions.nonEmpty)
     }
     hasSubmissions shouldBe true
 
-    // Check first period has a fulfilled obligation with a submission
     val firstPeriod = response.success.accountingPeriodDetails.head
     firstPeriod.obligations.head.status shouldEqual ObligationStatus.Fulfilled
     firstPeriod.obligations.head.submissions.nonEmpty shouldBe true
@@ -216,7 +209,7 @@ class ObligationsAndSubmissionsControllerSpec
     implicit val pillar2Id: String = "XEPLR4220000000"
     val invalidRequest =
       FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData("2024-01-31", "2023-01-31").url)
-        .withHeaders(Headers(validHeaders: _*))
+        .withHeaders(Headers(validHeaders*))
         .withHeaders("X-Pillar2-Id" -> pillar2Id)
 
     val result = route(app, invalidRequest).value
@@ -368,10 +361,9 @@ class ObligationsAndSubmissionsControllerSpec
     ) { (id, expectedResponse) =>
       val result = route(app, request(id)).value
 
-      status(result) shouldEqual 200
-      contentAsJson(result) shouldBe Json.toJson(expectedResponse)
+      status(result).shouldEqual(200)
+      contentAsJson(result).shouldBe(Json.toJson(expectedResponse))
     }
-
   }
 
 }

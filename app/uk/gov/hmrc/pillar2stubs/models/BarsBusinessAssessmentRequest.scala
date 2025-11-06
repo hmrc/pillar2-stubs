@@ -30,12 +30,12 @@ final case class Account(
 final case class Business(companyName: String)
 
 object Account {
-  implicit val format: OFormat[Account] = Json.format[Account]
+  given OFormat[Account] = Json.format[Account]
 }
 
 object Business {
-  implicit val format: OFormat[Business] = Json.format[Business]
+  given OFormat[Business] = Json.format[Business]
 }
 object BarsBusinessAssessmentRequest {
-  implicit val format: OFormat[BarsBusinessAssessmentRequest] = Json.format[BarsBusinessAssessmentRequest]
+  given OFormat[BarsBusinessAssessmentRequest] = Json.format[BarsBusinessAssessmentRequest]
 }
