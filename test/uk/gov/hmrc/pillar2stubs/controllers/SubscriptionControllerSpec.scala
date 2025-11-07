@@ -22,7 +22,7 @@ import org.scalatest.{Inspectors, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.*
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 
 class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues with Inspectors {
@@ -542,7 +542,14 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
           (contentAsJson(result) \ "success" \ "accountStatus" \ "inactive").as[Boolean] shouldBe true
           status(result)                                                                 shouldBe OK
         }
+      }
 
+      "must return a OK with no secondary contact details" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR2000000200").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        (contentAsJson(result) \ "success" \ "secondaryContact").asOpt[JsValue] should not be defined
+        status(result)                                                        shouldBe OK
       }
 
     }
