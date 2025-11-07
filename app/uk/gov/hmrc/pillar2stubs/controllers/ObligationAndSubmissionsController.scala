@@ -41,7 +41,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
       val accountingPeriods = ObligationsAndSubmissionsRequest(fromDate = LocalDate.parse(fromDate), toDate = LocalDate.parse(toDate))
 
       // First check if accounting period is valid, return error if not valid
-      if (!accountingPeriods.accountingPeriodValid) {
+      if !accountingPeriods.accountingPeriodValid then {
         UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse.invalidDateRange))
       } else {
         // Continue with other validations and responses only if accounting period is valid

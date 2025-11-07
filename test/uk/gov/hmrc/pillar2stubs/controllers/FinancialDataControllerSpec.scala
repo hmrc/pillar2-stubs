@@ -161,7 +161,7 @@ class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOn
       val result:  Future[Result]                      = route(app, request).value
 
       status(result) mustBe OK
-      if (interestDue) {
+      if interestDue then {
         contentAsJson(result) mustBe paymentOverdueWithInterest(id, fixedClock)
       } else {
         contentAsJson(result) mustBe paymentOverdueNoInterest(id, fixedClock)

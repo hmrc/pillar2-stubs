@@ -88,7 +88,7 @@ class UKTRAmendController @Inject() (
           case Success(json) =>
             json.validate[UKTRSubmission] match {
               case JsSuccess(submission, _) =>
-                if (!submission.accountingPeriodValid) {
+                if !submission.accountingPeriodValid then {
                   logger.error("Invalid date range: accountingPeriodTo is before accountingPeriodFrom")
                   Future.successful(
                     UnprocessableEntity(
@@ -104,7 +104,7 @@ class UKTRAmendController @Inject() (
                 } else {
                   submission match {
                     case d @ UKTRSubmissionData(_, _, _, _, _) =>
-                      if (d.liabilities.liableEntities.isEmpty) {
+                      if d.liabilities.liableEntities.isEmpty then {
                         logger.error("Liable entities array is empty in liability submission")
                         Future.successful(
                           UnprocessableEntity(
@@ -128,7 +128,7 @@ class UKTRAmendController @Inject() (
                 }
 
               case JsError(errors) =>
-                if (errors.exists(_._2.exists(_.messages.contains("liableEntities must not be empty")))) {
+                if errors.exists(_._2.exists(_.messages.contains("liableEntities must not be empty"))) then {
                   logger.error("Liable entities array is empty in liability submission")
                   Future.successful(
                     BadRequest(

@@ -56,8 +56,7 @@ case class AmendSubscriptionSuccess(
 object AmendSubscriptionSuccess {
 
   given Reads[AmendSubscriptionSuccess] = Reads { js =>
-    if (js.asInstanceOf[JsObject].value.contains("replaceFilingMember"))
-      JsError("AdditionalProperty")
+    if js.asInstanceOf[JsObject].value.contains("replaceFilingMember") then JsError("AdditionalProperty")
     else JsSuccess(js)
   }.andThen(Json.reads[AmendSubscriptionSuccess])
 

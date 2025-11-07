@@ -39,8 +39,8 @@ class BarsController @Inject() (cc: ControllerComponents, authFilter: AuthAction
       case ("206705", "86473611") =>
         val businessAccountName = "Epic Adventure Inc"
         val matchedName         =
-          if (businessAccountName == value.business.companyName) NameMatches.Yes
-          else if (businessAccountName.contains(value.business.companyName)) NameMatches.Partial
+          if businessAccountName == value.business.companyName then NameMatches.Yes
+          else if businessAccountName.contains(value.business.companyName) then NameMatches.Partial
           else NameMatches.No
 
         Ok(Json.toJson(barsAccountResponse(accountName = Some(businessAccountName), nameMatches = matchedName)))
