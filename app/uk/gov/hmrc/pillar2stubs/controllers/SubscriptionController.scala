@@ -17,7 +17,7 @@
 package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.Logging
-import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
+import play.api.libs.json.*
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSuccessResponse
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
@@ -148,6 +148,9 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
         // Payment overdue w/ interest, no Return, BTN
         case ref @ "XEPLR2000000112" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
 
+        // No secondary contact
+        case ref @ "XEPLR2000000200" => Ok(removeSecondaryContact(readSuccessResponseWithRef(ref)))
+
         case _ =>
           Ok(
             readSuccessResponseWithRef("plrReference")
@@ -206,6 +209,9 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     response.replace("2024-01-31", registrationDate)
 
   private def makeInactive(response: String): String = response.replace("\"inactive\": false", "\"inactive\": true")
+
+  private def removeSecondaryContact(response: String): String =
+    (__ \ "success" \ "secondaryContactDetails").prune(Json.parse(response).as[JsObject]).get.toString
 }
 
 object SubscriptionController {

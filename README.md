@@ -462,6 +462,7 @@ To trigger the unhappy paths, ensure you provide a valid request body. The below
 | XEPLR2000000110 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
 | XEPLR2000000111 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
 | XEPLR2000000112 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
+| XEPLR2000000200 | 200         | OK                      | Returns read success response without a secondary contact.                                            | 
 | XEPLR__________ | 200         | OK                      | Returns read success response .                                                                       |
 
 #### Happy Path
