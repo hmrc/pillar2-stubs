@@ -1093,7 +1093,7 @@ object FinancialDataController {
     // Transactions distribution: ensure at least 1 Payment, then split remaining between Repayments and Interest
     val paymentsCount:         Int = math.max(1, math.min(numberOfTransactions, numberOfTransactions / 3)) // at least 1 Payment
     val remainingTransactions: Int = numberOfTransactions - paymentsCount
-    val repaymentsCount: Int = if (remainingTransactions > 0) math.max(1, remainingTransactions / 2) else 0 // at least one Repayment if possible
+    val repaymentsCount: Int = if remainingTransactions > 0 then math.max(1, remainingTransactions / 2) else 0 // at least one Repayment if possible
     val interestRepaymentsCount: Int = math.max(0, numberOfTransactions - paymentsCount - repaymentsCount) // Remaining transactions are Interest
 
     val payments: Seq[FinancialTransaction] = (1 to paymentsCount).map(_ =>

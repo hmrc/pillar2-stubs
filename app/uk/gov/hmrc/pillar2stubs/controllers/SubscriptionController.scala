@@ -102,7 +102,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
-          if (count <= 3) {
+          if count <= 3 then {
             UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
           } else {
             Ok(readSuccessResponseWithRef(ref))
@@ -112,7 +112,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
           pollCounters(plrReference) = count
           logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
-          if (count <= 8) {
+          if count <= 8 then {
             UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
           } else {
             Ok(readSuccessResponseWithRef(ref))

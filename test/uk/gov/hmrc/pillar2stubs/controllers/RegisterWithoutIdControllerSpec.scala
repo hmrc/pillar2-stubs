@@ -59,7 +59,7 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
       status(result) shouldBe Status.FORBIDDEN
     }
 
-    for ((name, errorStatus) <- nameAndErrorStatus)
+    for (name, errorStatus) <- nameAndErrorStatus do
       s"must return $errorStatus for invalid registerWithoutIDRequest with organisation name as $name" in {
         val jsonPayload: String = s"""
                                      |{
@@ -77,7 +77,7 @@ class RegisterWithoutIdControllerSpec extends AnyFreeSpec with Matchers with Gui
         status(result) shouldBe errorStatus
       }
 
-    for ((name, safeId) <- nameSafeId)
+    for (name, safeId) <- nameSafeId do
       s"must return Ok response and valid registerWithoutIDRequest for an $name" in {
         val jsonPayload: String = s"""
                                    |{

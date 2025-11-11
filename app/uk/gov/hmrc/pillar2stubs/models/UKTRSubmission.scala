@@ -57,7 +57,7 @@ object UKTRSubmissionNilReturn {
 
 object UKTRSubmission {
   given Reads[UKTRSubmission] = (json: JsValue) =>
-    if ((json \ "liabilities" \ "returnType").isEmpty) {
+    if (json \ "liabilities" \ "returnType").isEmpty then {
       json.validate[UKTRSubmissionData]
     } else {
       json.validate[UKTRSubmissionNilReturn]

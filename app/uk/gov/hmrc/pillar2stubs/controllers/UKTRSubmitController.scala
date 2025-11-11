@@ -49,7 +49,7 @@ class UKTRSubmitController @Inject() (
       case Success(json) =>
         json.validate[UKTRSubmission] match {
           case JsSuccess(submission, _) =>
-            if (!submission.accountingPeriodValid) {
+            if !submission.accountingPeriodValid then {
               logger.error("Invalid date range: accountingPeriodTo is before accountingPeriodFrom")
               Future.successful(
                 UnprocessableEntity(
@@ -65,7 +65,7 @@ class UKTRSubmitController @Inject() (
             } else {
               submission match {
                 case d @ UKTRSubmissionData(_, _, _, _, _) =>
-                  if (d.liabilities.liableEntities.isEmpty) {
+                  if d.liabilities.liableEntities.isEmpty then {
                     logger.error("Liable entities array is empty in liability submission")
                     Future.successful(
                       UnprocessableEntity(
