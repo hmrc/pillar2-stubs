@@ -27,4 +27,3 @@ case class AccountActivityRequest(fromDate: LocalDate, toDate: LocalDate) {
 object AccountActivityRequest {
   given OFormat[AccountActivityRequest] = Json.format[AccountActivityRequest]
 }
-

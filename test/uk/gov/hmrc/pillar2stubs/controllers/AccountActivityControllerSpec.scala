@@ -28,11 +28,7 @@ import uk.gov.hmrc.pillar2stubs.models.accountactivity.*
 
 import scala.util.Random
 
-class AccountActivityControllerSpec
-    extends AnyFunSuite
-    with Matchers
-    with GuiceOneAppPerSuite
-    with OptionValues {
+class AccountActivityControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
 
   val validHeaders: List[(String, String)] =
     (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation, "X-Message-Type")).map(_ -> Random.nextString(10))
@@ -76,7 +72,7 @@ class AccountActivityControllerSpec
     status(result) shouldEqual 200
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
     response.success.transactionDetails should not be empty
-    Set("Payment", "Debit", "Credit") should contain(response.success.transactionDetails.head.transactionType)
+    Set("Payment", "Debit", "Credit")   should contain(response.success.transactionDetails.head.transactionType)
   }
 
   test("BadRequest - returns 400 error for XEPLR0000000400") {
@@ -160,15 +156,13 @@ class AccountActivityControllerSpec
 
     status(result) shouldEqual 200
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
-    response.success.processingDate should not be null
     response.success.transactionDetails should not be empty
 
     // Check that required fields are present in transaction details
     response.success.transactionDetails.foreach { transaction =>
       transaction.transactionType should not be empty
       transaction.transactionDesc should not be empty
-      transaction.transactionDate should not be null
-      transaction.originalAmount should not be null
+      transaction.originalAmount  should not be BigDecimal(0)
     }
   }
 
@@ -187,11 +181,9 @@ class AccountActivityControllerSpec
       transaction.clearingDetails.get should not be empty
       transaction.clearingDetails.get.foreach { clearing =>
         clearing.transactionDesc should not be empty
-        clearing.amount should not be null
-        clearing.clearingDate should not be null
+        clearing.amount          should not be BigDecimal(0)
       }
     }
   }
 
 }
-

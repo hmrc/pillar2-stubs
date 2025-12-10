@@ -63,14 +63,17 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
           }
         }
       }.recover { case e: Throwable =>
-        BadRequest(Json.toJson(AccountActivityErrorResponse(
-          AccountActivityError(
-            code = "400",
-            message = s"Invalid date format: ${e.getMessage}",
-            logID = "1D43D17801EBCC4C4EAB8974C05448D9"
+        BadRequest(
+          Json.toJson(
+            AccountActivityErrorResponse(
+              AccountActivityError(
+                code = "400",
+                message = s"Invalid date format: ${e.getMessage}",
+                logID = "1D43D17801EBCC4C4EAB8974C05448D9"
+              )
+            )
           )
-        )))
+        )
       }.get
     }
 }
-

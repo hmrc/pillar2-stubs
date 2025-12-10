@@ -27,9 +27,9 @@ object AccountActivityResponse {
   def now: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
 
   given Writes[AccountActivityResponse] = Writes {
-    case s: AccountActivitySuccessResponse      => Json.obj("success" -> s.success)
-    case e: AccountActivityErrorResponse        => Json.obj("error" -> e.error)
-    case d: AccountActivity422ErrorResponse     => Json.obj("errors" -> d.errors)
+    case s: AccountActivitySuccessResponse  => Json.obj("success" -> s.success)
+    case e: AccountActivityErrorResponse    => Json.obj("error" -> e.error)
+    case d: AccountActivity422ErrorResponse => Json.obj("errors" -> d.errors)
   }
 }
 
@@ -50,40 +50,42 @@ object AccountActivitySuccessResponse {
           originalAmount = 10000,
           outstandingAmount = Some(1000),
           clearedAmount = Some(9000),
-          clearingDetails = Some(Seq(
-            ClearingDetail(
-              transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
-              amount = 2000,
-              clearingDate = LocalDate.of(2025, 10, 15),
-              chargeRefNo = Some("X123456789012"),
-              dueDate = Some(LocalDate.of(2025, 12, 31)),
-              clearingReason = Some("Allocated to Charge")
-            ),
-            ClearingDetail(
-              transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
-              amount = 2000,
-              clearingDate = LocalDate.of(2025, 10, 15),
-              chargeRefNo = Some("X123456789012"),
-              dueDate = Some(LocalDate.of(2025, 12, 31)),
-              clearingReason = Some("Allocated to Charge")
-            ),
-            ClearingDetail(
-              transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT UTPR",
-              amount = 2000,
-              clearingDate = LocalDate.of(2025, 10, 15),
-              chargeRefNo = Some("X123456789012"),
-              dueDate = Some(LocalDate.of(2025, 12, 31)),
-              clearingReason = Some("Allocated to Charge")
-            ),
-            ClearingDetail(
-              transactionDesc = "Pillar 2 Discovery Assessment Pillar 2 DTT",
-              amount = 3000,
-              clearingDate = LocalDate.of(2025, 10, 15),
-              chargeRefNo = Some("X123456789012"),
-              dueDate = Some(LocalDate.of(2025, 12, 31)),
-              clearingReason = Some("Allocated to Charge")
+          clearingDetails = Some(
+            Seq(
+              ClearingDetail(
+                transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+                amount = 2000,
+                clearingDate = LocalDate.of(2025, 10, 15),
+                chargeRefNo = Some("X123456789012"),
+                dueDate = Some(LocalDate.of(2025, 12, 31)),
+                clearingReason = Some("Allocated to Charge")
+              ),
+              ClearingDetail(
+                transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+                amount = 2000,
+                clearingDate = LocalDate.of(2025, 10, 15),
+                chargeRefNo = Some("X123456789012"),
+                dueDate = Some(LocalDate.of(2025, 12, 31)),
+                clearingReason = Some("Allocated to Charge")
+              ),
+              ClearingDetail(
+                transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT UTPR",
+                amount = 2000,
+                clearingDate = LocalDate.of(2025, 10, 15),
+                chargeRefNo = Some("X123456789012"),
+                dueDate = Some(LocalDate.of(2025, 12, 31)),
+                clearingReason = Some("Allocated to Charge")
+              ),
+              ClearingDetail(
+                transactionDesc = "Pillar 2 Discovery Assessment Pillar 2 DTT",
+                amount = 3000,
+                clearingDate = LocalDate.of(2025, 10, 15),
+                chargeRefNo = Some("X123456789012"),
+                dueDate = Some(LocalDate.of(2025, 12, 31)),
+                clearingReason = Some("Allocated to Charge")
+              )
             )
-          ))
+          )
         ),
         // Debit transactions
         AccountActivityTransactionDetail(
@@ -96,14 +98,16 @@ object AccountActivitySuccessResponse {
           dueDate = Some(LocalDate.of(2025, 12, 31)),
           originalAmount = 2000,
           clearedAmount = Some(2000),
-          clearingDetails = Some(Seq(
-            ClearingDetail(
-              transactionDesc = "On Account Pillar 2 (Payment on Account)",
-              amount = 2000,
-              clearingDate = LocalDate.of(2025, 10, 15),
-              clearingReason = Some("Cleared by Payment")
+          clearingDetails = Some(
+            Seq(
+              ClearingDetail(
+                transactionDesc = "On Account Pillar 2 (Payment on Account)",
+                amount = 2000,
+                clearingDate = LocalDate.of(2025, 10, 15),
+                clearingReason = Some("Cleared by Payment")
+              )
             )
-          ))
+          )
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
@@ -115,14 +119,16 @@ object AccountActivitySuccessResponse {
           dueDate = Some(LocalDate.of(2025, 12, 31)),
           originalAmount = 2000,
           clearedAmount = Some(2000),
-          clearingDetails = Some(Seq(
-            ClearingDetail(
-              transactionDesc = "On Account Pillar 2 (Payment on Account)",
-              amount = 2000,
-              clearingDate = LocalDate.of(2025, 10, 15),
-              clearingReason = Some("Cleared by Payment")
+          clearingDetails = Some(
+            Seq(
+              ClearingDetail(
+                transactionDesc = "On Account Pillar 2 (Payment on Account)",
+                amount = 2000,
+                clearingDate = LocalDate.of(2025, 10, 15),
+                clearingReason = Some("Cleared by Payment")
+              )
             )
-          ))
+          )
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
@@ -134,14 +140,16 @@ object AccountActivitySuccessResponse {
           dueDate = Some(LocalDate.of(2025, 12, 31)),
           originalAmount = 2000,
           clearedAmount = Some(2000),
-          clearingDetails = Some(Seq(
-            ClearingDetail(
-              transactionDesc = "On Account Pillar 2 (Payment on Account)",
-              amount = 2000,
-              clearingDate = LocalDate.of(2025, 10, 15),
-              clearingReason = Some("Cleared by Payment")
+          clearingDetails = Some(
+            Seq(
+              ClearingDetail(
+                transactionDesc = "On Account Pillar 2 (Payment on Account)",
+                amount = 2000,
+                clearingDate = LocalDate.of(2025, 10, 15),
+                clearingReason = Some("Cleared by Payment")
+              )
             )
-          ))
+          )
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
@@ -153,14 +161,16 @@ object AccountActivitySuccessResponse {
           dueDate = Some(LocalDate.of(2025, 12, 31)),
           originalAmount = 3000,
           clearedAmount = Some(3000),
-          clearingDetails = Some(Seq(
-            ClearingDetail(
-              transactionDesc = "On Account Pillar 2 (Payment on Account)",
-              amount = 3000,
-              clearingDate = LocalDate.of(2025, 10, 15),
-              clearingReason = Some("Cleared by Payment")
+          clearingDetails = Some(
+            Seq(
+              ClearingDetail(
+                transactionDesc = "On Account Pillar 2 (Payment on Account)",
+                amount = 3000,
+                clearingDate = LocalDate.of(2025, 10, 15),
+                clearingReason = Some("Cleared by Payment")
+              )
             )
-          ))
+          )
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
@@ -234,7 +244,7 @@ object AccountActivitySuccessResponse {
 }
 
 case class AccountActivitySuccess(
-  processingDate: ZonedDateTime,
+  processingDate:     ZonedDateTime,
   transactionDetails: Seq[AccountActivityTransactionDetail]
 )
 
@@ -243,20 +253,20 @@ object AccountActivitySuccess {
 }
 
 case class AccountActivityTransactionDetail(
-  transactionType: String,
-  transactionDesc: String,
-  transactionDate: LocalDate,
-  originalAmount: BigDecimal,
-  startDate: Option[LocalDate] = None,
-  endDate: Option[LocalDate] = None,
-  accruedInterest: Option[BigDecimal] = None,
-  chargeRefNo: Option[String] = None,
-  dueDate: Option[LocalDate] = None,
+  transactionType:   String,
+  transactionDesc:   String,
+  transactionDate:   LocalDate,
+  originalAmount:    BigDecimal,
+  startDate:         Option[LocalDate] = None,
+  endDate:           Option[LocalDate] = None,
+  accruedInterest:   Option[BigDecimal] = None,
+  chargeRefNo:       Option[String] = None,
+  dueDate:           Option[LocalDate] = None,
   outstandingAmount: Option[BigDecimal] = None,
-  clearedAmount: Option[BigDecimal] = None,
-  standOverAmount: Option[BigDecimal] = None,
-  appealFlag: Option[Boolean] = None,
-  clearingDetails: Option[Seq[ClearingDetail]] = None
+  clearedAmount:     Option[BigDecimal] = None,
+  standOverAmount:   Option[BigDecimal] = None,
+  appealFlag:        Option[Boolean] = None,
+  clearingDetails:   Option[Seq[ClearingDetail]] = None
 )
 
 object AccountActivityTransactionDetail {
@@ -265,11 +275,11 @@ object AccountActivityTransactionDetail {
 
 case class ClearingDetail(
   transactionDesc: String,
-  amount: BigDecimal,
-  clearingDate: LocalDate,
-  chargeRefNo: Option[String] = None,
-  dueDate: Option[LocalDate] = None,
-  clearingReason: Option[String] = None
+  amount:          BigDecimal,
+  clearingDate:    LocalDate,
+  chargeRefNo:     Option[String] = None,
+  dueDate:         Option[LocalDate] = None,
+  clearingReason:  Option[String] = None
 )
 
 object ClearingDetail {
@@ -325,9 +335,8 @@ object AccountActivity422Error {
 }
 
 object AccountActivityErrorCodes {
-  val REGIME_MISSING_OR_INVALID_001: (String, String) = ("001", "REGIME missing or invalid")
+  val REGIME_MISSING_OR_INVALID_001:      (String, String) = ("001", "REGIME missing or invalid")
   val REQUEST_COULD_NOT_BE_PROCESSED_003: (String, String) = ("003", "Request could not be processed")
-  val NO_DATA_FOUND_014: (String, String) = ("014", "No data found")
-  val ID_NUMBER_MISSING_OR_INVALID_089: (String, String) = ("089", "ID number missing or invalid")
+  val NO_DATA_FOUND_014:                  (String, String) = ("014", "No data found")
+  val ID_NUMBER_MISSING_OR_INVALID_089:   (String, String) = ("089", "ID number missing or invalid")
 }
-
