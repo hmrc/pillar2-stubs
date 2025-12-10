@@ -21,16 +21,16 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.*
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.now
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.SubmissionType.{GIR, UKTR_CREATE}
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions._
 
 import java.time.LocalDate
 import scala.util.Random
@@ -362,7 +362,21 @@ class ObligationsAndSubmissionsControllerSpec
       val result = route(app, request(id)).value
 
       status(result).shouldEqual(200)
-      contentAsJson(result).shouldBe(Json.toJson(expectedResponse))
+      val actualJson   = contentAsJson(result).as[JsObject]
+      val expectedJson = Json.toJson(expectedResponse).as[JsObject]
+
+      // Extract processingDate from actual response and verify it exists
+      val actualProcessingDate = (actualJson \ "success" \ "processingDate").asOpt[String]
+      actualProcessingDate shouldBe defined
+
+      // Compare responses without processingDate field
+      val actualSuccess   = (actualJson \ "success").as[JsObject]
+      val expectedSuccess = (expectedJson \ "success").as[JsObject]
+
+      val actualWithoutProcessingDate   = actualSuccess - "processingDate"
+      val expectedWithoutProcessingDate = expectedSuccess - "processingDate"
+
+      actualWithoutProcessingDate.shouldBe(expectedWithoutProcessingDate)
     }
   }
 
