@@ -21,7 +21,7 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -362,21 +362,7 @@ class ObligationsAndSubmissionsControllerSpec
       val result = route(app, request(id)).value
 
       status(result).shouldEqual(200)
-      val actualJson   = contentAsJson(result).as[JsObject]
-      val expectedJson = Json.toJson(expectedResponse).as[JsObject]
-
-      // Extract processingDate from actual response and verify it exists
-      val actualProcessingDate = (actualJson \ "success" \ "processingDate").asOpt[String]
-      actualProcessingDate shouldBe defined
-
-      // Compare responses without processingDate field
-      val actualSuccess   = (actualJson \ "success").as[JsObject]
-      val expectedSuccess = (expectedJson \ "success").as[JsObject]
-
-      val actualWithoutProcessingDate   = actualSuccess - "processingDate"
-      val expectedWithoutProcessingDate = expectedSuccess - "processingDate"
-
-      actualWithoutProcessingDate.shouldBe(expectedWithoutProcessingDate)
+      contentAsJson(result).shouldBe(Json.toJson(expectedResponse))
     }
   }
 
