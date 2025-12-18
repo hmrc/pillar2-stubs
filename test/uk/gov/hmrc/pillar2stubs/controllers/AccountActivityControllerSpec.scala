@@ -31,7 +31,7 @@ import scala.util.Random
 class AccountActivityControllerSpec extends AnyFunSuite with Matchers with GuiceOneAppPerSuite with OptionValues {
 
   val validHeaders: List[(String, String)] =
-    (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation, "X-Message-Type")).map(_ -> Random.nextString(10))
+    (ETMPHeaderFilter.mandatoryHeaders ++ List(HeaderNames.authorisation)).map(_ -> Random.nextString(10))
 
   def request(implicit pillar2Id: String): FakeRequest[AnyContentAsEmpty.type] = {
     val fromDate = "2024-01-01"
@@ -184,6 +184,32 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
         clearing.amount          should not be BigDecimal(0)
       }
     }
+  }
+
+  test("BadRequest - returns 400 error when X-Message-Type header is missing or invalid") {
+    implicit val pillar2Id: String = "XMPLR00000000012"
+    val fromDate = "2024-01-01"
+    val toDate   = "2024-12-31"
+
+    // Test missing X-Message-Type header
+    val headersWithoutMessageType = validHeaders.filterNot(_._1 == "X-Message-Type")
+    val missingHeaderRequest      = FakeRequest(GET, routes.AccountActivityController.retrieveAccountActivity(fromDate, toDate).url)
+      .withHeaders(Headers(headersWithoutMessageType*))
+      .withHeaders("X-Pillar2-Id" -> pillar2Id)
+
+    val resultMissing = route(app, missingHeaderRequest).value
+    status(resultMissing) shouldEqual 400
+    contentAsJson(resultMissing).as[AccountActivityErrorResponse].error.code shouldEqual "400"
+    contentAsJson(resultMissing).as[AccountActivityErrorResponse].error.message shouldEqual "Bad Request"
+
+    // Test invalid X-Message-Type header value
+    val invalidHeaderRequest = FakeRequest(GET, routes.AccountActivityController.retrieveAccountActivity(fromDate, toDate).url)
+      .withHeaders(Headers(validHeaders*))
+      .withHeaders("X-Pillar2-Id" -> pillar2Id, "X-Message-Type" -> "INVALID_VALUE")
+
+    val resultInvalid = route(app, invalidHeaderRequest).value
+    status(resultInvalid) shouldEqual 400
+    contentAsJson(resultInvalid).as[AccountActivityErrorResponse].error.code shouldEqual "400"
   }
 
 }
