@@ -59,15 +59,15 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
               // Continue with other validations and responses only if date range is valid
               // ETMPHeaderFilter validates "x-pillar2-id" exists, and Play normalizes headers to lowercase
               val pillar2Id = request.headers.get("x-pillar2-id").getOrElse("")
-              logger.info(s"Account Activity - Pillar2 ID received: '$pillar2Id' (length: ${pillar2Id.length})")
+              logger.info(s"Account Activity - Pillar2 ID received: $pillar2Id")
               pillar2Id match {
-                case "XEPLR0000000422_001" =>
+                case "XEPLR0000422001" =>
                   UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(REGIME_MISSING_OR_INVALID_001)))
-                case "XEPLR0000000422_003" =>
+                case "XEPLR0000422003" =>
                   UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(REQUEST_COULD_NOT_BE_PROCESSED_003)))
-                case "XEPLR0000000422_014" =>
+                case "XEPLR0000422014" =>
                   UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
-                case "XEPLR0000000422_089" =>
+                case "XEPLR0000422089" =>
                   UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(ID_NUMBER_MISSING_OR_INVALID_089)))
                 case "XEPLR0000000400" =>
                   BadRequest(Json.toJson(AccountActivityErrorResponse.badRequest))

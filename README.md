@@ -1260,8 +1260,8 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
 
 | Pillar2 ID          | Response Type                                      | Description                                                                                              |
 |---------------------|----------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| XEPLR0000000422_014 | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                            |
-| XEPLR0000000422_089 | Unprocessable Entity (422) - Invalid ID            | Returns a 422 error with code "089" indicating ID number missing or invalid.                             |
+| XEPLR0000422014     | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                            |
+| XEPLR0000422089     | Unprocessable Entity (422) - Invalid ID            | Returns a 422 error with code "089" indicating ID number missing or invalid.                             |
 | XEPLR0000000400     | Bad Request (400)                                  | Returns a 400 Bad Request error.                                                                         |
 | XEPLR0000000500     | Internal Server Error (500)                        | Returns a 500 Internal Server Error.                                                                     |
 | Any other valid ID  | Success (200)                                      | Returns a successful response containing a list of financial transactions (Payment, Debit, Credit, etc). |

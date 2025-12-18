@@ -97,8 +97,8 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     contentAsJson(result).as[AccountActivityErrorResponse].error.logID shouldEqual "1D43D17801EBCC4C4EAB8974C05448D9"
   }
 
-  test("UnprocessableEntity - returns 422 with code 001 for XEPLR0000000422_001") {
-    implicit val pillar2Id: String = "XEPLR0000000422_001"
+  test("UnprocessableEntity - returns 422 with code 001 for XEPLR0000422001") {
+    implicit val pillar2Id: String = "XEPLR0000422001"
     val result = route(app, request).value
 
     status(result) shouldEqual 422
@@ -107,8 +107,8 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     contentAsJson(result).as[AccountActivity422ErrorResponse].errors.text shouldEqual "REGIME missing or invalid"
   }
 
-  test("UnprocessableEntity - returns 422 with code 003 for XEPLR0000000422_003") {
-    implicit val pillar2Id: String = "XEPLR0000000422_003"
+  test("UnprocessableEntity - returns 422 with code 003 for XEPLR0000422003") {
+    implicit val pillar2Id: String = "XEPLR0000422003"
     val result = route(app, request).value
 
     status(result) shouldEqual 422
@@ -117,8 +117,8 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     contentAsJson(result).as[AccountActivity422ErrorResponse].errors.text shouldEqual "Request could not be processed"
   }
 
-  test("UnprocessableEntity - returns 422 with code 014 for XEPLR0000000422_014") {
-    implicit val pillar2Id: String = "XEPLR0000000422_014"
+  test("UnprocessableEntity - returns 422 with code 014 for XEPLR0000422014") {
+    implicit val pillar2Id: String = "XEPLR0000422014"
     val result = route(app, request).value
 
     status(result) shouldEqual 422
@@ -127,8 +127,8 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     contentAsJson(result).as[AccountActivity422ErrorResponse].errors.text shouldEqual "No data found"
   }
 
-  test("UnprocessableEntity - returns 422 with code 089 for XEPLR0000000422_089") {
-    implicit val pillar2Id: String = "XEPLR0000000422_089"
+  test("UnprocessableEntity - returns 422 with code 089 for XEPLR0000422089") {
+    implicit val pillar2Id: String = "XEPLR0000422089"
     val result = route(app, request).value
 
     status(result) shouldEqual 422

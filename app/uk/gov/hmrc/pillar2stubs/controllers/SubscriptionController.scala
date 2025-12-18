@@ -192,6 +192,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
 
           case _ =>
+            logger.info(s"AmendSubscription Request received \n ${request.body} \n")
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
         }
 
