@@ -75,6 +75,7 @@ The Pillar2 stubs service provides stubs for the GRS systems to mock the respons
         * [HTTP 400 Bad Request Error](#http-400-bad-request-error-2)
         * [HTTP 500 Internal Server Error](#http-500-internal-server-error-2)
     * [Below-Threshold Notification (BTN)](#below-threshold-notification-btn)
+    * [Account Activity](#account-activity)
   * [License](#license)
 <!-- TOC -->
 
@@ -1246,6 +1247,87 @@ For this API, the payload is rather simple, so responses are limited in their sc
 | XEPLR5000000000 | InternalServerError response |
 | Any valid ID    | Successful response          |
 
+
+### Account Activity
+
+**Endpoint**: `GET /RESTAdapter/plr/account-activity?fromDate={fromDate}&toDate={toDate}`
+
+**Description**: This API retrieves account activity (financial transactions) for a given period based on the Pillar2 ID. The `fromDate` and `toDate` parameters are required and must be valid date strings in the format `YYYY-MM-DD`. The `toDate` must be after the `fromDate`.
+
+#### Test Data for Different Responses
+
+The API returns different responses based on the Pillar2 ID provided in the `X-Pillar2-Id` header:
+
+| Pillar2 ID          | Response Type                                      | Description                                                                                              |
+|---------------------|----------------------------------------------------|----------------------------------------------------------------------------------------------------------|
+| XEPLR0000422014     | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                            |
+| XEPLR0000422089     | Unprocessable Entity (422) - Invalid ID            | Returns a 422 error with code "089" indicating ID number missing or invalid.                             |
+| XEPLR0000000400     | Bad Request (400)                                  | Returns a 400 Bad Request error.                                                                         |
+| XEPLR0000000500     | Internal Server Error (500)                        | Returns a 500 Internal Server Error.                                                                     |
+| Any other valid ID  | Success (200)                                      | Returns a successful response containing a list of financial transactions (Payment, Debit, Credit, etc). |
+
+**Note:**
+- The request requires the `X-Message-Type` header to be set to `ACCOUNT_ACTIVITY`. If missing or invalid, a 400 Bad Request is returned.
+- If the date range is invalid (e.g., `toDate` is before `fromDate`), a 422 error with code "003" (Request could not be processed) is returned.
+
+#### Happy Path
+
+##### Sample Success Response
+
+```json
+{
+  "success": {
+    "processingDate": "2024-01-01T00:00:00Z",
+    "transactionDetails": [
+      {
+        "transactionType": "Payment",
+        "transactionDesc": "Payment",
+        "transactionDate": "2024-01-01",
+        "originalAmount": 1000.00,
+        "clearingDetails": [
+           {
+              "transactionDesc": "Payment",
+              "amount": 1000.00,
+              "clearingDate": "2024-01-01"
+           }
+        ]
+      },
+      {
+        "transactionType": "Debit",
+        "transactionDesc": "Debit",
+        "transactionDate": "2024-02-01",
+        "originalAmount": 500.00
+      }
+    ]
+  }
+}
+```
+
+#### Unhappy Path
+
+##### Sample Error Response (422 - No Data Found)
+
+```json
+{
+  "errors": {
+    "processingDate": "2025-12-18T10:48:00Z",
+    "code": "014",
+    "text": "No data found"
+  }
+}
+```
+
+##### Sample Error Response (400 - Bad Request)
+
+```json
+{
+  "error": {
+    "code": "400",
+    "message": "Bad Request",
+    "logID": "1D43D17801EBCC4C4EAB8974C05448D9"
+  }
+}
+```
 
 ## License
 
