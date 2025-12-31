@@ -299,6 +299,14 @@ object AccountActivityErrorResponse {
     )
   )
 
+  val notFound: AccountActivityErrorResponse = AccountActivityErrorResponse(
+    AccountActivityError(
+      code = "404",
+      message = "Not Found",
+      logID = "1D43D17801EBCC4C4EAB8974C05448D9"
+    )
+  )
+
   val internalServerError: AccountActivityErrorResponse = AccountActivityErrorResponse(
     AccountActivityError(
       code = "500",

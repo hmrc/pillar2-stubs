@@ -71,6 +71,8 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                   UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(ID_NUMBER_MISSING_OR_INVALID_089)))
                 case "XEPLR0000000400" =>
                   BadRequest(Json.toJson(AccountActivityErrorResponse.badRequest))
+                case "XEPLR0000000404" =>
+                  NotFound(Json.toJson(AccountActivityErrorResponse.notFound))
                 case "XEPLR0000000500" =>
                   InternalServerError(Json.toJson(AccountActivityErrorResponse.internalServerError))
                 case _ =>
