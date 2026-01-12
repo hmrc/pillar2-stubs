@@ -1281,22 +1281,56 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
     "transactionDetails": [
       {
         "transactionType": "Payment",
-        "transactionDesc": "Payment",
-        "transactionDate": "2024-01-01",
-        "originalAmount": 1000.00,
+        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+        "transactionDate": "2025-10-15",
+        "originalAmount": 10000,
+        "outstandingAmount": 8000,
+        "clearedAmount": 2000,
         "clearingDetails": [
-           {
-              "transactionDesc": "Payment",
-              "amount": 1000.00,
-              "clearingDate": "2024-01-01"
-           }
+          {
+            "transactionDesc": "Pillar 2 UK Tax Return Pillar 2 DTT",
+            "amount": 2000,
+            "clearingDate": "2025-10-15",
+            "chargeRefNo": "X123456789012",
+            "dueDate": "2025-12-31",
+            "clearingReason": "Allocated to Charge"
+          }
+        ]
+      },
+      {
+        "transactionType": "Payment",
+        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+        "transactionDate": "2025-11-01",
+        "originalAmount": 500,
+        "outstandingAmount": 0,
+        "clearedAmount": 500,
+        "clearingDetails": [
+          {
+            "transactionDesc": "Pillar 2 Repayment",
+            "amount": 500,
+            "clearingDate": "2025-11-01",
+            "clearingReason": "Outgoing payment - Paid"
+          }
         ]
       },
       {
         "transactionType": "Debit",
-        "transactionDesc": "Debit",
-        "transactionDate": "2024-02-01",
-        "originalAmount": 500.00
+        "transactionDesc": "Pillar 2 UK Tax Return Pillar 2 DTT",
+        "startDate": "2025-01-01",
+        "endDate": "2025-12-31",
+        "chargeRefNo": "X123456789012",
+        "transactionDate": "2025-02-15",
+        "dueDate": "2025-12-31",
+        "originalAmount": 2000,
+        "clearedAmount": 2000,
+        "clearingDetails": [
+          {
+            "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+            "amount": 2000,
+            "clearingDate": "2025-10-15",
+            "clearingReason": "Cleared by Payment"
+          }
+        ]
       }
     ]
   }
