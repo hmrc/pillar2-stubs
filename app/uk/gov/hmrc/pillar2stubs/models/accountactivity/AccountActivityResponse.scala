@@ -259,6 +259,15 @@ object AccountActivitySuccessResponse {
       )
     )
   )
+
+  /** Empty success variant used for testing no outstanding payments. */
+  def empty: AccountActivitySuccessResponse =
+    AccountActivitySuccessResponse(
+      AccountActivitySuccess(
+        processingDate = AccountActivityResponse.now,
+        transactionDetails = Seq.empty
+      )
+    )
 }
 
 case class AccountActivitySuccess(

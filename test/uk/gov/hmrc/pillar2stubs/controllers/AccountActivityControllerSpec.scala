@@ -49,6 +49,15 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     contentAsJson(result).validate[AccountActivitySuccessResponse].asEither.isRight shouldBe true
   }
 
+  test("Returns success with empty transactionDetails for PLR with no account activity") {
+    implicit val pillar2Id: String = "XMPLR0000000000"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[AccountActivitySuccessResponse]
+    response.success.transactionDetails shouldBe empty
+  }
+
   test("Date validation is performed before Pillar2 ID checking") {
     implicit val pillar2Id: String = "XEPLR0000000400" // Special ID for 400 error
 

@@ -1270,6 +1270,28 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
 - The request requires the `X-Message-Type` header to be set to `ACCOUNT_ACTIVITY`. If missing or invalid, a 400 Bad Request is returned.
 - If the date range is invalid (e.g., `toDate` is before `fromDate`), a 422 error with code "003" (Request could not be processed) is returned.
 
+#### Test data
+
+To retrieve an empty account activity response (no `transactionDetails`), call:
+
+- `GET /RESTAdapter/plr/account-activity?fromDate=2025-01-01&toDate=2025-12-31`
+- With headers including:
+  - `X-Pillar2-Id: XMPLR0000000000`
+  - `X-Pillar2-Id-Type: PLRID`
+  - `X-Message-Type: ACCOUNT_ACTIVITY`
+  - `X-Environment`, `X-Client-Id`, etc., as per other examples
+
+The response will be similar to:
+
+```json
+{
+  "success": {
+    "processingDate": "2025-01-06T10:30:00Z",
+    "transactionDetails": []
+  }
+}
+```
+
 #### Happy Path
 
 ##### Sample Success Response
