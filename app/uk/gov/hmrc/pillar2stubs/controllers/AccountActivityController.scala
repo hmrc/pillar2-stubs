@@ -73,6 +73,9 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                   BadRequest(Json.toJson(AccountActivityErrorResponse.badRequest))
                 case "XEPLR0000000500" =>
                   InternalServerError(Json.toJson(AccountActivityErrorResponse.internalServerError))
+                // PLR that returns an empty account activity (no outstanding payments)
+                case "XMPLR0000000000" =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.empty))
                 case _ =>
                   Ok(Json.toJson(AccountActivitySuccessResponse()))
               }
