@@ -73,6 +73,9 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                   BadRequest(Json.toJson(AccountActivityErrorResponse.badRequest))
                 case "XEPLR0000000500" =>
                   InternalServerError(Json.toJson(AccountActivityErrorResponse.internalServerError))
+                // No data found (match ETMP behaviour)
+                case "XMPLR0000000000" =>
+                  UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
                 case _ =>
                   Ok(Json.toJson(AccountActivitySuccessResponse()))
               }

@@ -49,6 +49,16 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     contentAsJson(result).validate[AccountActivitySuccessResponse].asEither.isRight shouldBe true
   }
 
+  test("UnprocessableEntity - returns 422 with code 014 for XMPLR0000000000") {
+    implicit val pillar2Id: String = "XMPLR0000000000"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 422
+    contentAsJson(result).validate[AccountActivity422ErrorResponse].asEither.isRight shouldBe true
+    contentAsJson(result).as[AccountActivity422ErrorResponse].errors.code shouldEqual "014"
+    contentAsJson(result).as[AccountActivity422ErrorResponse].errors.text shouldEqual "No data found"
+  }
+
   test("Date validation is performed before Pillar2 ID checking") {
     implicit val pillar2Id: String = "XEPLR0000000400" // Special ID for 400 error
 

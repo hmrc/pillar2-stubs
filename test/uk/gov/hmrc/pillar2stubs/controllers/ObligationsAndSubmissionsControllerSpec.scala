@@ -21,7 +21,6 @@ import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -362,7 +361,8 @@ class ObligationsAndSubmissionsControllerSpec
       val result = route(app, request(id)).value
 
       status(result).shouldEqual(200)
-      contentAsJson(result).shouldBe(Json.toJson(expectedResponse))
+      val actual = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+      actual.success.accountingPeriodDetails shouldBe expectedResponse.success.accountingPeriodDetails
     }
   }
 

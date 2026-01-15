@@ -87,6 +87,24 @@ object AccountActivitySuccessResponse {
             )
           )
         ),
+        AccountActivityTransactionDetail(
+          transactionType = "Payment",
+          transactionDesc = "On Account Pillar 2 (Payment on Account)",
+          transactionDate = LocalDate.of(2025, 11, 1),
+          originalAmount = 500,
+          outstandingAmount = Some(0),
+          clearedAmount = Some(500),
+          clearingDetails = Some(
+            Seq(
+              ClearingDetail(
+                transactionDesc = "Pillar 2 Repayment",
+                amount = 500,
+                clearingDate = LocalDate.of(2025, 11, 1),
+                clearingReason = Some("Outgoing payment - Paid")
+              )
+            )
+          )
+        ),
         // Debit transactions
         AccountActivityTransactionDetail(
           transactionType = "Debit",
