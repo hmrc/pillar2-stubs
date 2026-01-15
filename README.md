@@ -1261,6 +1261,7 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
 | Pillar2 ID          | Response Type                                      | Description                                                                                              |
 |---------------------|----------------------------------------------------|----------------------------------------------------------------------------------------------------------|
 | XEPLR0000422014     | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                            |
+| XMPLR0000000000     | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                            |
 | XEPLR0000422089     | Unprocessable Entity (422) - Invalid ID            | Returns a 422 error with code "089" indicating ID number missing or invalid.                             |
 | XEPLR0000000400     | Bad Request (400)                                  | Returns a 400 Bad Request error.                                                                         |
 | XEPLR0000000500     | Internal Server Error (500)                        | Returns a 500 Internal Server Error.                                                                     |
@@ -1269,28 +1270,6 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
 **Note:**
 - The request requires the `X-Message-Type` header to be set to `ACCOUNT_ACTIVITY`. If missing or invalid, a 400 Bad Request is returned.
 - If the date range is invalid (e.g., `toDate` is before `fromDate`), a 422 error with code "003" (Request could not be processed) is returned.
-
-#### Test data
-
-To retrieve an empty account activity response (no `transactionDetails`), call:
-
-- `GET /RESTAdapter/plr/account-activity?fromDate=2025-01-01&toDate=2025-12-31`
-- With headers including:
-  - `X-Pillar2-Id: XMPLR0000000000`
-  - `X-Pillar2-Id-Type: PLRID`
-  - `X-Message-Type: ACCOUNT_ACTIVITY`
-  - `X-Environment`, `X-Client-Id`, etc., as per other examples
-
-The response will be similar to:
-
-```json
-{
-  "success": {
-    "processingDate": "2025-01-06T10:30:00Z",
-    "transactionDetails": []
-  }
-}
-```
 
 #### Happy Path
 
