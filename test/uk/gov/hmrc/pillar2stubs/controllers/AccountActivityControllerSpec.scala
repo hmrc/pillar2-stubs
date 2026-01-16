@@ -22,9 +22,9 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.*
+import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderNames
-import uk.gov.hmrc.pillar2stubs.models.accountactivity.*
+import uk.gov.hmrc.pillar2stubs.models.accountactivity._
 
 import scala.util.Random
 
@@ -184,6 +184,27 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
         clearing.amount          should not be BigDecimal(0)
       }
     }
+  }
+
+  test("Success response contains repayment interest Credit transaction") {
+    implicit val pillar2Id: String = "XMPLR00000000012"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[AccountActivitySuccessResponse]
+
+    // Find the repayment interest transaction
+    val repaymentInterest = response.success.transactionDetails.find { transaction =>
+      transaction.transactionType == "Credit" &&
+      transaction.transactionDesc.contains("RPI")
+    }
+
+    repaymentInterest shouldBe defined
+    repaymentInterest.get.transactionDesc shouldEqual "Pillar 2 UKTR RPI Pillar 2 OECD RPI"
+    repaymentInterest.get.originalAmount shouldEqual 5
+    repaymentInterest.get.clearingDetails shouldBe defined
+    repaymentInterest.get.clearingDetails.get.head.transactionDesc shouldEqual "Pillar 2 Repayment"
+    repaymentInterest.get.clearingDetails.get.head.clearingReason shouldBe Some("Outgoing payment - Paid")
   }
 
   test("BadRequest - returns 400 error when X-Message-Type header is missing or invalid") {

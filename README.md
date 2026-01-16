@@ -1314,6 +1314,21 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
         ]
       },
       {
+        "transactionType": "Credit",
+        "transactionDesc": "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+        "transactionDate": "2025-12-01",
+        "originalAmount": 5,
+        "clearedAmount": 5,
+        "clearingDetails": [
+          {
+            "transactionDesc": "Pillar 2 Repayment",
+            "amount": 5,
+            "clearingDate": "2025-12-01",
+            "clearingReason": "Outgoing payment - Paid"
+          }
+        ]
+      },
+      {
         "transactionType": "Debit",
         "transactionDesc": "Pillar 2 UK Tax Return Pillar 2 DTT",
         "startDate": "2025-01-01",
