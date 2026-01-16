@@ -22,9 +22,9 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.mvc.{AnyContentAsEmpty, Headers}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
-import uk.gov.hmrc.pillar2stubs.models.accountactivity._
+import uk.gov.hmrc.pillar2stubs.models.accountactivity.*
 
 import scala.util.Random
 
