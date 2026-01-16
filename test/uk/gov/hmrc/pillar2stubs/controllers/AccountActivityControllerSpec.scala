@@ -186,6 +186,27 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     }
   }
 
+  test("Success response contains repayment interest Credit transaction") {
+    implicit val pillar2Id: String = "XMPLR00000000012"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[AccountActivitySuccessResponse]
+
+    // Find the repayment interest transaction
+    val repaymentInterest = response.success.transactionDetails.find { transaction =>
+      transaction.transactionType == "Credit" &&
+      transaction.transactionDesc.contains("RPI")
+    }
+
+    repaymentInterest shouldBe defined
+    repaymentInterest.get.transactionDesc shouldEqual "Pillar 2 UKTR RPI Pillar 2 OECD RPI"
+    repaymentInterest.get.originalAmount shouldEqual 5
+    repaymentInterest.get.clearingDetails shouldBe defined
+    repaymentInterest.get.clearingDetails.get.head.transactionDesc shouldEqual "Pillar 2 Repayment"
+    repaymentInterest.get.clearingDetails.get.head.clearingReason shouldBe Some("Outgoing payment - Paid")
+  }
+
   test("BadRequest - returns 400 error when X-Message-Type header is missing or invalid") {
     implicit val pillar2Id: String = "XMPLR00000000012"
     val fromDate = "2024-01-01"

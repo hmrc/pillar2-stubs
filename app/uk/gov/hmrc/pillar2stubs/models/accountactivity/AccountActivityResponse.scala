@@ -87,6 +87,42 @@ object AccountActivitySuccessResponse {
             )
           )
         ),
+        AccountActivityTransactionDetail(
+          transactionType = "Payment",
+          transactionDesc = "On Account Pillar 2 (Payment on Account)",
+          transactionDate = LocalDate.of(2025, 11, 1),
+          originalAmount = 500,
+          outstandingAmount = Some(0),
+          clearedAmount = Some(500),
+          clearingDetails = Some(
+            Seq(
+              ClearingDetail(
+                transactionDesc = "Pillar 2 Repayment",
+                amount = 500,
+                clearingDate = LocalDate.of(2025, 11, 1),
+                clearingReason = Some("Outgoing payment - Paid")
+              )
+            )
+          )
+        ),
+        // Repayment interest
+        AccountActivityTransactionDetail(
+          transactionType = "Credit",
+          transactionDesc = "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+          transactionDate = LocalDate.of(2025, 12, 1),
+          originalAmount = 5,
+          clearedAmount = Some(5),
+          clearingDetails = Some(
+            Seq(
+              ClearingDetail(
+                transactionDesc = "Pillar 2 Repayment",
+                amount = 5,
+                clearingDate = LocalDate.of(2025, 12, 1),
+                clearingReason = Some("Outgoing payment - Paid")
+              )
+            )
+          )
+        ),
         // Debit transactions
         AccountActivityTransactionDetail(
           transactionType = "Debit",
