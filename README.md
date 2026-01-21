@@ -1265,11 +1265,22 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
 | XEPLR0000422089     | Unprocessable Entity (422) - Invalid ID            | Returns a 422 error with code "089" indicating ID number missing or invalid.                             |
 | XEPLR0000000400     | Bad Request (400)                                  | Returns a 400 Bad Request error.                                                                         |
 | XEPLR0000000500     | Internal Server Error (500)                        | Returns a 500 Internal Server Error.                                                                     |
+| XEPLR2697000001     | Success (200)                                      | Scenario 1: UKTR charges (DTT + MTT(IIR) + MTT(UTPR)) with mix of full + partial outstanding.            |
+| XEPLR2697000002     | Success (200)                                      | Scenario 2: UKTR interest charges (DTT + MTT(IIR) + MTT(UTPR)) with mix of full + partial outstanding.   |
+| XEPLR2697000003     | Success (200)                                      | Scenario 3: Determination charges (DTT + MTT(IIR) + MTT(UTPR)).                                          |
+| XEPLR2697000004     | Success (200)                                      | Scenario 4: Discovery Assessment charges (DTT + MTT(IIR) + MTT(UTPR)).                                   |
+| XEPLR2697000005     | Success (200)                                      | Scenario 5: Overpaid Claim Assessment charges (DTT + MTT(IIR) + MTT(UTPR)).                              |
+| XEPLR2697000007     | Success (200)                                      | Scenario 7: UKTR Late Filing Penalties (DTT + MTT).                                                      |
+| XEPLR2697000008     | Success (200)                                      | Scenario 8: ORN/GIR Late Filing Penalties (DTT + MTT).                                                   |
+| XEPLR2697000009     | Success (200)                                      | Scenario 9: Potential Lost Revenue penalty (partial outstanding).                                        |
+| XEPLR2697000010     | Success (200)                                      | Scenario 10: Schedule 36 information notice penalty.                                                     |
+| XEPLR2697000011     | Success (200)                                      | Scenario 11: Failure to keep accurate records penalty.                                                   |
 | Any other valid ID  | Success (200)                                      | Returns a successful response containing a list of financial transactions (Payment, Debit, Credit, etc). |
 
 **Note:**
 - The request requires the `X-Message-Type` header to be set to `ACCOUNT_ACTIVITY`. If missing or invalid, a 400 Bad Request is returned.
 - If the date range is invalid (e.g., `toDate` is before `fromDate`), a 422 error with code "003" (Request could not be processed) is returned.
+ - The scenario IDs (`XEPLR2697...`) are intended for testing the Outstanding Payments page with `features.useAccountActivityApi=true` in `pillar2-frontend`.
 
 #### Happy Path
 
