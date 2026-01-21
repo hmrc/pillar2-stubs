@@ -38,6 +38,307 @@ case class AccountActivitySuccessResponse(success: AccountActivitySuccess) exten
 object AccountActivitySuccessResponse {
   given OFormat[AccountActivitySuccessResponse] = Json.format[AccountActivitySuccessResponse]
 
+  // Scenario-specific IDs for Outstanding Payments testing (one per scenario)
+  val Scenario1UktrCharges:                String = "XEPLR2697000001"
+  val Scenario2UktrInterestCharges:        String = "XEPLR2697000002"
+  val Scenario3DeterminationCharges:       String = "XEPLR2697000003"
+  val Scenario4DiscoveryAssessmentCharges: String = "XEPLR2697000004"
+  val Scenario5OverpaidClaimAssessment:    String = "XEPLR2697000005"
+  val Scenario7UktrLateFilingPenalties:    String = "XEPLR2697000007"
+  val Scenario8OrnGirLateFilingPenalties:  String = "XEPLR2697000008"
+  val Scenario9PotentialLostRevenue:       String = "XEPLR2697000009"
+  val Scenario10Schedule36:                String = "XEPLR2697000010"
+  val Scenario11RecordKeeping:             String = "XEPLR2697000011"
+
+  private val apStart: LocalDate = LocalDate.of(2024, 1, 1)
+  private val apEnd:   LocalDate = LocalDate.of(2024, 12, 31)
+
+  private def debitTransaction(
+    desc:            String,
+    chargeRefNo:     String,
+    dueDate:         LocalDate,
+    transactionDate: LocalDate,
+    originalAmount:  BigDecimal,
+    outstanding:     BigDecimal,
+    clearedAmount:   Option[BigDecimal] = None
+  ): AccountActivityTransactionDetail =
+    AccountActivityTransactionDetail(
+      transactionType = "Debit",
+      transactionDesc = desc,
+      startDate = Some(apStart),
+      endDate = Some(apEnd),
+      chargeRefNo = Some(chargeRefNo),
+      transactionDate = transactionDate,
+      dueDate = Some(dueDate),
+      originalAmount = originalAmount,
+      outstandingAmount = Some(outstanding),
+      clearedAmount = clearedAmount,
+      clearingDetails = clearedAmount.map { cleared =>
+        Seq(
+          ClearingDetail(
+            transactionDesc = desc,
+            amount = cleared,
+            clearingDate = transactionDate,
+            chargeRefNo = Some(chargeRefNo),
+            dueDate = Some(dueDate),
+            clearingReason = Some("Cleared by Payment")
+          )
+        )
+      }
+    )
+
+  private def responseWithDebits(transactions: Seq[AccountActivityTransactionDetail]): AccountActivitySuccessResponse =
+    AccountActivitySuccessResponse(
+      AccountActivitySuccess(
+        processingDate = AccountActivityResponse.now,
+        transactionDetails = transactions
+      )
+    )
+
+  def scenario1UktrCharges(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+          chargeRefNo = "XDT3456789012",
+          dueDate = LocalDate.of(2026, 6, 20),
+          transactionDate = LocalDate.of(2026, 6, 15),
+          originalAmount = 3100,
+          outstanding = 3100
+        ),
+        debitTransaction(
+          desc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+          chargeRefNo = "XII3456789012",
+          dueDate = LocalDate.of(2026, 6, 25),
+          transactionDate = LocalDate.of(2026, 6, 15),
+          originalAmount = 4100,
+          outstanding = 2100,
+          clearedAmount = Some(2000)
+        ),
+        debitTransaction(
+          desc = "Pillar 2 UK Tax Return Pillar 2 MTT UTPR",
+          chargeRefNo = "XUT3456789012",
+          dueDate = LocalDate.of(2026, 6, 30),
+          transactionDate = LocalDate.of(2026, 6, 15),
+          originalAmount = 1500,
+          outstanding = 1500
+        )
+      )
+    )
+
+  def scenario2UktrInterestCharges(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Pillar 2 UKTR Interest Pillar 2 DTT Int",
+          chargeRefNo = "XIN3456789012",
+          dueDate = LocalDate.of(2026, 7, 20),
+          transactionDate = LocalDate.of(2026, 7, 15),
+          originalAmount = 35,
+          outstanding = 35
+        ),
+        debitTransaction(
+          desc = "Pillar 2 UKTR Interest Pillar 2 MTT IIR Int",
+          chargeRefNo = "XIN3456789013",
+          dueDate = LocalDate.of(2026, 7, 20),
+          transactionDate = LocalDate.of(2026, 7, 15),
+          originalAmount = 50,
+          outstanding = 20,
+          clearedAmount = Some(30)
+        ),
+        debitTransaction(
+          desc = "Pillar 2 UKTR Interest Pillar 2 MTT UTPR Int",
+          chargeRefNo = "XIN3456789014",
+          dueDate = LocalDate.of(2026, 7, 20),
+          transactionDate = LocalDate.of(2026, 7, 15),
+          originalAmount = 25,
+          outstanding = 25
+        )
+      )
+    )
+
+  def scenario3DeterminationCharges(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Pillar 2 Determination Pillar 2 DTT",
+          chargeRefNo = "XDD3456789012",
+          dueDate = LocalDate.of(2028, 3, 31),
+          transactionDate = LocalDate.of(2027, 2, 15),
+          originalAmount = 3100,
+          outstanding = 3100
+        ),
+        debitTransaction(
+          desc = "Pillar 2 Determination Pillar 2 MTT IIR",
+          chargeRefNo = "XDT3456789012",
+          dueDate = LocalDate.of(2028, 3, 31),
+          transactionDate = LocalDate.of(2027, 2, 15),
+          originalAmount = 3100,
+          outstanding = 1100,
+          clearedAmount = Some(2000)
+        ),
+        debitTransaction(
+          desc = "Pillar 2 Determination Pillar 2 MTT UTPR",
+          chargeRefNo = "XDU3456789012",
+          dueDate = LocalDate.of(2028, 3, 31),
+          transactionDate = LocalDate.of(2027, 2, 15),
+          originalAmount = 1500,
+          outstanding = 1500
+        )
+      )
+    )
+
+  def scenario4DiscoveryAssessmentCharges(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Pillar 2 Discovery Assessment Pillar 2 DTT",
+          chargeRefNo = "XDA3456789012",
+          dueDate = LocalDate.of(2026, 9, 30),
+          transactionDate = LocalDate.of(2026, 9, 15),
+          originalAmount = 3000,
+          outstanding = 3000
+        ),
+        debitTransaction(
+          desc = "Pillar 2 Discovery Assessment Pillar 2 MTT IIR",
+          chargeRefNo = "XDA3456789013",
+          dueDate = LocalDate.of(2026, 9, 30),
+          transactionDate = LocalDate.of(2026, 9, 15),
+          originalAmount = 2500,
+          outstanding = 1500,
+          clearedAmount = Some(1000)
+        ),
+        debitTransaction(
+          desc = "Pillar 2 Discovery Assessment Pillar 2 MTT UTPR",
+          chargeRefNo = "XDA3456789014",
+          dueDate = LocalDate.of(2026, 9, 30),
+          transactionDate = LocalDate.of(2026, 9, 15),
+          originalAmount = 1200,
+          outstanding = 1200
+        )
+      )
+    )
+
+  def scenario5OverpaidClaimAssessmentCharges(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Pillar 2 Overpaid Claim Assmt Pillar 2 DTT",
+          chargeRefNo = "XOC3456789010",
+          dueDate = LocalDate.of(2028, 3, 31),
+          transactionDate = LocalDate.of(2027, 2, 15),
+          originalAmount = 4100,
+          outstanding = 4100
+        ),
+        debitTransaction(
+          desc = "Pillar 2 Overpaid Claim Assmt Pillar 2 MTT IIR",
+          chargeRefNo = "XOC3456789011",
+          dueDate = LocalDate.of(2028, 3, 31),
+          transactionDate = LocalDate.of(2027, 2, 15),
+          originalAmount = 3000,
+          outstanding = 1000,
+          clearedAmount = Some(2000)
+        ),
+        debitTransaction(
+          desc = "Pillar 2 Overpaid Claim Assmt Pillar 2 MTT UTPR",
+          chargeRefNo = "XOC3456789012",
+          dueDate = LocalDate.of(2028, 3, 31),
+          transactionDate = LocalDate.of(2027, 2, 15),
+          originalAmount = 4100,
+          outstanding = 4100
+        )
+      )
+    )
+
+  def scenario7UktrLateFilingPenalties(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Pillar 2 UKTR DTT LFP AUTO PEN",
+          chargeRefNo = "XPN3456789012",
+          dueDate = LocalDate.of(2026, 7, 31),
+          transactionDate = LocalDate.of(2026, 7, 1),
+          originalAmount = 100,
+          outstanding = 100
+        ),
+        debitTransaction(
+          desc = "Pillar 2 UKTR MTT LFP AUTO PEN",
+          chargeRefNo = "XPN3456789013",
+          dueDate = LocalDate.of(2026, 7, 31),
+          transactionDate = LocalDate.of(2026, 7, 1),
+          originalAmount = 200,
+          outstanding = 50,
+          clearedAmount = Some(150)
+        )
+      )
+    )
+
+  def scenario8OrnGirLateFilingPenalties(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Pillar 2 ORN/GIR DTT LFP AUTO PEN",
+          chargeRefNo = "XPN3456789020",
+          dueDate = LocalDate.of(2026, 8, 31),
+          transactionDate = LocalDate.of(2026, 8, 1),
+          originalAmount = 300,
+          outstanding = 100,
+          clearedAmount = Some(200)
+        ),
+        debitTransaction(
+          desc = "Pillar 2 ORN/GIR MTT LFP AUTO PEN",
+          chargeRefNo = "XPN3456789021",
+          dueDate = LocalDate.of(2026, 8, 31),
+          transactionDate = LocalDate.of(2026, 8, 1),
+          originalAmount = 150,
+          outstanding = 150
+        )
+      )
+    )
+
+  def scenario9PotentialLostRevenuePenalty(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Pillar 2 Poten Lost Rev Pen TG PEN",
+          chargeRefNo = "XPL3456789012",
+          dueDate = LocalDate.of(2026, 11, 30),
+          transactionDate = LocalDate.of(2026, 11, 1),
+          originalAmount = 500,
+          outstanding = 250,
+          clearedAmount = Some(250)
+        )
+      )
+    )
+
+  def scenario10Schedule36(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Sch 36 Penalty TG PEN",
+          chargeRefNo = "XS363456789012",
+          dueDate = LocalDate.of(2026, 10, 31),
+          transactionDate = LocalDate.of(2026, 10, 1),
+          originalAmount = 1000,
+          outstanding = 1000
+        )
+      )
+    )
+
+  def scenario11RecordKeeping(): AccountActivitySuccessResponse =
+    responseWithDebits(
+      Seq(
+        debitTransaction(
+          desc = "Pillar 2 Record Keeping Pen TG PEN",
+          chargeRefNo = "XRK3456789012",
+          dueDate = LocalDate.of(2026, 7, 30),
+          transactionDate = LocalDate.of(2026, 6, 30),
+          originalAmount = 3500,
+          outstanding = 3500
+        )
+      )
+    )
+
   def apply(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
@@ -131,7 +432,7 @@ object AccountActivitySuccessResponse {
           endDate = Some(LocalDate.of(2025, 12, 31)),
           chargeRefNo = Some("X123456789012"),
           transactionDate = LocalDate.of(2025, 2, 15),
-          dueDate = Some(LocalDate.of(2025, 12, 31)),
+          dueDate = Some(LocalDate.of(2026, 12, 31)),
           originalAmount = 2000,
           clearedAmount = Some(2000),
           clearingDetails = Some(
@@ -152,7 +453,7 @@ object AccountActivitySuccessResponse {
           endDate = Some(LocalDate.of(2025, 12, 31)),
           chargeRefNo = Some("X123456789012"),
           transactionDate = LocalDate.of(2025, 2, 15),
-          dueDate = Some(LocalDate.of(2025, 12, 31)),
+          dueDate = Some(LocalDate.of(2026, 12, 31)),
           originalAmount = 2000,
           clearedAmount = Some(2000),
           clearingDetails = Some(
@@ -173,7 +474,7 @@ object AccountActivitySuccessResponse {
           endDate = Some(LocalDate.of(2025, 12, 31)),
           chargeRefNo = Some("X123456789012"),
           transactionDate = LocalDate.of(2025, 2, 15),
-          dueDate = Some(LocalDate.of(2025, 12, 31)),
+          dueDate = Some(LocalDate.of(2026, 12, 31)),
           originalAmount = 2000,
           clearedAmount = Some(2000),
           clearingDetails = Some(
@@ -194,7 +495,7 @@ object AccountActivitySuccessResponse {
           endDate = Some(LocalDate.of(2025, 12, 31)),
           chargeRefNo = Some("XD23456789012"),
           transactionDate = LocalDate.of(2025, 2, 15),
-          dueDate = Some(LocalDate.of(2025, 12, 31)),
+          dueDate = Some(LocalDate.of(2026, 12, 31)),
           originalAmount = 3000,
           clearedAmount = Some(3000),
           clearingDetails = Some(
@@ -261,7 +562,7 @@ object AccountActivitySuccessResponse {
           endDate = Some(LocalDate.of(2024, 12, 31)),
           chargeRefNo = Some("XIN3456789012"),
           transactionDate = LocalDate.of(2025, 10, 15),
-          dueDate = Some(LocalDate.of(2025, 10, 15)),
+          dueDate = Some(LocalDate.of(2026, 10, 15)),
           originalAmount = 35,
           outstandingAmount = Some(35)
         ),
