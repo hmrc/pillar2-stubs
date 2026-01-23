@@ -49,6 +49,128 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     contentAsJson(result).validate[AccountActivitySuccessResponse].asEither.isRight shouldBe true
   }
 
+  private def debitTransactionsFor(pillar2Id: String): Seq[AccountActivityTransactionDetail] = {
+    implicit val id: String = pillar2Id
+    val result = route(app, request).value
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[AccountActivitySuccessResponse]
+    response.success.transactionDetails.filter(_.transactionType == "Debit")
+  }
+
+  private def assertDebitDescs(pillar2Id: String, expected: Set[String]): Unit = {
+    val debits = debitTransactionsFor(pillar2Id)
+    debits.map(_.transactionDesc).toSet shouldEqual expected
+    debits.flatMap(_.outstandingAmount).foreach(_ should be > BigDecimal(0))
+  }
+
+  test("Scenario 1 ID returns UKTR DTT + MTT IIR + MTT UTPR debit charges") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario1UktrCharges,
+      Set(
+        "Pillar 2 UK Tax Return Pillar 2 DTT",
+        "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+        "Pillar 2 UK Tax Return Pillar 2 MTT UTPR"
+      )
+    )
+  }
+
+  test("Scenario 2 ID returns UKTR interest DTT + MTT IIR + MTT UTPR debit charges") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario2UktrInterestCharges,
+      Set(
+        "Pillar 2 UKTR Interest Pillar 2 DTT Int",
+        "Pillar 2 UKTR Interest Pillar 2 MTT IIR Int",
+        "Pillar 2 UKTR Interest Pillar 2 MTT UTPR Int"
+      )
+    )
+  }
+
+  test("Scenario 3 ID returns Determination DTT + MTT IIR + MTT UTPR debit charges") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario3DeterminationCharges,
+      Set(
+        "Pillar 2 Determination Pillar 2 DTT",
+        "Pillar 2 Determination Pillar 2 MTT IIR",
+        "Pillar 2 Determination Pillar 2 MTT UTPR"
+      )
+    )
+  }
+
+  test("Scenario 4 ID returns Discovery Assessment DTT + MTT IIR + MTT UTPR debit charges") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario4DiscoveryAssessmentCharges,
+      Set(
+        "Pillar 2 Discovery Assessment Pillar 2 DTT",
+        "Pillar 2 Discovery Assessment Pillar 2 MTT IIR",
+        "Pillar 2 Discovery Assessment Pillar 2 MTT UTPR"
+      )
+    )
+  }
+
+  test("Scenario 5 ID returns Overpaid Claim Assessment DTT + MTT IIR + MTT UTPR debit charges") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario5OverpaidClaimAssessment,
+      Set(
+        "Pillar 2 Overpaid Claim Assmt Pillar 2 DTT",
+        "Pillar 2 Overpaid Claim Assmt Pillar 2 MTT IIR",
+        "Pillar 2 Overpaid Claim Assmt Pillar 2 MTT UTPR"
+      )
+    )
+  }
+
+  test("Scenario 7 ID returns UKTR LFP debit penalties for DTT + MTT") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario7UktrLateFilingPenalties,
+      Set("Pillar 2 UKTR DTT LFP AUTO PEN", "Pillar 2 UKTR MTT LFP AUTO PEN")
+    )
+  }
+
+  test("Scenario 8 ID returns ORN/GIR LFP debit penalties for DTT + MTT") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario8OrnGirLateFilingPenalties,
+      Set("Pillar 2 ORN/GIR DTT LFP AUTO PEN", "Pillar 2 ORN/GIR MTT LFP AUTO PEN")
+    )
+  }
+
+  test("Scenario 9 ID returns Potential Lost Revenue debit penalty") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario9PotentialLostRevenue,
+      Set("Pillar 2 Poten Lost Rev Pen TG PEN")
+    )
+  }
+
+  test("Scenario 10 ID returns Schedule 36 debit penalty") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario10Schedule36,
+      Set("Sch 36 Penalty TG PEN")
+    )
+  }
+
+  test("Scenario 11 ID returns Record Keeping debit penalty") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario11RecordKeeping,
+      Set("Pillar 2 Record Keeping Pen TG PEN")
+    )
+  }
+
+  test("Scenario 1 includes a partial payment example (clearedAmount and clearingDetails present)") {
+    val debits  = debitTransactionsFor(AccountActivitySuccessResponse.Scenario1UktrCharges)
+    val partial = debits.find(tx => tx.transactionDesc.contains("MTT IIR")).value
+    partial.outstandingAmount.value should be < partial.originalAmount
+    partial.clearedAmount.value shouldEqual partial.originalAmount - partial.outstandingAmount.value
+    partial.clearingDetails.value.head.clearingReason shouldEqual Some("Cleared by Payment")
+  }
+
+  test("UnprocessableEntity - returns 422 with code 014 for XMPLR0000000000") {
+    implicit val pillar2Id: String = "XMPLR0000000000"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 422
+    contentAsJson(result).validate[AccountActivity422ErrorResponse].asEither.isRight shouldBe true
+    contentAsJson(result).as[AccountActivity422ErrorResponse].errors.code shouldEqual "014"
+    contentAsJson(result).as[AccountActivity422ErrorResponse].errors.text shouldEqual "No data found"
+  }
+
   test("Date validation is performed before Pillar2 ID checking") {
     implicit val pillar2Id: String = "XEPLR0000000400" // Special ID for 400 error
 

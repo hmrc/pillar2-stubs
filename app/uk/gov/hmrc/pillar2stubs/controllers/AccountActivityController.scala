@@ -61,6 +61,26 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
               val pillar2Id = request.headers.get("x-pillar2-id").getOrElse("")
               logger.info(s"Account Activity - Pillar2 ID received: $pillar2Id")
               pillar2Id match {
+                case AccountActivitySuccessResponse.Scenario1UktrCharges =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario1UktrCharges()))
+                case AccountActivitySuccessResponse.Scenario2UktrInterestCharges =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario2UktrInterestCharges()))
+                case AccountActivitySuccessResponse.Scenario3DeterminationCharges =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario3DeterminationCharges()))
+                case AccountActivitySuccessResponse.Scenario4DiscoveryAssessmentCharges =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario4DiscoveryAssessmentCharges()))
+                case AccountActivitySuccessResponse.Scenario5OverpaidClaimAssessment =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario5OverpaidClaimAssessmentCharges()))
+                case AccountActivitySuccessResponse.Scenario7UktrLateFilingPenalties =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario7UktrLateFilingPenalties()))
+                case AccountActivitySuccessResponse.Scenario8OrnGirLateFilingPenalties =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario8OrnGirLateFilingPenalties()))
+                case AccountActivitySuccessResponse.Scenario9PotentialLostRevenue =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario9PotentialLostRevenuePenalty()))
+                case AccountActivitySuccessResponse.Scenario10Schedule36 =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario10Schedule36()))
+                case AccountActivitySuccessResponse.Scenario11RecordKeeping =>
+                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario11RecordKeeping()))
                 case "XEPLR0000422001" =>
                   UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(REGIME_MISSING_OR_INVALID_001)))
                 case "XEPLR0000422003" =>
@@ -73,6 +93,9 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                   BadRequest(Json.toJson(AccountActivityErrorResponse.badRequest))
                 case "XEPLR0000000500" =>
                   InternalServerError(Json.toJson(AccountActivityErrorResponse.internalServerError))
+                // No data found (match ETMP behaviour)
+                case "XMPLR0000000000" =>
+                  UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
                 case _ =>
                   Ok(Json.toJson(AccountActivitySuccessResponse()))
               }

@@ -68,7 +68,10 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         // Payment overdue, no Return, BTN
         case "XEPLR2000000111" => Ok(paymentOverdueNoInterest(idNumber, clock))
         // Payment overdue w/ interest, no Return, BTN
-        case "XEPLR2000000112"                                    => Ok(paymentOverdueWithInterest(idNumber, clock))
+        case "XEPLR2000000112" => Ok(paymentOverdueWithInterest(idNumber, clock))
+        // Empty financial data response (for testing no outstanding payments - also used by Account Activity API)
+        case "XMPLR0000000000" =>
+          Ok(Json.parse(baseResponse(idNumber, processingDate = LocalDateTime.now(clock), transactions = Seq.empty)))
         case v @ yearsAndTransactionPattern(numberOfTransactions) =>
           Ok(Json.toJson(generateSuccessfulResponse(v, numberOfTransactions.toInt, LocalDate.parse(dateFrom), LocalDate.parse(dateTo))))
         case _ => Ok(Json.parse(successfulResponse(idNumber)))
