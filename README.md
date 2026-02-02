@@ -454,6 +454,7 @@ To trigger the unhappy paths, ensure you provide a valid request body. The below
 | XEPLR0123456404 | 404         | NOT_FOUND               | Submission has not passed validation. Record not found.                                               |
 | XEPLR0123456422 | 422         | CANNOT_COMPLETE_REQUEST | Request could not be completed because the subscription is being created or amended.                  |
 | XEPLR0123456500 | 500         | INTERNAL_SERVER_ERROR   | Internal Server error.                                                                                |
+| XEPLR0123456502 | 502         | BAD_GATEWAY             | Bad Gateway (for testing homepage retries).                                                           |
 | XEPLR0123456503 | 503         | SERVICE_UNAVAILABLE     | Dependent systems are currently not responding.                                                       |
 | XEPLR5555555555 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
 | XEPLR6666666666 | 200         | OK                      | Returns read success response with upe registration year of 2011.                                     |

@@ -1,0 +1,8 @@
+{
+  "failures": [
+    {
+      "code": "BAD_GATEWAY",
+      "reason": "Bad Gateway - upstream server returned an invalid response."
+    }
+  ]
+}

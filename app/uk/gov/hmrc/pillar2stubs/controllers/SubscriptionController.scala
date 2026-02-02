@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 import play.api.Logging
 import play.api.libs.json.*
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.Results.Status
 import uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSuccessResponse
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionSuccess, Subscription}
@@ -126,6 +127,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
           UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
         case "XEPLR0123456500" =>
           InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get)
+        case "XEPLR0123456502" =>
+          Status(502)(resourceAsString("/resources/error/subscription/BadGateway.json").get)
         case "XEPLR0123456503" =>
           ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
         case ref @ "XEPLR5555555555" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
