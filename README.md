@@ -98,6 +98,20 @@ To use test-only route locally, run the below:
 sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10052'
 ```
 
+#### Testing homepage retries (pillar2-frontend)
+
+The pillar2-frontend homepage retries on 502 and 500 when loading Subscription, Obligations and Submissions, and Financial Data. To test this locally:
+
+1. Run pillar2-stubs (e.g. `sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10052'`).
+2. Run pillar2-frontend pointing at the stub: `sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes -Dmicroservice.services.pillar2.port=10052 10050'`. You must set `-Dmicroservice.services.pillar2.port=10052` so the frontend calls this stub; otherwise it uses the default port and retries may not be exercised.
+3. Sign in via the [Authority Wizard](http://localhost:9949/auth-login-stub/gg-sign-in) with a user that has the Pillar 2 enrolment (`HMRC-PILLAR2-ORG`) and set **PLRID** to one of the test IDs below. If the session has no PLR, the homepage redirects to the restart-error page before any API calls.
+
+Test IDs that return 502 for homepage retries (see the endpoint tables in this README for full details):
+
+- **Subscription:** PLR reference `XEPLR0123456502` (see [Retrieve Subscription Details](#retrieve-subscription-details)).
+- **Obligations:** Header `X-Pillar2-Id: XEPLR0000000502` (see [Obligations and Submissions API](#obligations-and-submissions-api)).
+- **Financial data:** PLR reference `XEPLR5020000000` (see [Financial Data - Get Financial Test Data](#financial-data---get-financial-test-data)).
+
 
 ## Running with Service Manager
 
@@ -789,9 +803,12 @@ To trigger the unhappy paths, use `XEPLR0444444400`.
 
 ### Financial Data - Get Financial Test Data
 
-**Endpoint**: `GET  /enterprise/financial-data/ZPLR/:idNumber/PLR`
+**Endpoints** (same behaviour):
 
-**Description**: This endpoint provides the ability to get financial data (charges, estimates and payments).
+- `GET /enterprise/financial-data/ZPLR/:idNumber/PLR` (query params: `dateFrom`, `dateTo`)
+- `GET /report-pillar2-top-up-taxes/financial-data/:plrReference/:dateFrom/:dateTo` (used by pillar2-frontend)
+
+**Description**: These endpoints provide the ability to get financial data (charges, estimates and payments).
 
 
 | idNumber (PLR Reference Number)                                          | Response Returned                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
@@ -799,6 +816,7 @@ To trigger the unhappy paths, use `XEPLR0444444400`.
 | XEPLR4000000000                                                          | INVALID_IDNUMBER Error Response                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | XEPLR4040000000                                                          | NOT_FOUND Error Response                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | XEPLR5000000000                                                          | SERVER_ERROR Error Response                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| XEPLR5020000000                                                          | BAD_GATEWAY (502) – for testing homepage retries when pillar2-frontend calls this stub                                                                                                                                                                                                                                                                                                                                                                                         |
 | XEPLR5030000000                                                          | SERVICE_UNAVAILABLE Error Response                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | XMPLR0000000(Last three digits are the number of transactions displayed) | For example <br/> - XMPLR0000000022 will display 22 transactions 12 refund and 12 payments. <br/> - XMPLR0000000122 will display 122 transactions 61 refunds and 61 payments <br/> **Please note** <br/> - Use even numbers since 13 will default to 6 refund and 6 payment <br/> - All returned values are randomised so figures won't be consistent <br/> Please note a user must be able to see only last 7 years of transactions on their account, to test read note below |
 | XEPLR2000000000                                                          | Outstanding payments (ETMP QA Test Data)                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                               
@@ -892,6 +910,7 @@ The API returns different responses based on the Pillar2 ID provided in the X-Pi
 | XEPLR2500000422    | Error - No Data Found                                    | Returns a 422 error with code 025                                                                                                                 |
 | XEPLR0000000400    | Error - Invalid JSON                                     | Returns a 400 error                                                                                                                               |
 | XEPLR0000000500    | Error - Internal Server Error                            | Returns a 500 error                                                                                                                               |
+| XEPLR0000000502    | Error - Bad Gateway (502)                                 | Returns a 502 error (for testing homepage retries when pillar2-frontend calls this stub).                                                         |
 | Any other valid ID | Single Accounting Period (Default)                       | Returns a single accounting period for the current tax year                                                                                       |
 
 **Note:** All successful responses require valid date parameters. If the toDate is not after the fromDate, a 422 error with code 001 will be returned regardless of which Pillar2 ID is used.
@@ -1262,26 +1281,14 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
 | Pillar2 ID          | Response Type                                      | Description                                                                                              |
 |---------------------|----------------------------------------------------|----------------------------------------------------------------------------------------------------------|
 | XEPLR0000422014     | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                            |
-| XMPLR0000000000     | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                            |
 | XEPLR0000422089     | Unprocessable Entity (422) - Invalid ID            | Returns a 422 error with code "089" indicating ID number missing or invalid.                             |
 | XEPLR0000000400     | Bad Request (400)                                  | Returns a 400 Bad Request error.                                                                         |
 | XEPLR0000000500     | Internal Server Error (500)                        | Returns a 500 Internal Server Error.                                                                     |
-| XEPLR2697000001     | Success (200)                                      | Scenario 1: UKTR charges (DTT + MTT(IIR) + MTT(UTPR)) with mix of full + partial outstanding.            |
-| XEPLR2697000002     | Success (200)                                      | Scenario 2: UKTR interest charges (DTT + MTT(IIR) + MTT(UTPR)) with mix of full + partial outstanding.   |
-| XEPLR2697000003     | Success (200)                                      | Scenario 3: Determination charges (DTT + MTT(IIR) + MTT(UTPR)).                                          |
-| XEPLR2697000004     | Success (200)                                      | Scenario 4: Discovery Assessment charges (DTT + MTT(IIR) + MTT(UTPR)).                                   |
-| XEPLR2697000005     | Success (200)                                      | Scenario 5: Overpaid Claim Assessment charges (DTT + MTT(IIR) + MTT(UTPR)).                              |
-| XEPLR2697000007     | Success (200)                                      | Scenario 7: UKTR Late Filing Penalties (DTT + MTT).                                                      |
-| XEPLR2697000008     | Success (200)                                      | Scenario 8: ORN/GIR Late Filing Penalties (DTT + MTT).                                                   |
-| XEPLR2697000009     | Success (200)                                      | Scenario 9: Potential Lost Revenue penalty (partial outstanding).                                        |
-| XEPLR2697000010     | Success (200)                                      | Scenario 10: Schedule 36 information notice penalty.                                                     |
-| XEPLR2697000011     | Success (200)                                      | Scenario 11: Failure to keep accurate records penalty.                                                   |
 | Any other valid ID  | Success (200)                                      | Returns a successful response containing a list of financial transactions (Payment, Debit, Credit, etc). |
 
 **Note:**
 - The request requires the `X-Message-Type` header to be set to `ACCOUNT_ACTIVITY`. If missing or invalid, a 400 Bad Request is returned.
 - If the date range is invalid (e.g., `toDate` is before `fromDate`), a 422 error with code "003" (Request could not be processed) is returned.
- - The scenario IDs (`XEPLR2697...`) are intended for testing the Outstanding Payments page with `features.useAccountActivityApi=true` in `pillar2-frontend`.
 
 #### Happy Path
 
@@ -1294,71 +1301,22 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
     "transactionDetails": [
       {
         "transactionType": "Payment",
-        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
-        "transactionDate": "2025-10-15",
-        "originalAmount": 10000,
-        "outstandingAmount": 8000,
-        "clearedAmount": 2000,
+        "transactionDesc": "Payment",
+        "transactionDate": "2024-01-01",
+        "originalAmount": 1000.00,
         "clearingDetails": [
-          {
-            "transactionDesc": "Pillar 2 UK Tax Return Pillar 2 DTT",
-            "amount": 2000,
-            "clearingDate": "2025-10-15",
-            "chargeRefNo": "X123456789012",
-            "dueDate": "2025-12-31",
-            "clearingReason": "Allocated to Charge"
-          }
-        ]
-      },
-      {
-        "transactionType": "Payment",
-        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
-        "transactionDate": "2025-11-01",
-        "originalAmount": 500,
-        "outstandingAmount": 0,
-        "clearedAmount": 500,
-        "clearingDetails": [
-          {
-            "transactionDesc": "Pillar 2 Repayment",
-            "amount": 500,
-            "clearingDate": "2025-11-01",
-            "clearingReason": "Outgoing payment - Paid"
-          }
-        ]
-      },
-      {
-        "transactionType": "Credit",
-        "transactionDesc": "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
-        "transactionDate": "2025-12-01",
-        "originalAmount": 5,
-        "clearedAmount": 5,
-        "clearingDetails": [
-          {
-            "transactionDesc": "Pillar 2 Repayment",
-            "amount": 5,
-            "clearingDate": "2025-12-01",
-            "clearingReason": "Outgoing payment - Paid"
-          }
+           {
+              "transactionDesc": "Payment",
+              "amount": 1000.00,
+              "clearingDate": "2024-01-01"
+           }
         ]
       },
       {
         "transactionType": "Debit",
-        "transactionDesc": "Pillar 2 UK Tax Return Pillar 2 DTT",
-        "startDate": "2025-01-01",
-        "endDate": "2025-12-31",
-        "chargeRefNo": "X123456789012",
-        "transactionDate": "2025-02-15",
-        "dueDate": "2025-12-31",
-        "originalAmount": 2000,
-        "clearedAmount": 2000,
-        "clearingDetails": [
-          {
-            "transactionDesc": "On Account Pillar 2 (Payment on Account)",
-            "amount": 2000,
-            "clearingDate": "2025-10-15",
-            "clearingReason": "Cleared by Payment"
-          }
-        ]
+        "transactionDesc": "Debit",
+        "transactionDate": "2024-02-01",
+        "originalAmount": 500.00
       }
     ]
   }
