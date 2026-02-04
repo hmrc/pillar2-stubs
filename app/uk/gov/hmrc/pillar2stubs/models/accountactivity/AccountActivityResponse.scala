@@ -339,7 +339,7 @@ object AccountActivitySuccessResponse {
       )
     )
 
-  def overdueOutstandingCharges(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
+  def overdueOutstandingCharge(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
       transactionDetails = Seq(
