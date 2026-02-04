@@ -112,14 +112,14 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       if count <= 8 then (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
       else (OK, readSuccessResponseWithRef(ref))
 
-    case "XEPLR0123456400" => (BAD_REQUEST, resourceAsString("/resources/error/subscription/BadRequest.json").get)
-    case "XEPLR0123456404" => (NOT_FOUND, resourceAsString("/resources/error/subscription/NotFound.json").get)
-    case "XEPLR0123456422" => (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
-    case "XEPLR0123456500" => (INTERNAL_SERVER_ERROR, resourceAsString("/resources/error/subscription/ServerError.json").get)
-    case "XEPLR0123456502" => (502, resourceAsString("/resources/error/subscription/BadGateway.json").get)
-    case "XEPLR0123456503" => (SERVICE_UNAVAILABLE, resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
+    case "XEPLR0123456400"       => (BAD_REQUEST, resourceAsString("/resources/error/subscription/BadRequest.json").get)
+    case "XEPLR0123456404"       => (NOT_FOUND, resourceAsString("/resources/error/subscription/NotFound.json").get)
+    case "XEPLR0123456422"       => (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+    case "XEPLR0123456500"       => (INTERNAL_SERVER_ERROR, resourceAsString("/resources/error/subscription/ServerError.json").get)
+    case "XEPLR0123456502"       => (502, resourceAsString("/resources/error/subscription/BadGateway.json").get)
+    case "XEPLR0123456503"       => (SERVICE_UNAVAILABLE, resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
     case ref @ "XEPLR5555555555" => (OK, makeInactive(readSuccessResponseWithRef(ref)))
-    case "XEPLR5555551111" => (OK, replaceDate(readSuccessResponse, LocalDate.now().toString))
+    case "XEPLR5555551111"       => (OK, replaceDate(readSuccessResponse, LocalDate.now().toString))
     case ref @ "XEPLR6666666666" =>
       (OK, readSuccessResponseWithRef(ref).replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
     case ref @ "XEPLR1066196600" => (OK, readSuccessResponseWithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
@@ -129,7 +129,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     case ref @ "XEPLR2000000111" => (OK, makeInactive(readSuccessResponseWithRef(ref)))
     case ref @ "XEPLR2000000112" => (OK, makeInactive(readSuccessResponseWithRef(ref)))
     case ref @ "XEPLR2000000200" => (OK, removeSecondaryContact(readSuccessResponseWithRef(ref)))
-    case _ =>
+    case _                       =>
       (
         OK,
         readSuccessResponseWithRef("plrReference")
