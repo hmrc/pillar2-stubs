@@ -339,6 +339,41 @@ object AccountActivitySuccessResponse {
       )
     )
 
+  def overdueOutstandingCharge(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
+    AccountActivitySuccess(
+      processingDate = AccountActivityResponse.now,
+      transactionDetails = Seq(
+        AccountActivityTransactionDetail(
+          transactionType = "Debit",
+          transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+          startDate = Some(LocalDate.of(2025, 1, 1)),
+          endDate = Some(LocalDate.of(2025, 12, 31)),
+          chargeRefNo = Some("X123456789012"),
+          transactionDate = LocalDate.of(2025, 2, 15),
+          dueDate = Some(LocalDate.of(2026, 12, 31)),
+          originalAmount = BigDecimal(9000),
+          outstandingAmount = Some(BigDecimal(9000)),
+          clearedAmount = None,
+          clearingDetails = None
+        ),
+        AccountActivityTransactionDetail(
+          transactionType = "Debit",
+          transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+          startDate = Some(LocalDate.of(2024, 1, 1)),
+          endDate = Some(LocalDate.of(2024, 12, 31)),
+          chargeRefNo = Some("X123456789012"),
+          transactionDate = LocalDate.of(2024, 2, 15),
+          dueDate = Some(LocalDate.of(2025, 12, 31)),
+          accruedInterest = Some(BigDecimal(425)),
+          originalAmount = BigDecimal(6500),
+          outstandingAmount = Some(BigDecimal(6500)),
+          clearedAmount = None,
+          clearingDetails = None
+        )
+      )
+    )
+  )
+
   def apply(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
@@ -516,8 +551,8 @@ object AccountActivitySuccessResponse {
           endDate = Some(LocalDate.of(2026, 12, 31)),
           accruedInterest = Some(35),
           chargeRefNo = Some("XDT3456789012"),
-          transactionDate = LocalDate.of(2027, 2, 15),
-          dueDate = Some(LocalDate.of(2028, 3, 31)),
+          transactionDate = LocalDate.of(2026, 1, 2),
+          dueDate = Some(LocalDate.of(2026, 1, 31)),
           originalAmount = 3100,
           outstandingAmount = Some(3100)
         ),
