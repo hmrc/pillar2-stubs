@@ -53,6 +53,8 @@ object AccountActivitySuccessResponse {
   private val apStart: LocalDate = LocalDate.of(2024, 1, 1)
   private val apEnd:   LocalDate = LocalDate.of(2024, 12, 31)
 
+  import TransactionDesc.*
+
   private def debitTransaction(
     desc:            String,
     chargeRefNo:     String,
@@ -76,10 +78,10 @@ object AccountActivitySuccessResponse {
       clearingDetails = clearedAmount.map { cleared =>
         Seq(
           ClearingDetail(
-            transactionDesc = desc,
+            transactionDesc = PaymentOnAccountDesc, // What cleared it, not the debit's own description
             amount = cleared,
             clearingDate = transactionDate,
-            chargeRefNo = Some(chargeRefNo),
+            chargeRefNo = None,
             dueDate = Some(dueDate),
             clearingReason = Some("Cleared by Payment")
           )
@@ -99,7 +101,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+          desc = UktrDttDesc,
           chargeRefNo = "XDT3456789012",
           dueDate = LocalDate.of(2026, 6, 20),
           transactionDate = LocalDate.of(2026, 6, 15),
@@ -107,7 +109,7 @@ object AccountActivitySuccessResponse {
           outstanding = 3100
         ),
         debitTransaction(
-          desc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+          desc = UktrMttIirDesc,
           chargeRefNo = "XII3456789012",
           dueDate = LocalDate.of(2026, 6, 25),
           transactionDate = LocalDate.of(2026, 6, 15),
@@ -116,7 +118,7 @@ object AccountActivitySuccessResponse {
           clearedAmount = Some(2000)
         ),
         debitTransaction(
-          desc = "Pillar 2 UK Tax Return Pillar 2 MTT UTPR",
+          desc = UktrMttUtprDesc,
           chargeRefNo = "XUT3456789012",
           dueDate = LocalDate.of(2026, 6, 30),
           transactionDate = LocalDate.of(2026, 6, 15),
@@ -130,7 +132,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Pillar 2 UKTR Interest Pillar 2 DTT Int",
+          desc = LateUktrPayIntDttDesc,
           chargeRefNo = "XIN3456789012",
           dueDate = LocalDate.of(2026, 7, 20),
           transactionDate = LocalDate.of(2026, 7, 15),
@@ -138,7 +140,7 @@ object AccountActivitySuccessResponse {
           outstanding = 35
         ),
         debitTransaction(
-          desc = "Pillar 2 UKTR Interest Pillar 2 MTT IIR Int",
+          desc = LateUktrPayIntMttIirDesc,
           chargeRefNo = "XIN3456789013",
           dueDate = LocalDate.of(2026, 7, 20),
           transactionDate = LocalDate.of(2026, 7, 15),
@@ -147,7 +149,7 @@ object AccountActivitySuccessResponse {
           clearedAmount = Some(30)
         ),
         debitTransaction(
-          desc = "Pillar 2 UKTR Interest Pillar 2 MTT UTPR Int",
+          desc = LateUktrPayIntMttUtprDesc,
           chargeRefNo = "XIN3456789014",
           dueDate = LocalDate.of(2026, 7, 20),
           transactionDate = LocalDate.of(2026, 7, 15),
@@ -161,7 +163,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Pillar 2 Determination Pillar 2 DTT",
+          desc = DeterminationDttDesc,
           chargeRefNo = "XDD3456789012",
           dueDate = LocalDate.of(2028, 3, 31),
           transactionDate = LocalDate.of(2027, 2, 15),
@@ -169,7 +171,7 @@ object AccountActivitySuccessResponse {
           outstanding = 3100
         ),
         debitTransaction(
-          desc = "Pillar 2 Determination Pillar 2 MTT IIR",
+          desc = DeterminationMttIirDesc,
           chargeRefNo = "XDT3456789012",
           dueDate = LocalDate.of(2028, 3, 31),
           transactionDate = LocalDate.of(2027, 2, 15),
@@ -178,7 +180,7 @@ object AccountActivitySuccessResponse {
           clearedAmount = Some(2000)
         ),
         debitTransaction(
-          desc = "Pillar 2 Determination Pillar 2 MTT UTPR",
+          desc = DeterminationMttUtprDesc,
           chargeRefNo = "XDU3456789012",
           dueDate = LocalDate.of(2028, 3, 31),
           transactionDate = LocalDate.of(2027, 2, 15),
@@ -192,7 +194,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Pillar 2 Discovery Assessment Pillar 2 DTT",
+          desc = DiscoveryDttDesc,
           chargeRefNo = "XDA3456789012",
           dueDate = LocalDate.of(2026, 9, 30),
           transactionDate = LocalDate.of(2026, 9, 15),
@@ -200,7 +202,7 @@ object AccountActivitySuccessResponse {
           outstanding = 3000
         ),
         debitTransaction(
-          desc = "Pillar 2 Discovery Assessment Pillar 2 MTT IIR",
+          desc = DiscoveryMttIirDesc,
           chargeRefNo = "XDA3456789013",
           dueDate = LocalDate.of(2026, 9, 30),
           transactionDate = LocalDate.of(2026, 9, 15),
@@ -209,7 +211,7 @@ object AccountActivitySuccessResponse {
           clearedAmount = Some(1000)
         ),
         debitTransaction(
-          desc = "Pillar 2 Discovery Assessment Pillar 2 MTT UTPR",
+          desc = DiscoveryMttUtprDesc,
           chargeRefNo = "XDA3456789014",
           dueDate = LocalDate.of(2026, 9, 30),
           transactionDate = LocalDate.of(2026, 9, 15),
@@ -223,7 +225,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Pillar 2 Overpaid Claim Assmt Pillar 2 DTT",
+          desc = OverpaidClaimDttDesc,
           chargeRefNo = "XOC3456789010",
           dueDate = LocalDate.of(2028, 3, 31),
           transactionDate = LocalDate.of(2027, 2, 15),
@@ -231,7 +233,7 @@ object AccountActivitySuccessResponse {
           outstanding = 4100
         ),
         debitTransaction(
-          desc = "Pillar 2 Overpaid Claim Assmt Pillar 2 MTT IIR",
+          desc = OverpaidClaimMttIirDesc,
           chargeRefNo = "XOC3456789011",
           dueDate = LocalDate.of(2028, 3, 31),
           transactionDate = LocalDate.of(2027, 2, 15),
@@ -240,7 +242,7 @@ object AccountActivitySuccessResponse {
           clearedAmount = Some(2000)
         ),
         debitTransaction(
-          desc = "Pillar 2 Overpaid Claim Assmt Pillar 2 MTT UTPR",
+          desc = OverpaidClaimMttUtprDesc,
           chargeRefNo = "XOC3456789012",
           dueDate = LocalDate.of(2028, 3, 31),
           transactionDate = LocalDate.of(2027, 2, 15),
@@ -254,7 +256,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Pillar 2 UKTR DTT LFP AUTO PEN",
+          desc = LateUktrSubPenDttDesc,
           chargeRefNo = "XPN3456789012",
           dueDate = LocalDate.of(2026, 7, 31),
           transactionDate = LocalDate.of(2026, 7, 1),
@@ -262,7 +264,7 @@ object AccountActivitySuccessResponse {
           outstanding = 100
         ),
         debitTransaction(
-          desc = "Pillar 2 UKTR MTT LFP AUTO PEN",
+          desc = LateUktrSubPenMttDesc,
           chargeRefNo = "XPN3456789013",
           dueDate = LocalDate.of(2026, 7, 31),
           transactionDate = LocalDate.of(2026, 7, 1),
@@ -277,7 +279,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Pillar 2 ORN/GIR DTT LFP AUTO PEN",
+          desc = LateOrnGirSubPenDttDesc,
           chargeRefNo = "XPN3456789020",
           dueDate = LocalDate.of(2026, 8, 31),
           transactionDate = LocalDate.of(2026, 8, 1),
@@ -286,7 +288,7 @@ object AccountActivitySuccessResponse {
           clearedAmount = Some(200)
         ),
         debitTransaction(
-          desc = "Pillar 2 ORN/GIR MTT LFP AUTO PEN",
+          desc = LateOrnGirSubPenMttDesc,
           chargeRefNo = "XPN3456789021",
           dueDate = LocalDate.of(2026, 8, 31),
           transactionDate = LocalDate.of(2026, 8, 1),
@@ -300,7 +302,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Pillar 2 Poten Lost Rev Pen TG PEN",
+          desc = Schedule24Desc,
           chargeRefNo = "XPL3456789012",
           dueDate = LocalDate.of(2026, 11, 30),
           transactionDate = LocalDate.of(2026, 11, 1),
@@ -315,7 +317,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Sch 36 Penalty TG PEN",
+          desc = Schedule36Desc,
           chargeRefNo = "XS363456789012",
           dueDate = LocalDate.of(2026, 10, 31),
           transactionDate = LocalDate.of(2026, 10, 1),
@@ -329,7 +331,7 @@ object AccountActivitySuccessResponse {
     responseWithDebits(
       Seq(
         debitTransaction(
-          desc = "Pillar 2 Record Keeping Pen TG PEN",
+          desc = RecordKeepingPenDesc,
           chargeRefNo = "XRK3456789012",
           dueDate = LocalDate.of(2026, 7, 30),
           transactionDate = LocalDate.of(2026, 6, 30),
@@ -345,7 +347,7 @@ object AccountActivitySuccessResponse {
       transactionDetails = Seq(
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+          transactionDesc = UktrDttDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
           chargeRefNo = Some("X123456789012"),
@@ -358,7 +360,7 @@ object AccountActivitySuccessResponse {
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+          transactionDesc = UktrMttIirDesc,
           startDate = Some(LocalDate.of(2024, 1, 1)),
           endDate = Some(LocalDate.of(2024, 12, 31)),
           chargeRefNo = Some("X123456789012"),
@@ -378,18 +380,18 @@ object AccountActivitySuccessResponse {
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
       transactionDetails = Seq(
-        // Payment transaction
+        // Payment transaction - amounts should be NEGATIVE
         AccountActivityTransactionDetail(
           transactionType = "Payment",
-          transactionDesc = "On Account Pillar 2 (Payment on Account)",
+          transactionDesc = PaymentOnAccountDesc,
           transactionDate = LocalDate.of(2025, 10, 15),
-          originalAmount = 10000,
-          outstandingAmount = Some(1000),
-          clearedAmount = Some(9000),
+          originalAmount = -10000,
+          outstandingAmount = Some(-1000),
+          clearedAmount = Some(-9000),
           clearingDetails = Some(
             Seq(
               ClearingDetail(
-                transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+                transactionDesc = UktrDttDesc,
                 amount = 2000,
                 clearingDate = LocalDate.of(2025, 10, 15),
                 chargeRefNo = Some("X123456789012"),
@@ -397,7 +399,7 @@ object AccountActivitySuccessResponse {
                 clearingReason = Some("Allocated to Charge")
               ),
               ClearingDetail(
-                transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+                transactionDesc = UktrMttIirDesc,
                 amount = 2000,
                 clearingDate = LocalDate.of(2025, 10, 15),
                 chargeRefNo = Some("X123456789012"),
@@ -405,7 +407,7 @@ object AccountActivitySuccessResponse {
                 clearingReason = Some("Allocated to Charge")
               ),
               ClearingDetail(
-                transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT UTPR",
+                transactionDesc = UktrMttUtprDesc,
                 amount = 2000,
                 clearingDate = LocalDate.of(2025, 10, 15),
                 chargeRefNo = Some("X123456789012"),
@@ -413,7 +415,7 @@ object AccountActivitySuccessResponse {
                 clearingReason = Some("Allocated to Charge")
               ),
               ClearingDetail(
-                transactionDesc = "Pillar 2 Discovery Assessment Pillar 2 DTT",
+                transactionDesc = DiscoveryDttDesc,
                 amount = 3000,
                 clearingDate = LocalDate.of(2025, 10, 15),
                 chargeRefNo = Some("X123456789012"),
@@ -425,15 +427,15 @@ object AccountActivitySuccessResponse {
         ),
         AccountActivityTransactionDetail(
           transactionType = "Payment",
-          transactionDesc = "On Account Pillar 2 (Payment on Account)",
+          transactionDesc = PaymentOnAccountDesc,
           transactionDate = LocalDate.of(2025, 11, 1),
-          originalAmount = 500,
+          originalAmount = -500,
           outstandingAmount = Some(0),
-          clearedAmount = Some(500),
+          clearedAmount = Some(-500),
           clearingDetails = Some(
             Seq(
               ClearingDetail(
-                transactionDesc = "Pillar 2 Repayment",
+                transactionDesc = "Repayment",
                 amount = 500,
                 clearingDate = LocalDate.of(2025, 11, 1),
                 clearingReason = Some("Outgoing payment - Paid")
@@ -441,17 +443,17 @@ object AccountActivitySuccessResponse {
             )
           )
         ),
-        // Repayment interest
+        // Repayment interest - Credit amounts should be NEGATIVE
         AccountActivityTransactionDetail(
           transactionType = "Credit",
-          transactionDesc = "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+          transactionDesc = RepaymentInterestDesc,
           transactionDate = LocalDate.of(2025, 12, 1),
-          originalAmount = 5,
-          clearedAmount = Some(5),
+          originalAmount = -5,
+          clearedAmount = Some(-5),
           clearingDetails = Some(
             Seq(
               ClearingDetail(
-                transactionDesc = "Pillar 2 Repayment",
+                transactionDesc = "Repayment",
                 amount = 5,
                 clearingDate = LocalDate.of(2025, 12, 1),
                 clearingReason = Some("Outgoing payment - Paid")
@@ -462,7 +464,7 @@ object AccountActivitySuccessResponse {
         // Debit transactions
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 UK Tax Return Pillar 2 DTT",
+          transactionDesc = UktrDttDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
           chargeRefNo = Some("X123456789012"),
@@ -473,7 +475,7 @@ object AccountActivitySuccessResponse {
           clearingDetails = Some(
             Seq(
               ClearingDetail(
-                transactionDesc = "On Account Pillar 2 (Payment on Account)",
+                transactionDesc = PaymentOnAccountDesc,
                 amount = 2000,
                 clearingDate = LocalDate.of(2025, 10, 15),
                 clearingReason = Some("Cleared by Payment")
@@ -483,7 +485,7 @@ object AccountActivitySuccessResponse {
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
+          transactionDesc = UktrMttIirDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
           chargeRefNo = Some("X123456789012"),
@@ -494,7 +496,7 @@ object AccountActivitySuccessResponse {
           clearingDetails = Some(
             Seq(
               ClearingDetail(
-                transactionDesc = "On Account Pillar 2 (Payment on Account)",
+                transactionDesc = PaymentOnAccountDesc,
                 amount = 2000,
                 clearingDate = LocalDate.of(2025, 10, 15),
                 clearingReason = Some("Cleared by Payment")
@@ -504,7 +506,7 @@ object AccountActivitySuccessResponse {
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 UK Tax Return Pillar 2 MTT UTPR",
+          transactionDesc = UktrMttUtprDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
           chargeRefNo = Some("X123456789012"),
@@ -515,7 +517,7 @@ object AccountActivitySuccessResponse {
           clearingDetails = Some(
             Seq(
               ClearingDetail(
-                transactionDesc = "On Account Pillar 2 (Payment on Account)",
+                transactionDesc = PaymentOnAccountDesc,
                 amount = 2000,
                 clearingDate = LocalDate.of(2025, 10, 15),
                 clearingReason = Some("Cleared by Payment")
@@ -525,7 +527,7 @@ object AccountActivitySuccessResponse {
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 Discovery Assessment Pillar 2 DTT",
+          transactionDesc = DiscoveryDttDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
           chargeRefNo = Some("XD23456789012"),
@@ -536,7 +538,7 @@ object AccountActivitySuccessResponse {
           clearingDetails = Some(
             Seq(
               ClearingDetail(
-                transactionDesc = "On Account Pillar 2 (Payment on Account)",
+                transactionDesc = PaymentOnAccountDesc,
                 amount = 3000,
                 clearingDate = LocalDate.of(2025, 10, 15),
                 clearingReason = Some("Cleared by Payment")
@@ -546,7 +548,7 @@ object AccountActivitySuccessResponse {
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 Determination Pillar 2 MTT IIR",
+          transactionDesc = DeterminationMttIirDesc,
           startDate = Some(LocalDate.of(2026, 1, 1)),
           endDate = Some(LocalDate.of(2026, 12, 31)),
           accruedInterest = Some(35),
@@ -558,7 +560,7 @@ object AccountActivitySuccessResponse {
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 Overpaid Claim Assmt Pillar 2 MTT UTPR",
+          transactionDesc = OverpaidClaimMttUtprDesc,
           startDate = Some(LocalDate.of(2026, 1, 1)),
           endDate = Some(LocalDate.of(2026, 12, 31)),
           chargeRefNo = Some("XOC3456789012"),
@@ -569,10 +571,10 @@ object AccountActivitySuccessResponse {
           standOverAmount = Some(4100),
           appealFlag = Some(true)
         ),
-        // Credit transaction
+        // Credit transaction - amounts should be NEGATIVE
         AccountActivityTransactionDetail(
           transactionType = "Credit",
-          transactionDesc = "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+          transactionDesc = RepaymentInterestDesc,
           chargeRefNo = Some("XR23456789012"),
           transactionDate = LocalDate.of(2025, 3, 15),
           originalAmount = -100,
@@ -581,7 +583,7 @@ object AccountActivitySuccessResponse {
         // Penalty and Interest transactions
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 UKTR DTT LFP AUTO PEN",
+          transactionDesc = LateUktrSubPenDttDesc,
           startDate = Some(LocalDate.of(2024, 1, 1)),
           endDate = Some(LocalDate.of(2024, 12, 31)),
           chargeRefNo = Some("XPN3456789012"),
@@ -592,7 +594,7 @@ object AccountActivitySuccessResponse {
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 UKTR Interest Pillar 2 DTT Int",
+          transactionDesc = LateUktrPayIntDttDesc,
           startDate = Some(LocalDate.of(2024, 1, 1)),
           endDate = Some(LocalDate.of(2024, 12, 31)),
           chargeRefNo = Some("XIN3456789012"),
@@ -603,7 +605,7 @@ object AccountActivitySuccessResponse {
         ),
         AccountActivityTransactionDetail(
           transactionType = "Debit",
-          transactionDesc = "Pillar 2 Record Keeping Pen TG PEN",
+          transactionDesc = RecordKeepingPenDesc,
           chargeRefNo = Some("XIN3456789012"),
           transactionDate = LocalDate.of(2026, 6, 30),
           dueDate = Some(LocalDate.of(2026, 7, 30)),
@@ -711,4 +713,81 @@ object AccountActivityErrorCodes {
   val REQUEST_COULD_NOT_BE_PROCESSED_003: (String, String) = ("003", "Request could not be processed")
   val NO_DATA_FOUND_014:                  (String, String) = ("014", "No data found")
   val ID_NUMBER_MISSING_OR_INVALID_089:   (String, String) = ("089", "ID number missing or invalid")
+}
+
+/** Transaction descriptions condensed to ≤30 chars for ETMP SAP limit */
+enum TransactionDesc(val description: String) {
+  // Payment
+  case PaymentOnAccountDesc extends TransactionDesc("Pillar 2 (Payment on Account)")
+
+  // UKTR charges
+  case UktrDttDesc extends TransactionDesc("UKTR - DTT")
+  case UktrMttIirDesc extends TransactionDesc("UKTR - MTT (IIR)")
+  case UktrMttUtprDesc extends TransactionDesc("UKTR - MTT (UTPR)")
+
+  // Repayment interest
+  case RepaymentInterestDesc extends TransactionDesc("Repayment interest - UKTR")
+
+  // Determination charges
+  case DeterminationDttDesc extends TransactionDesc("Determination - DTT")
+  case DeterminationMttIirDesc extends TransactionDesc("Determination - MTT (IIR)")
+  case DeterminationMttUtprDesc extends TransactionDesc("Determination - MTT (UTPR)")
+
+  // Determination interest
+  case DeterminationIntDttDesc extends TransactionDesc("Determination interest - DTT")
+  case DeterminationIntMttIirDesc extends TransactionDesc("Determination int- MTT (IIR)")
+  case DeterminationIntMttUtprDesc extends TransactionDesc("Determination int - MTT (UTPR)")
+
+  // Discovery Assessment charges
+  case DiscoveryDttDesc extends TransactionDesc("Discovery Assessment - DTT")
+  case DiscoveryMttIirDesc extends TransactionDesc("Discovery Assessment-MTT(IIR)")
+  case DiscoveryMttUtprDesc extends TransactionDesc("Discovery Assessment-MTT(UTPR)")
+
+  // Discovery Assessment interest
+  case DiscoveryIntDttDesc extends TransactionDesc("Discovery Assessment int - DTT")
+  case DiscoveryIntMttIirDesc extends TransactionDesc("Discovery Assmnt int-MTT(IIR)")
+  case DiscoveryIntMttUtprDesc extends TransactionDesc("Discovery Assmnt int-MTT(UTPR)")
+
+  // Overpaid Claim Assessment charges
+  case OverpaidClaimDttDesc extends TransactionDesc("Overpaid claim assmnt - DTT")
+  case OverpaidClaimMttIirDesc extends TransactionDesc("O/paid claim assmnt-MTT (IIR)")
+  case OverpaidClaimMttUtprDesc extends TransactionDesc("O/paid claim assmnt-MTT (UTPR)")
+
+  // Overpaid Claim Assessment interest
+  case OverpaidClaimIntDttDesc extends TransactionDesc("O/paid claim assmnt int - DTT")
+  case OverpaidClaimIntMttIirDesc extends TransactionDesc("O/p claim assmnt int-MTT(IIR)")
+  case OverpaidClaimIntMttUtprDesc extends TransactionDesc("O/p claim assmnt int-MTT(UTPR)")
+
+  // Late UKTR payment interest
+  case LateUktrPayIntDttDesc extends TransactionDesc("Late UKTR pay int - DTT")
+  case LateUktrPayIntMttIirDesc extends TransactionDesc("Late UKTR pay int - MTT(IIR)")
+  case LateUktrPayIntMttUtprDesc extends TransactionDesc("Late UKTR pay int - MTT(UTPR)")
+
+  // Late submission penalties - UKTR
+  case LateUktrSubPenDttDesc extends TransactionDesc("Late UKTR sub pen - DTT")
+  case LateUktrSubPenDtt3MnthDesc extends TransactionDesc("Late UKTR sub pen - DTT 3mnth")
+  case LateUktrSubPenDtt6MnthDesc extends TransactionDesc("Late UKTR sub pen - DTT 6mnth")
+  case LateUktrSubPenDtt12MnthDesc extends TransactionDesc("Late UKTR sub pen - DTT 12mnth")
+  case LateUktrSubPenMttDesc extends TransactionDesc("Late UKTR sub pen - MTT")
+  case LateUktrSubPenMtt3MnthDesc extends TransactionDesc("Late UKTR sub pen - MTT 3mnth")
+  case LateUktrSubPenMtt6MnthDesc extends TransactionDesc("Late UKTR sub pen - MTT 6mnth")
+  case LateUktrSubPenMtt12MnthDesc extends TransactionDesc("Late UKTR sub pen - MTT 12mnth")
+
+  // Late submission penalties - ORN/GIR
+  case LateOrnGirSubPenDttDesc extends TransactionDesc("Late ORN/GIR sub pen - DTT")
+  case LateOrnGirSubPenDtt3MnthDesc extends TransactionDesc("Late ORN/GIR sub pen -DTT3mnth")
+  case LateOrnGirSubPenDtt6MnthDesc extends TransactionDesc("Late ORN/GIR sub pen -DTT6mnth")
+  case LateOrnGirSubPenMttDesc extends TransactionDesc("Late ORN/GIR sub pen - MTT")
+  case LateOrnGirSubPenMtt3MnthDesc extends TransactionDesc("Late ORN/GIR sub pen-MTT 3mnth")
+  case LateOrnGirSubPenMtt6MnthDesc extends TransactionDesc("Late ORN/GIR sub pen-MTT 6mnth")
+
+  // Other penalties
+  case Schedule36Desc extends TransactionDesc("Schedule 36 information notice")
+  case Schedule24Desc extends TransactionDesc("Schedule 24 inaccurate return")
+  case RecordKeepingPenDesc extends TransactionDesc("Accurate records failure pen")
+  case GaarPenaltyDesc extends TransactionDesc("General Anti Abuse Rule pen")
+}
+
+object TransactionDesc {
+  given Conversion[TransactionDesc, String] = _.description
 }
