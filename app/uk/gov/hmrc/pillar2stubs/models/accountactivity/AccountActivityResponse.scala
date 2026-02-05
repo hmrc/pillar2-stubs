@@ -78,7 +78,7 @@ object AccountActivitySuccessResponse {
       clearingDetails = clearedAmount.map { cleared =>
         Seq(
           ClearingDetail(
-            transactionDesc = PaymentOnAccountDesc, // What cleared it, not the debit's own description
+            transactionDesc = PaymentOnAccountDesc,
             amount = cleared,
             clearingDate = transactionDate,
             chargeRefNo = None,
@@ -718,7 +718,7 @@ object AccountActivityErrorCodes {
 /** Transaction descriptions condensed to ≤30 chars for ETMP SAP limit */
 enum TransactionDesc(val description: String) {
   // Payment
-  case PaymentOnAccountDesc extends TransactionDesc("Pillar 2 (Payment on Account)")
+  case PaymentOnAccountDesc extends TransactionDesc("On Account Pillar 2 (Payment on Account)")
 
   // UKTR charges
   case UktrDttDesc extends TransactionDesc("UKTR - DTT")
