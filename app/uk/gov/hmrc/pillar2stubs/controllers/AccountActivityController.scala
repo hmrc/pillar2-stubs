@@ -62,6 +62,8 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                 if !accountActivityRequest.dateRangeValid then {
                   UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(REQUEST_COULD_NOT_BE_PROCESSED_003)))
                 } else {
+                  // Continue with other validations and responses only if date range is valid
+                  // ETMPHeaderFilter validates "x-pillar2-id" exists, and Play normalizes headers to lowercase
                   val pillar2Id = request.headers.get("x-pillar2-id").getOrElse("")
                   logger.info(s"Account Activity - Pillar2 ID received: $pillar2Id")
                   pillar2Id match {
@@ -85,6 +87,12 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                       Ok(Json.toJson(AccountActivitySuccessResponse.scenario10Schedule36()))
                     case AccountActivitySuccessResponse.Scenario11RecordKeeping =>
                       Ok(Json.toJson(AccountActivitySuccessResponse.scenario11RecordKeeping()))
+                    case AccountActivitySuccessResponse.Scenario12DeterminationWithInterest =>
+                      Ok(Json.toJson(AccountActivitySuccessResponse.scenario12DeterminationWithInterest()))
+                    case AccountActivitySuccessResponse.Scenario13DiscAssmtWithInterest =>
+                      Ok(Json.toJson(AccountActivitySuccessResponse.scenario13DiscAssmtWithInterest()))
+                    case AccountActivitySuccessResponse.Scenario14OverpaidClaimAssmtWithInterest =>
+                      Ok(Json.toJson(AccountActivitySuccessResponse.scenario14OverpaidClaimAssmtWithInterest()))
                     case "XEPLR0000422001" =>
                       UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(REGIME_MISSING_OR_INVALID_001)))
                     case "XEPLR0000422003" =>
@@ -97,8 +105,11 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                       BadRequest(Json.toJson(AccountActivityErrorResponse.badRequest))
                     case "XEPLR0000000500" =>
                       InternalServerError(Json.toJson(AccountActivityErrorResponse.internalServerError))
+                    // No data found (match ETMP behaviour)
                     case "XMPLR0000000000" =>
                       UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
+                    case "XEPLR2000000001" =>
+                      Ok(Json.toJson(AccountActivitySuccessResponse.overdueOutstandingCharge()))
                     case _ =>
                       Ok(Json.toJson(AccountActivitySuccessResponse()))
                   }
@@ -162,6 +173,12 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                 Ok(Json.toJson(AccountActivitySuccessResponse.scenario10Schedule36()))
               case AccountActivitySuccessResponse.Scenario11RecordKeeping =>
                 Ok(Json.toJson(AccountActivitySuccessResponse.scenario11RecordKeeping()))
+              case AccountActivitySuccessResponse.Scenario12DeterminationWithInterest =>
+                Ok(Json.toJson(AccountActivitySuccessResponse.scenario12DeterminationWithInterest()))
+              case AccountActivitySuccessResponse.Scenario13DiscAssmtWithInterest =>
+                Ok(Json.toJson(AccountActivitySuccessResponse.scenario13DiscAssmtWithInterest()))
+              case AccountActivitySuccessResponse.Scenario14OverpaidClaimAssmtWithInterest =>
+                Ok(Json.toJson(AccountActivitySuccessResponse.scenario14OverpaidClaimAssmtWithInterest()))
               case "XEPLR0000422001" =>
                 UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(REGIME_MISSING_OR_INVALID_001)))
               case "XEPLR0000422003" =>
@@ -174,8 +191,11 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                 BadRequest(Json.toJson(AccountActivityErrorResponse.badRequest))
               case "XEPLR0000000500" =>
                 InternalServerError(Json.toJson(AccountActivityErrorResponse.internalServerError))
+              // No data found (match ETMP behaviour)
               case "XMPLR0000000000" =>
                 UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
+              case "XEPLR2000000001" =>
+                Ok(Json.toJson(AccountActivitySuccessResponse.overdueOutstandingCharge()))
               case _ =>
                 Ok(Json.toJson(AccountActivitySuccessResponse()))
             }

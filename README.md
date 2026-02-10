@@ -1278,12 +1278,24 @@ For this API, the payload is rather simple, so responses are limited in their sc
 
 The API returns different responses based on the Pillar2 ID provided in the `X-Pillar2-Id` header:
 
-| Pillar2 ID          | Response Type                                      | Description                                                                                              |
-|---------------------|----------------------------------------------------|----------------------------------------------------------------------------------------------------------|
-| XEPLR0000422014     | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                            |
-| XEPLR0000422089     | Unprocessable Entity (422) - Invalid ID            | Returns a 422 error with code "089" indicating ID number missing or invalid.                             |
-| XEPLR0000000400     | Bad Request (400)                                  | Returns a 400 Bad Request error.                                                                         |
-| XEPLR0000000500     | Internal Server Error (500)                        | Returns a 500 Internal Server Error.                                                                     |
+| Pillar2 ID          | Response Type                                      | Description                                                                                             |
+|---------------------|----------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| XEPLR0000422014     | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                           |
+| XMPLR0000000000     | Unprocessable Entity (422) - No Data Found         | Returns a 422 error with code "014" indicating no data found.                                           |
+| XEPLR0000422089     | Unprocessable Entity (422) - Invalid ID            | Returns a 422 error with code "089" indicating ID number missing or invalid.                            |
+| XEPLR0000000400     | Bad Request (400)                                  | Returns a 400 Bad Request error.                                                                        |
+| XEPLR0000000500     | Internal Server Error (500)                        | Returns a 500 Internal Server Error.                                                                    |
+| XEPLR2697000001     | Success (200)                                      | Scenario 1: UKTR charges (DTT + MTT(IIR) + MTT(UTPR)) with mix of full + partial outstanding.           |
+| XEPLR2697000002     | Success (200)                                      | Scenario 2: UKTR interest charges (DTT + MTT(IIR) + MTT(UTPR)) with mix of full + partial outstanding.  |
+| XEPLR2697000003     | Success (200)                                      | Scenario 3: Determination charges (DTT + MTT(IIR) + MTT(UTPR)).                                         |
+| XEPLR2697000004     | Success (200)                                      | Scenario 4: Discovery Assessment charges (DTT + MTT(IIR) + MTT(UTPR)).                                  |
+| XEPLR2697000005     | Success (200)                                      | Scenario 5: Overpaid Claim Assessment charges (DTT + MTT(IIR) + MTT(UTPR)).                             |
+| XEPLR2697000007     | Success (200)                                      | Scenario 7: UKTR Late Filing Penalties (DTT + MTT).                                                     |
+| XEPLR2697000008     | Success (200)                                      | Scenario 8: ORN/GIR Late Filing Penalties (DTT + MTT).                                                  |
+| XEPLR2697000009     | Success (200)                                      | Scenario 9: Potential Lost Revenue penalty (partial outstanding).                                       |
+| XEPLR2697000010     | Success (200)                                      | Scenario 10: Schedule 36 information notice penalty.                                                    |
+| XEPLR2697000011     | Success (200)                                      | Scenario 11: Failure to keep accurate records penalty.                                                  |
+| XEPLR2000000001     | Success (200)                                      | Returns a successful response containing an overdue and outstanding charge                              |
 | Any other valid ID  | Success (200)                                      | Returns a successful response containing a list of financial transactions (Payment, Debit, Credit, etc). |
 
 **Note:**
