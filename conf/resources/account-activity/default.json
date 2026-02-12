@@ -1,0 +1,220 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Payment",
+                "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                "transactionDate": "2025-10-15",
+                "originalAmount": -10000.0,
+                "outstandingAmount": -1000.0,
+                "clearedAmount": -9000.0,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "UKTR - DTT",
+                        "amount": 2000,
+                        "clearingDate": "2025-10-15",
+                        "chargeRefNo": "X123456789012",
+                        "dueDate": "2025-12-31",
+                        "clearingReason": "Allocated to Charge"
+                    },
+                    {
+                        "transactionDesc": "UKTR - MTT (IIR)",
+                        "amount": 2000,
+                        "clearingDate": "2025-10-15",
+                        "chargeRefNo": "X123456789012",
+                        "dueDate": "2025-12-31",
+                        "clearingReason": "Allocated to Charge"
+                    },
+                    {
+                        "transactionDesc": "UKTR - MTT (UTPR)",
+                        "amount": 2000,
+                        "clearingDate": "2025-10-15",
+                        "chargeRefNo": "X123456789012",
+                        "dueDate": "2025-12-31",
+                        "clearingReason": "Allocated to Charge"
+                    },
+                    {
+                        "transactionDesc": "Discovery Assessment - DTT",
+                        "amount": 3000,
+                        "clearingDate": "2025-10-15",
+                        "chargeRefNo": "X123456789012",
+                        "dueDate": "2025-12-31",
+                        "clearingReason": "Allocated to Charge"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Payment",
+                "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                "transactionDate": "2025-11-01",
+                "originalAmount": -500.0,
+                "outstandingAmount": 0.0,
+                "clearedAmount": -500.0,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "Repayment",
+                        "amount": 500,
+                        "clearingDate": "2025-11-01",
+                        "clearingReason": "Outgoing payment - Paid"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Credit",
+                "transactionDesc": "Repayment interest - UKTR",
+                "transactionDate": "2025-12-01",
+                "originalAmount": -5.0,
+                "clearedAmount": -5.0,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "Repayment",
+                        "amount": 5,
+                        "clearingDate": "2025-12-01",
+                        "clearingReason": "Outgoing payment - Paid"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "UKTR - DTT",
+                "startDate": "2025-01-01",
+                "endDate": "2025-12-31",
+                "chargeRefNo": "X123456789012",
+                "transactionDate": "2025-02-15",
+                "dueDate": "2026-12-31",
+                "originalAmount": 2000.0,
+                "clearedAmount": 2000.0,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 2000,
+                        "clearingDate": "2025-10-15",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "UKTR - MTT (IIR)",
+                "startDate": "2025-01-01",
+                "endDate": "2025-12-31",
+                "chargeRefNo": "X123456789012",
+                "transactionDate": "2025-02-15",
+                "dueDate": "2026-12-31",
+                "originalAmount": 2000.0,
+                "clearedAmount": 2000.0,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 2000,
+                        "clearingDate": "2025-10-15",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "UKTR - MTT (UTPR)",
+                "startDate": "2025-01-01",
+                "endDate": "2025-12-31",
+                "chargeRefNo": "X123456789012",
+                "transactionDate": "2025-02-15",
+                "dueDate": "2026-12-31",
+                "originalAmount": 2000.0,
+                "clearedAmount": 2000.0,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 2000,
+                        "clearingDate": "2025-10-15",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Discovery Assessment - DTT",
+                "startDate": "2025-01-01",
+                "endDate": "2025-12-31",
+                "chargeRefNo": "XD23456789012",
+                "transactionDate": "2025-02-15",
+                "dueDate": "2026-12-31",
+                "originalAmount": 3000.0,
+                "clearedAmount": 3000.0,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 3000,
+                        "clearingDate": "2025-10-15",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Determination - MTT (IIR)",
+                "startDate": "2026-01-01",
+                "endDate": "2026-12-31",
+                "accruedInterest": 35.0,
+                "chargeRefNo": "XDT3456789012",
+                "transactionDate": "2026-01-02",
+                "dueDate": "2026-01-31",
+                "originalAmount": 3100.0,
+                "outstandingAmount": 3100.0
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "O/paid claim assmnt-MTT (UTPR)",
+                "startDate": "2026-01-01",
+                "endDate": "2026-12-31",
+                "chargeRefNo": "XOC3456789012",
+                "transactionDate": "2027-02-15",
+                "dueDate": "2028-03-31",
+                "originalAmount": 4100.0,
+                "outstandingAmount": 4100.0,
+                "standOverAmount": 4100.0,
+                "appealFlag": true
+            },
+            {
+                "transactionType": "Credit",
+                "transactionDesc": "Repayment interest - UKTR",
+                "chargeRefNo": "XR23456789012",
+                "transactionDate": "2025-03-15",
+                "originalAmount": -100.0,
+                "outstandingAmount": -100.0
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Late UKTR sub pen - DTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XPN3456789012",
+                "transactionDate": "2026-07-01",
+                "dueDate": "2026-07-31",
+                "originalAmount": 100.0,
+                "outstandingAmount": 100.0
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Late UKTR pay int - DTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XIN3456789012",
+                "transactionDate": "2025-10-15",
+                "dueDate": "2026-10-15",
+                "originalAmount": 35.0,
+                "outstandingAmount": 35.0
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Accurate records failure pen",
+                "chargeRefNo": "XIN3456789012",
+                "transactionDate": "2026-06-30",
+                "dueDate": "2026-07-30",
+                "originalAmount": 3500.0,
+                "outstandingAmount": 3500.0
+            }
+        ]
+    }
+}

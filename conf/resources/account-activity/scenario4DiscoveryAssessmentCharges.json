@@ -1,0 +1,50 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Discovery Assessment - DTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XDA3456789012",
+                "transactionDate": "2026-09-15",
+                "dueDate": "2026-09-30",
+                "originalAmount": 3000,
+                "outstandingAmount": 3000
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Discovery Assessment-MTT(IIR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XDA3456789013",
+                "transactionDate": "2026-09-15",
+                "dueDate": "2026-09-30",
+                "originalAmount": 2500,
+                "outstandingAmount": 1500,
+                "clearedAmount": 1000,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 1000,
+                        "clearingDate": "2026-09-15",
+                        "dueDate": "2026-09-30",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Discovery Assessment-MTT(UTPR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XDA3456789014",
+                "transactionDate": "2026-09-15",
+                "dueDate": "2026-09-30",
+                "originalAmount": 1200,
+                "outstandingAmount": 1200
+            }
+        ]
+    }
+}

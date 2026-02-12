@@ -1,0 +1,30 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "UKTR - DTT",
+                "startDate": "2025-01-01",
+                "endDate": "2025-12-31",
+                "chargeRefNo": "X123456789012",
+                "transactionDate": "2025-02-15",
+                "dueDate": "2026-12-31",
+                "originalAmount": 9000,
+                "outstandingAmount": 9000
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "UKTR - MTT (IIR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "accruedInterest": 425,
+                "chargeRefNo": "X123456789012",
+                "transactionDate": "2024-02-15",
+                "dueDate": "2025-12-31",
+                "originalAmount": 6500,
+                "outstandingAmount": 6500
+            }
+        ]
+    }
+}

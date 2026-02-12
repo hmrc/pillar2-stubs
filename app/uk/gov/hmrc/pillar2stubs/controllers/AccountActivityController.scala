@@ -22,13 +22,15 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.accountactivity.AccountActivityErrorCodes.*
 import uk.gov.hmrc.pillar2stubs.models.accountactivity.*
+import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate, ZonedDateTime}
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import scala.util.Try
 
-class AccountActivityController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter, etmpHeaderFilter: ETMPHeaderFilter)
+class AccountActivityController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter, etmpHeaderFilter: ETMPHeaderFilter, clock: Clock)
     extends BackendController(cc)
     with Logging {
 
@@ -60,27 +62,76 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
               // ETMPHeaderFilter validates "x-pillar2-id" exists, and Play normalizes headers to lowercase
               val pillar2Id = request.headers.get("x-pillar2-id").getOrElse("")
               logger.info(s"Account Activity - Pillar2 ID received: $pillar2Id")
+              val processingDate = ZonedDateTime.now(clock).truncatedTo(ChronoUnit.SECONDS).toString
+
               pillar2Id match {
                 case AccountActivitySuccessResponse.Scenario1UktrCharges =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario1UktrCharges()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario1UktrCharges.json").get.replace("[processingDate]", processingDate)
+                    )
+                  )
                 case AccountActivitySuccessResponse.Scenario2UktrInterestCharges =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario2UktrInterestCharges()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario2UktrInterestCharges.json").get
+                        .replace("[processingDate]", processingDate)
+                    )
+                  )
                 case AccountActivitySuccessResponse.Scenario3DeterminationCharges =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario3DeterminationCharges()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario3DeterminationCharges.json").get
+                        .replace("[processingDate]", processingDate)
+                    )
+                  )
                 case AccountActivitySuccessResponse.Scenario4DiscoveryAssessmentCharges =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario4DiscoveryAssessmentCharges()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario4DiscoveryAssessmentCharges.json").get
+                        .replace("[processingDate]", processingDate)
+                    )
+                  )
                 case AccountActivitySuccessResponse.Scenario5OverpaidClaimAssessment =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario5OverpaidClaimAssessmentCharges()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario5OverpaidClaimAssessment.json").get
+                        .replace("[processingDate]", processingDate)
+                    )
+                  )
                 case AccountActivitySuccessResponse.Scenario7UktrLateFilingPenalties =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario7UktrLateFilingPenalties()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario7UktrLateFilingPenalties.json").get
+                        .replace("[processingDate]", processingDate)
+                    )
+                  )
                 case AccountActivitySuccessResponse.Scenario8OrnGirLateFilingPenalties =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario8OrnGirLateFilingPenalties()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario8OrnGirLateFilingPenalties.json").get
+                        .replace("[processingDate]", processingDate)
+                    )
+                  )
                 case AccountActivitySuccessResponse.Scenario9PotentialLostRevenue =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario9PotentialLostRevenuePenalty()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario9PotentialLostRevenue.json").get
+                        .replace("[processingDate]", processingDate)
+                    )
+                  )
                 case AccountActivitySuccessResponse.Scenario10Schedule36 =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario10Schedule36()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario10Schedule36.json").get.replace("[processingDate]", processingDate)
+                    )
+                  )
                 case AccountActivitySuccessResponse.Scenario11RecordKeeping =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.scenario11RecordKeeping()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/scenario11RecordKeeping.json").get.replace("[processingDate]", processingDate)
+                    )
+                  )
                 case "XEPLR0000422001" =>
                   UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(REGIME_MISSING_OR_INVALID_001)))
                 case "XEPLR0000422003" =>
@@ -97,9 +148,13 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                 case "XMPLR0000000000" =>
                   UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
                 case "XEPLR2000000001" =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse.overdueOutstandingCharge()))
+                  Ok(
+                    Json.parse(
+                      resourceAsString("/resources/account-activity/overdueOutstandingCharge.json").get.replace("[processingDate]", processingDate)
+                    )
+                  )
                 case _ =>
-                  Ok(Json.toJson(AccountActivitySuccessResponse()))
+                  Ok(Json.parse(resourceAsString("/resources/account-activity/default.json").get.replace("[processingDate]", processingDate)))
               }
             }
         )

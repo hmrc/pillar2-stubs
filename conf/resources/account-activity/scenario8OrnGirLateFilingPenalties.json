@@ -1,0 +1,39 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Late ORN/GIR sub pen - DTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XPN3456789020",
+                "transactionDate": "2026-08-01",
+                "dueDate": "2026-08-31",
+                "originalAmount": 300,
+                "outstandingAmount": 100,
+                "clearedAmount": 200,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 200,
+                        "clearingDate": "2026-08-01",
+                        "dueDate": "2026-08-31",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Late ORN/GIR sub pen - MTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XPN3456789021",
+                "transactionDate": "2026-08-01",
+                "dueDate": "2026-08-31",
+                "originalAmount": 150,
+                "outstandingAmount": 150
+            }
+        ]
+    }
+}

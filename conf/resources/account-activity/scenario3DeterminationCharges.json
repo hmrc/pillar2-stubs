@@ -1,0 +1,50 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Determination - DTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XDD3456789012",
+                "transactionDate": "2027-02-15",
+                "dueDate": "2028-03-31",
+                "originalAmount": 3100,
+                "outstandingAmount": 3100
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Determination - MTT (IIR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XDT3456789012",
+                "transactionDate": "2027-02-15",
+                "dueDate": "2028-03-31",
+                "originalAmount": 3100,
+                "outstandingAmount": 1100,
+                "clearedAmount": 2000,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 2000,
+                        "clearingDate": "2027-02-15",
+                        "dueDate": "2028-03-31",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Determination - MTT (UTPR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XDU3456789012",
+                "transactionDate": "2027-02-15",
+                "dueDate": "2028-03-31",
+                "originalAmount": 1500,
+                "outstandingAmount": 1500
+            }
+        ]
+    }
+}

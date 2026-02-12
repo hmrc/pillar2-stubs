@@ -1,0 +1,50 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Late UKTR pay int - DTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XIN3456789012",
+                "transactionDate": "2026-07-15",
+                "dueDate": "2026-07-20",
+                "originalAmount": 35,
+                "outstandingAmount": 35
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Late UKTR pay int - MTT(IIR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XIN3456789013",
+                "transactionDate": "2026-07-15",
+                "dueDate": "2026-07-20",
+                "originalAmount": 50,
+                "outstandingAmount": 20,
+                "clearedAmount": 30,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 30,
+                        "clearingDate": "2026-07-15",
+                        "dueDate": "2026-07-20",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Late UKTR pay int - MTT(UTPR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XIN3456789014",
+                "transactionDate": "2026-07-15",
+                "dueDate": "2026-07-20",
+                "originalAmount": 25,
+                "outstandingAmount": 25
+            }
+        ]
+    }
+}

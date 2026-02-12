@@ -366,4 +366,87 @@ class ObligationsAndSubmissionsControllerSpec
     }
   }
 
+  test("Returns single active AP with no submission for XEPLR9999999991") {
+    implicit val pillar2Id: String = "XEPLR9999999991"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 1
+    response.success.accountingPeriodDetails.head.obligations.head.submissions shouldBe empty
+  }
+
+  test("Returns two active APs with no submissions for XEPLR9999999992") {
+    implicit val pillar2Id: String = "XEPLR9999999992"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 2
+  }
+
+  test("Returns three active APs with different scenarios for XEPLR9999999993") {
+    implicit val pillar2Id: String = "XEPLR9999999993"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 3
+  }
+
+  test("Returns four active APs with different scenarios for XEPLR9999999994") {
+    implicit val pillar2Id: String = "XEPLR9999999994"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 4
+  }
+
+  test("Returns BTN under enquiry scenario for XEPLR9999999995") {
+    implicit val pillar2Id: String = "XEPLR9999999995"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+  }
+
+  test("Returns UKTR overdue scenario for XMPLR0012345676") {
+    implicit val pillar2Id: String = "XMPLR0012345676"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails should not be empty
+  }
+
+  test("Returns UKTR incomplete scenario for XMPLR0012345677") {
+    implicit val pillar2Id: String = "XMPLR0012345677"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    contentAsJson(result).validate[ObligationsAndSubmissionsSuccessResponse].asEither.isRight shouldBe true
+  }
+
+  test("Returns two APs with no submissions for XEPLR1066196602") {
+    implicit val pillar2Id: String = "XEPLR1066196602"
+    val result = route(app, request).value
+
+    status(result) shouldEqual 200
+    val response = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
+    response.success.accountingPeriodDetails.size shouldEqual 2
+  }
+
+  test("Returns BAD_REQUEST for invalid date format") {
+    implicit val pillar2Id: String = "XMPLR00000000012"
+    val invalidRequest =
+      FakeRequest(GET, routes.ObligationAndSubmissionsController.retrieveData("not-a-date", "also-not-a-date").url)
+        .withHeaders(Headers(validHeaders*))
+        .withHeaders("X-Pillar2-Id" -> pillar2Id)
+
+    val result = route(app, invalidRequest).value
+
+    status(result) shouldEqual 400
+  }
+
 }

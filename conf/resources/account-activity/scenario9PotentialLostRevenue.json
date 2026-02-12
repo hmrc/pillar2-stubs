@@ -1,0 +1,28 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Schedule 24 inaccurate return",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XPL3456789012",
+                "transactionDate": "2026-11-01",
+                "dueDate": "2026-11-30",
+                "originalAmount": 500,
+                "outstandingAmount": 250,
+                "clearedAmount": 250,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 250,
+                        "clearingDate": "2026-11-01",
+                        "dueDate": "2026-11-30",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,50 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Overpaid claim assmnt - DTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XOC3456789010",
+                "transactionDate": "2027-02-15",
+                "dueDate": "2028-03-31",
+                "originalAmount": 4100,
+                "outstandingAmount": 4100
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "O/paid claim assmnt-MTT (IIR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XOC3456789011",
+                "transactionDate": "2027-02-15",
+                "dueDate": "2028-03-31",
+                "originalAmount": 3000,
+                "outstandingAmount": 1000,
+                "clearedAmount": 2000,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 2000,
+                        "clearingDate": "2027-02-15",
+                        "dueDate": "2028-03-31",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "O/paid claim assmnt-MTT (UTPR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XOC3456789012",
+                "transactionDate": "2027-02-15",
+                "dueDate": "2028-03-31",
+                "originalAmount": 4100,
+                "outstandingAmount": 4100
+            }
+        ]
+    }
+}

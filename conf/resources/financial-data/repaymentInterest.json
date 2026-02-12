@@ -1,0 +1,206 @@
+{
+    "idType": "ZPLR",
+    "idNumber": "[idNumber]",
+    "regimeType": "PLR",
+    "processingDate": "[processingDate]",
+    "financialTransactions": [
+        {
+            "chargeType": "Pillar 2 (Payment on Account)",
+            "mainType": "On Account",
+            "businessPartner": "0100457514",
+            "contractAccountCategory": "53",
+            "contractAccount": "002100000827",
+            "contractObjectType": "PLR",
+            "contractObject": "00000300000000000407",
+            "sapDocumentNumber": "341000000125",
+            "sapDocumentNumberItem": "0001",
+            "mainTransaction": "0060",
+            "subTransaction": "0400",
+            "originalAmount": -9000.0,
+            "clearedAmount": -9000.0,
+            "items": [
+                {
+                    "subItem": "001",
+                    "dueDate": "2025-08-07",
+                    "amount": -4896.99,
+                    "clearingDate": "2025-08-07",
+                    "clearingReason": "Allocated to Charge",
+                    "paymentReference": "XX002610234417",
+                    "paymentAmount": 9000.0,
+                    "paymentMethod": "PAYMENTS MADE BY CHEQUE",
+                    "paymentLot": "SM09",
+                    "paymentLotItem": "000001",
+                    "clearingSAPDocument": "361000000157"
+                },
+                {
+                    "subItem": "000",
+                    "dueDate": "2025-08-07",
+                    "amount": -4103.01,
+                    "clearingDate": "2025-08-07",
+                    "clearingReason": "Allocated to Charge",
+                    "paymentReference": "XX002610234417",
+                    "paymentAmount": 9000.0,
+                    "paymentMethod": "PAYMENTS MADE BY CHEQUE",
+                    "paymentLot": "SM09",
+                    "paymentLotItem": "000001",
+                    "clearingSAPDocument": "339000000748"
+                }
+            ]
+        },
+        {
+            "chargeType": "Pillar 2 UKTR RPI",
+            "mainType": "Pillar 2 UKTR RPI",
+            "businessPartner": "0100457514",
+            "contractAccountCategory": "53",
+            "contractAccount": "002100000827",
+            "contractObjectType": "PLR",
+            "contractObject": "00000300000000000407",
+            "sapDocumentNumber": "349000000329",
+            "sapDocumentNumberItem": "0001",
+            "chargeReference": "0000438000000072",
+            "mainTransaction": "6504",
+            "subTransaction": "6237",
+            "originalAmount": -103.01,
+            "clearedAmount": -103.01,
+            "items": [
+                {
+                    "subItem": "000",
+                    "dueDate": "2025-08-05",
+                    "amount": -103.01,
+                    "clearingDate": "2025-08-07",
+                    "clearingReason": "Allocated to Charge",
+                    "clearingSAPDocument": "300000000201"
+                }
+            ]
+        },
+        {
+            "chargeType": "Payment on account",
+            "mainType": "On Account",
+            "businessPartner": "0100457514",
+            "contractAccountCategory": "53",
+            "contractAccount": "002100000827",
+            "contractObjectType": "PLR",
+            "contractObject": "00000300000000000407",
+            "sapDocumentNumber": "438000000072",
+            "sapDocumentNumberItem": "0001",
+            "mainTransaction": "0060",
+            "subTransaction": "0100",
+            "originalAmount": -5000.0,
+            "clearedAmount": -5000.0,
+            "items": [
+                {
+                    "subItem": "000",
+                    "dueDate": "2025-01-01",
+                    "amount": -5000.0,
+                    "clearingDate": "2025-01-01",
+                    "clearingReason": "Allocated to Charge",
+                    "paymentReference": "XG002610233900",
+                    "paymentAmount": 5000.0,
+                    "paymentMethod": "PAYMENTS MADE BY CHEQUE",
+                    "paymentLot": "M_011",
+                    "paymentLotItem": "000001",
+                    "clearingSAPDocument": "002520000612"
+                }
+            ]
+        },
+        {
+            "chargeType": "Pillar 2 DTT",
+            "mainType": "OECD Pillar 2 UK Tax Return",
+            "taxPeriodFrom": "2025-01-01",
+            "taxPeriodTo": "2025-12-31",
+            "businessPartner": "0100457514",
+            "contractAccountCategory": "53",
+            "contractAccount": "002100000827",
+            "contractObjectType": "PLR",
+            "contractObject": "00000300000000000407",
+            "sapDocumentNumber": "461000000082",
+            "sapDocumentNumberItem": "0001",
+            "chargeReference": "XX002610234417",
+            "mainTransaction": "6500",
+            "subTransaction": "6233",
+            "originalAmount": 5000.0,
+            "clearedAmount": 5000.0,
+            "items": [
+                {
+                    "subItem": "000",
+                    "dueDate": "2027-03-31",
+                    "amount": 5000.0,
+                    "clearingDate": "2025-08-07",
+                    "clearingReason": "Incoming Payment",
+                    "paymentReference": "XX002610234417",
+                    "paymentAmount": 9000.0,
+                    "paymentMethod": "PAYMENTS MADE BY CHEQUE",
+                    "paymentLot": "SM08",
+                    "paymentLotItem": "000001",
+                    "clearingSAPDocument": "002090001501"
+                }
+            ]
+        },
+        {
+            "chargeType": "Pillar 2 MTT IIR",
+            "mainType": "OECD Pillar 2 UK Tax Return",
+            "taxPeriodFrom": "2025-01-01",
+            "taxPeriodTo": "2025-12-31",
+            "businessPartner": "0100457514",
+            "contractAccountCategory": "53",
+            "contractAccount": "002100000827",
+            "contractObjectType": "PLR",
+            "contractObject": "00000300000000000407",
+            "sapDocumentNumber": "461000000082",
+            "sapDocumentNumberItem": "0002",
+            "chargeReference": "XX002610234417",
+            "mainTransaction": "6500",
+            "subTransaction": "6234",
+            "originalAmount": 2000.0,
+            "clearedAmount": 2000.0,
+            "items": [
+                {
+                    "subItem": "000",
+                    "dueDate": "2027-03-31",
+                    "amount": 2000.0,
+                    "clearingDate": "2025-08-07",
+                    "clearingReason": "Incoming Payment",
+                    "paymentReference": "XX002610234417",
+                    "paymentAmount": 9000.0,
+                    "paymentMethod": "PAYMENTS MADE BY CHEQUE",
+                    "paymentLot": "SM08",
+                    "paymentLotItem": "000001",
+                    "clearingSAPDocument": "002090001501"
+                }
+            ]
+        },
+        {
+            "chargeType": "Pillar 2 MTT UTPR",
+            "mainType": "OECD Pillar 2 UK Tax Return",
+            "taxPeriodFrom": "2025-01-01",
+            "taxPeriodTo": "2025-12-31",
+            "businessPartner": "0100457514",
+            "contractAccountCategory": "53",
+            "contractAccount": "002100000827",
+            "contractObjectType": "PLR",
+            "contractObject": "00000300000000000407",
+            "sapDocumentNumber": "461000000082",
+            "sapDocumentNumberItem": "0003",
+            "chargeReference": "XX002610234417",
+            "mainTransaction": "6500",
+            "subTransaction": "6235",
+            "originalAmount": 2000.0,
+            "clearedAmount": 2000.0,
+            "items": [
+                {
+                    "subItem": "000",
+                    "dueDate": "2027-03-31",
+                    "amount": 2000.0,
+                    "clearingDate": "2025-08-07",
+                    "clearingReason": "Incoming Payment",
+                    "paymentReference": "XX002610234417",
+                    "paymentAmount": 9000.0,
+                    "paymentMethod": "PAYMENTS MADE BY CHEQUE",
+                    "paymentLot": "SM08",
+                    "paymentLotItem": "000001",
+                    "clearingSAPDocument": "002090001501"
+                }
+            ]
+        }
+    ]
+}

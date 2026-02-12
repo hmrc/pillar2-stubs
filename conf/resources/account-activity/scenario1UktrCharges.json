@@ -1,0 +1,50 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "UKTR - DTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XDT3456789012",
+                "transactionDate": "2026-06-15",
+                "dueDate": "2026-06-20",
+                "originalAmount": 3100,
+                "outstandingAmount": 3100
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "UKTR - MTT (IIR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XII3456789012",
+                "transactionDate": "2026-06-15",
+                "dueDate": "2026-06-25",
+                "originalAmount": 4100,
+                "outstandingAmount": 2100,
+                "clearedAmount": 2000,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 2000,
+                        "clearingDate": "2026-06-15",
+                        "dueDate": "2026-06-25",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "UKTR - MTT (UTPR)",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XUT3456789012",
+                "transactionDate": "2026-06-15",
+                "dueDate": "2026-06-30",
+                "originalAmount": 1500,
+                "outstandingAmount": 1500
+            }
+        ]
+    }
+}

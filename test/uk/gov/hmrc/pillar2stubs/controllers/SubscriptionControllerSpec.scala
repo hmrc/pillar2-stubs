@@ -462,6 +462,60 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
         responseBody should include("XEPLR0000000002")
       }
 
+      "must return CREATED with XEPLR0000000003 for organisation name Timeout Processing Corp" in {
+        val json    = createSubscriptionJson(organisationName = "Timeout Processing Corp")
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result)        shouldBe CREATED
+        contentAsString(result) should include("XEPLR0000000003")
+      }
+
+      "must return UNPROCESSABLE_ENTITY for organisation name subReqNotProcessed" in {
+        val json    = createSubscriptionJson(organisationName = "subReqNotProcessed")
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe UNPROCESSABLE_ENTITY
+      }
+
+      "must return BAD_REQUEST for organisation name subInvalidRequest" in {
+        val json    = createSubscriptionJson(organisationName = "subInvalidRequest")
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe BAD_REQUEST
+      }
+
+      "must return CREATED with matching Pillar2 ID for specific organisation names" in {
+        val orgNames = Seq("XE0000123456400", "XE0000123456404", "XE0000123456422", "XE0000123456500", "XE0000123456503")
+        orgNames.foreach { orgName =>
+          val json    = createSubscriptionJson(organisationName = orgName)
+          val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+          val result  = route(app, request).value
+
+          status(result)        shouldBe CREATED
+          contentAsString(result) should include(orgName)
+        }
+      }
+
+      "must return CONFLICT for organisation name XMPLR0009999999" in {
+        val json    = createSubscriptionJson(organisationName = "XMPLR0009999999")
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe CONFLICT
+      }
+
+      "must return CREATED with XMPLR0012345671 when safeId is XE0000123456789" in {
+        val json    = createSubscriptionJson(safeId = "XE0000123456789")
+        val request = FakeRequest(POST, routes.SubscriptionController.createSubscription.url).withBody(json).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result)        shouldBe CREATED
+        contentAsString(result) should include("XMPLR0012345671")
+      }
+
     }
 
   }
@@ -535,7 +589,7 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       }
 
       "must return a OK with an inactive subscription for the given IDs" in {
-        val ids      = Seq("XEPLR2000000109", "XEPLR2000000110", "XEPLR2000000111", "XEPLR2000000111")
+        val ids      = Seq("XEPLR2000000109", "XEPLR2000000110", "XEPLR2000000111", "XEPLR2000000112")
         val requests = ids.map(id => FakeRequest(GET, routes.SubscriptionController.retrieveSubscription(id).url).withHeaders(authHeader))
         val results  = requests.map(route(app, _).value)
         forAll(results) { result =>
@@ -550,6 +604,32 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         (contentAsJson(result) \ "success" \ "secondaryContact").asOpt[JsValue] should not be defined
         status(result)                                                        shouldBe OK
+      }
+
+      "must return OK with today's registration date for XEPLR5555551111" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR5555551111").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe OK
+        val registrationDate = (contentAsJson(result) \ "success" \ "upeDetails" \ "registrationDate").as[String]
+        registrationDate shouldBe java.time.LocalDate.now().toString
+      }
+
+      "must return OK with 2011 registration date for XEPLR6666666666" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR6666666666").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result) shouldBe OK
+        val registrationDate = (contentAsJson(result) \ "success" \ "upeDetails" \ "registrationDate").as[String]
+        registrationDate shouldBe "2011-01-31"
+      }
+
+      "must return OK with domesticOnly true for XEPLR1066196600" in {
+        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR1066196600").url).withHeaders(authHeader)
+        val result  = route(app, request).value
+
+        status(result)                                                                  shouldBe OK
+        (contentAsJson(result) \ "success" \ "upeDetails" \ "domesticOnly").as[Boolean] shouldBe true
       }
 
     }
@@ -850,8 +930,53 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
         status(result) shouldBe SERVICE_UNAVAILABLE
       }
+
+      "must return BAD_REQUEST for invalid JSON body" in {
+        val invalidJson: JsValue = Json.parse("""{ "invalid": "body" }""")
+        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(invalidJson)
+        val result  = route(app, request).value
+
+        status(result) shouldBe BAD_REQUEST
+      }
     }
 
   }
+
+  private val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+
+  private def createSubscriptionJson(
+    safeId:           String = "XE6666666666666",
+    organisationName: String = "Dave Smith",
+    contactName:      String = "Ashley Smith"
+  ): JsValue = Json.parse(
+    s"""{
+       |  "upeDetails": {
+       |    "safeId": "$safeId",
+       |    "organisationName": "$organisationName",
+       |    "registrationDate": "2023-09-28",
+       |    "domesticOnly": false,
+       |    "filingMember": false
+       |  },
+       |  "accountingPeriod": {
+       |    "startDate": "2024-12-31",
+       |    "endDate": "2025-12-12"
+       |  },
+       |  "upeCorrespAddressDetails": {
+       |    "addressLine1": "10 High Street",
+       |    "addressLine2": "Egham",
+       |    "addressLine3": "Surrey",
+       |    "addressLine4": "South East England",
+       |    "countryCode": "GB"
+       |  },
+       |  "primaryContactDetails": {
+       |    "name": "$contactName",
+       |    "emailAddress": "Test@test.com"
+       |  },
+       |  "filingMemberDetails": {
+       |    "safeId": "XE6666666666666",
+       |    "organisationName": "Test"
+       |  }
+       |}""".stripMargin
+  )
 
 }

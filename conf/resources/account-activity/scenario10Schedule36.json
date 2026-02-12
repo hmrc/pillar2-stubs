@@ -1,0 +1,18 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Schedule 36 information notice",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XS363456789012",
+                "transactionDate": "2026-10-01",
+                "dueDate": "2026-10-31",
+                "originalAmount": 1000,
+                "outstandingAmount": 1000
+            }
+        ]
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Accurate records failure pen",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XRK3456789012",
+                "transactionDate": "2026-06-30",
+                "dueDate": "2026-07-30",
+                "originalAmount": 3500,
+                "outstandingAmount": 3500
+            }
+        ]
+    }
+}

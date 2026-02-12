@@ -1,0 +1,39 @@
+{
+    "success": {
+        "processingDate": "[processingDate]",
+        "transactionDetails": [
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Late UKTR sub pen - DTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XPN3456789012",
+                "transactionDate": "2026-07-01",
+                "dueDate": "2026-07-31",
+                "originalAmount": 100,
+                "outstandingAmount": 100
+            },
+            {
+                "transactionType": "Debit",
+                "transactionDesc": "Late UKTR sub pen - MTT",
+                "startDate": "2024-01-01",
+                "endDate": "2024-12-31",
+                "chargeRefNo": "XPN3456789013",
+                "transactionDate": "2026-07-01",
+                "dueDate": "2026-07-31",
+                "originalAmount": 200,
+                "outstandingAmount": 50,
+                "clearedAmount": 150,
+                "clearingDetails": [
+                    {
+                        "transactionDesc": "On Account Pillar 2 (Payment on Account)",
+                        "amount": 150,
+                        "clearingDate": "2026-07-01",
+                        "dueDate": "2026-07-31",
+                        "clearingReason": "Cleared by Payment"
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -189,6 +189,38 @@ class FinancialDataControllerSpec extends AnyFreeSpec with Matchers with GuiceOn
       contentAsJson(result) mustBe Json.parse(baseResponse(validIdNumber, processingDate = LocalDateTime.now(fixedClock), transactions = Seq.empty))
     }
 
+    "must return OK with one Accounting Period and paid status for the given ID" in {
+      val validIdNumber: String                              = "XEPLR2000000004"
+      val request:       FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(validIdNumber)
+      val result:        Future[Result]                      = route(app, request).value
+
+      val processingDateTime: String = (contentAsJson(result) \ "processingDate").as[String]
+
+      status(result) mustBe OK
+      contentAsJson(result) mustBe Json.parse(oneAccountingPeriodWithPaidStatus(validIdNumber, processingDateTime))
+    }
+
+    "must return OK with empty financial transactions for XMPLR0000000000" in {
+      val validIdNumber: String                              = "XMPLR0000000000"
+      val request:       FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(validIdNumber)
+      val result:        Future[Result]                      = route(app, request).value
+
+      status(result) mustBe OK
+      val json = contentAsJson(result)
+      (json \ "financialTransactions").as[Seq[play.api.libs.json.JsValue]] mustBe empty
+    }
+
+    "must return OK with generated transactions when the ID matches the regex pattern" in {
+      val validIdNumber: String                              = "XMPLR0000000100"
+      val request:       FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(validIdNumber)
+      val result:        Future[Result]                      = route(app, request).value
+
+      status(result) mustBe OK
+      val json = contentAsJson(result)
+      (json \ "idNumber").as[String] mustBe validIdNumber
+      (json \ "financialTransactions").as[Seq[play.api.libs.json.JsValue]] must not be empty
+    }
+
     "must return OK with default response when the ID does not match a pattern" in {
       val validIdNumber: String                              = "SOME-ID-123"
       val request:       FakeRequest[AnyContentAsEmpty.type] = buildFakeRequest(validIdNumber)
