@@ -54,7 +54,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     val result = route(app, request).value
     status(result) shouldEqual 200
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
-    response.success.transactionDetails.filter(_.transactionType == "Debit")
+    response.success.transactionDetails.filter(_.transactionType == "DEBIT")
   }
 
   private def assertDebitDescs(pillar2Id: String, expected: Set[String]): Unit = {
@@ -194,7 +194,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     status(result) shouldEqual 200
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
     response.success.transactionDetails should not be empty
-    Set("Payment", "Debit", "Credit")   should contain(response.success.transactionDetails.head.transactionType)
+    Set("PAYMENT", "DEBIT", "CREDIT")   should contain(response.success.transactionDetails.head.transactionType)
   }
 
   test("BadRequest - returns 400 error for XEPLR0000000400") {
@@ -317,7 +317,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
 
     // Find the repayment interest transaction
     val repaymentInterest = response.success.transactionDetails.find { transaction =>
-      transaction.transactionType == "Credit" &&
+      transaction.transactionType == "CREDIT" &&
       transaction.transactionDesc.contains("Repayment interest")
     }
 

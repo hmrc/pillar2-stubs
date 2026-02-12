@@ -65,7 +65,7 @@ object AccountActivitySuccessResponse {
     clearedAmount:   Option[BigDecimal] = None
   ): AccountActivityTransactionDetail =
     AccountActivityTransactionDetail(
-      transactionType = "Debit",
+      transactionType = "DEBIT",
       transactionDesc = desc,
       startDate = Some(apStart),
       endDate = Some(apEnd),
@@ -346,7 +346,7 @@ object AccountActivitySuccessResponse {
       processingDate = AccountActivityResponse.now,
       transactionDetails = Seq(
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = UktrDttDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
@@ -359,7 +359,7 @@ object AccountActivitySuccessResponse {
           clearingDetails = None
         ),
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = UktrMttIirDesc,
           startDate = Some(LocalDate.of(2024, 1, 1)),
           endDate = Some(LocalDate.of(2024, 12, 31)),
@@ -382,7 +382,7 @@ object AccountActivitySuccessResponse {
       transactionDetails = Seq(
         // Payment transaction - amounts should be NEGATIVE
         AccountActivityTransactionDetail(
-          transactionType = "Payment",
+          transactionType = "PAYMENT",
           transactionDesc = PaymentOnAccountDesc,
           transactionDate = LocalDate.of(2025, 10, 15),
           originalAmount = -10000,
@@ -426,7 +426,7 @@ object AccountActivitySuccessResponse {
           )
         ),
         AccountActivityTransactionDetail(
-          transactionType = "Payment",
+          transactionType = "PAYMENT",
           transactionDesc = PaymentOnAccountDesc,
           transactionDate = LocalDate.of(2025, 11, 1),
           originalAmount = -500,
@@ -445,7 +445,7 @@ object AccountActivitySuccessResponse {
         ),
         // Repayment interest - Credit amounts should be NEGATIVE
         AccountActivityTransactionDetail(
-          transactionType = "Credit",
+          transactionType = "CREDIT",
           transactionDesc = RepaymentInterestDesc,
           transactionDate = LocalDate.of(2025, 12, 1),
           originalAmount = -5,
@@ -463,7 +463,7 @@ object AccountActivitySuccessResponse {
         ),
         // Debit transactions
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = UktrDttDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
@@ -484,7 +484,7 @@ object AccountActivitySuccessResponse {
           )
         ),
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = UktrMttIirDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
@@ -505,7 +505,7 @@ object AccountActivitySuccessResponse {
           )
         ),
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = UktrMttUtprDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
@@ -526,7 +526,7 @@ object AccountActivitySuccessResponse {
           )
         ),
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = DiscoveryDttDesc,
           startDate = Some(LocalDate.of(2025, 1, 1)),
           endDate = Some(LocalDate.of(2025, 12, 31)),
@@ -547,7 +547,7 @@ object AccountActivitySuccessResponse {
           )
         ),
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = DeterminationMttIirDesc,
           startDate = Some(LocalDate.of(2026, 1, 1)),
           endDate = Some(LocalDate.of(2026, 12, 31)),
@@ -559,7 +559,7 @@ object AccountActivitySuccessResponse {
           outstandingAmount = Some(3100)
         ),
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = OverpaidClaimMttUtprDesc,
           startDate = Some(LocalDate.of(2026, 1, 1)),
           endDate = Some(LocalDate.of(2026, 12, 31)),
@@ -573,7 +573,7 @@ object AccountActivitySuccessResponse {
         ),
         // Credit transaction - amounts should be NEGATIVE
         AccountActivityTransactionDetail(
-          transactionType = "Credit",
+          transactionType = "CREDIT",
           transactionDesc = RepaymentInterestDesc,
           chargeRefNo = Some("XR23456789012"),
           transactionDate = LocalDate.of(2025, 3, 15),
@@ -582,7 +582,7 @@ object AccountActivitySuccessResponse {
         ),
         // Penalty and Interest transactions
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = LateUktrSubPenDttDesc,
           startDate = Some(LocalDate.of(2024, 1, 1)),
           endDate = Some(LocalDate.of(2024, 12, 31)),
@@ -593,7 +593,7 @@ object AccountActivitySuccessResponse {
           outstandingAmount = Some(100)
         ),
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = LateUktrPayIntDttDesc,
           startDate = Some(LocalDate.of(2024, 1, 1)),
           endDate = Some(LocalDate.of(2024, 12, 31)),
@@ -604,7 +604,7 @@ object AccountActivitySuccessResponse {
           outstandingAmount = Some(35)
         ),
         AccountActivityTransactionDetail(
-          transactionType = "Debit",
+          transactionType = "DEBIT",
           transactionDesc = RecordKeepingPenDesc,
           chargeRefNo = Some("XIN3456789012"),
           transactionDate = LocalDate.of(2026, 6, 30),
@@ -718,7 +718,7 @@ object AccountActivityErrorCodes {
 /** Transaction descriptions condensed to ≤30 chars for ETMP SAP limit */
 enum TransactionDesc(val description: String) {
   // Payment
-  case PaymentOnAccountDesc extends TransactionDesc("On Account Pillar 2 (Payment on Account)")
+  case PaymentOnAccountDesc extends TransactionDesc("Pillar 2 Payment on Account")
 
   // UKTR charges
   case UktrDttDesc extends TransactionDesc("UKTR - DTT")
