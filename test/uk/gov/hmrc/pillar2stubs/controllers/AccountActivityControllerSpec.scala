@@ -153,6 +153,27 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     )
   }
 
+  test("Scenario 12 ID returns Determination with Interest") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario12DeterminationWithInterest,
+      Set("Pillar 2 Determination Pillar 2 DTT")
+    )
+  }
+
+  test("Scenario 13 ID returns Discovery Assessment with Interest") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario13DiscAssmtWithInterest,
+      Set("Pillar 2 Discovery Assessment Pillar 2 DTT")
+    )
+  }
+
+  test("Scenario 14 ID returns Overpaid Claim Assessment with Interest") {
+    assertDebitDescs(
+      AccountActivitySuccessResponse.Scenario14OverpaidClaimAssmtWithInterest,
+      Set("Pillar 2 Overpaid Claim Assmt Pillar 2 DTT")
+    )
+  }
+
   test("Scenario 1 includes a partial payment example (clearedAmount and clearingDetails present)") {
     val debits  = debitTransactionsFor(AccountActivitySuccessResponse.Scenario1UktrCharges)
     val partial = debits.find(tx => tx.transactionDesc.contains("MTT (IIR)")).value
