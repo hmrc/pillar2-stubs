@@ -66,6 +66,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XEPLR2500000422" => UnprocessableEntity(Json.toJson(ObligationsAndSubmissionsDetailedErrorResponse(NO_DATA_FOUND_025)))
           case "XEPLR0000000400" => BadRequest(Json.toJson(HIPErrorWrapper(HIP, HIPFailure(List(HIPError("invalid json", "invalid json"))))))
           case "XEPLR0000000500" => InternalServerError(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.SAPError))
+          case "XEPLR0000000502" => play.api.mvc.Results.Status(502)(Json.toJson(ObligationsAndSubmissionsSimpleErrorResponse.SAPError))
           case "XEPLR1111111111" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withMultipleAccountingPeriods()))
           case "XEPLR2222222222" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withNoAccountingPeriods()))
           case "XEPLR3333333333" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse()))

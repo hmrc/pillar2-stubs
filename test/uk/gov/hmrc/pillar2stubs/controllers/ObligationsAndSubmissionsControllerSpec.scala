@@ -52,6 +52,30 @@ class ObligationsAndSubmissionsControllerSpec
       .withHeaders("X-Pillar2-Id" -> pillar2Id)
   }
 
+  /** Compares accounting period details by time-invariant fields only (excludes dueDate and submission receivedDate). */
+  def assertAccountingPeriodDetailsMatch(
+    actual:   Seq[AccountingPeriodDetails],
+    expected: Seq[AccountingPeriodDetails]
+  ): Unit = {
+    actual.size shouldEqual expected.size
+    actual.zip(expected).foreach { case (a, e) =>
+      a.startDate shouldEqual e.startDate
+      a.endDate shouldEqual e.endDate
+      a.underEnquiry shouldEqual e.underEnquiry
+      a.obligations.size shouldEqual e.obligations.size
+      a.obligations.zip(e.obligations).foreach { case (ao, eo) =>
+        ao.obligationType shouldEqual eo.obligationType
+        ao.status shouldEqual eo.status
+        ao.canAmend shouldEqual eo.canAmend
+        ao.submissions.size shouldEqual eo.submissions.size
+        ao.submissions.zip(eo.submissions).foreach { case (as, es) =>
+          as.submissionType shouldEqual es.submissionType
+          as.country shouldEqual es.country
+        }
+      }
+    }
+  }
+
   test("Valid ObligationsAndSubmissions submission") {
     implicit val pillar2Id: String = "XMPLR00000000012"
     val result = route(app, request).value
@@ -362,7 +386,7 @@ class ObligationsAndSubmissionsControllerSpec
 
       status(result).shouldEqual(200)
       val actual = contentAsJson(result).as[ObligationsAndSubmissionsSuccessResponse]
-      actual.success.accountingPeriodDetails shouldBe expectedResponse.success.accountingPeriodDetails
+      assertAccountingPeriodDetailsMatch(actual.success.accountingPeriodDetails, expectedResponse.success.accountingPeriodDetails)
     }
   }
 

@@ -16,9 +16,11 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
+import play.api.http.Status.*
 import play.api.Logging
 import play.api.libs.json.*
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.Results.Status
 import uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSuccessResponse
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionSuccess, Subscription}
@@ -93,72 +95,66 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     }
   }
 
+  /** Returns (HTTP status code, response body). Used by both read and cache endpoints. */
+  private def subscriptionResponse(plrReference: String): (Int, String) = plrReference match {
+
+    case ref @ "XEPLR0000000001" =>
+      val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
+      pollCounters(plrReference) = count
+      logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
+      if count <= 3 then (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+      else (OK, readSuccessResponseWithRef(ref))
+
+    case ref @ "XEPLR0000000002" =>
+      val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
+      pollCounters(plrReference) = count
+      logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
+      if count <= 8 then (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+      else (OK, readSuccessResponseWithRef(ref))
+
+    case "XEPLR0123456400"       => (BAD_REQUEST, resourceAsString("/resources/error/subscription/BadRequest.json").get)
+    case "XEPLR0123456404"       => (NOT_FOUND, resourceAsString("/resources/error/subscription/NotFound.json").get)
+    case "XEPLR0123456422"       => (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+    case "XEPLR0123456500"       => (INTERNAL_SERVER_ERROR, resourceAsString("/resources/error/subscription/ServerError.json").get)
+    case "XEPLR0123456502"       => (502, resourceAsString("/resources/error/subscription/BadGateway.json").get)
+    case "XEPLR0123456503"       => (SERVICE_UNAVAILABLE, resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
+    case ref @ "XEPLR5555555555" => (OK, makeInactive(readSuccessResponseWithRef(ref)))
+    case "XEPLR5555551111"       => (OK, replaceDate(readSuccessResponse, LocalDate.now().toString))
+    case ref @ "XEPLR6666666666" =>
+      (OK, readSuccessResponseWithRef(ref).replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
+    case ref @ "XEPLR1066196600" => (OK, readSuccessResponseWithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
+    case ref @ "XEPLR1066196602" => (OK, readSuccessResponseWithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
+    case ref @ "XEPLR2000000109" => (OK, makeInactive(readSuccessResponseWithRef(ref)))
+    case ref @ "XEPLR2000000110" => (OK, makeInactive(readSuccessResponseWithRef(ref)))
+    case ref @ "XEPLR2000000111" => (OK, makeInactive(readSuccessResponseWithRef(ref)))
+    case ref @ "XEPLR2000000112" => (OK, makeInactive(readSuccessResponseWithRef(ref)))
+    case ref @ "XEPLR2000000200" => (OK, removeSecondaryContact(readSuccessResponseWithRef(ref)))
+    case _                       =>
+      (
+        OK,
+        readSuccessResponseWithRef("plrReference")
+          .replace("\"startDate\": \"2024-01-06\"", s"\"startDate\": \"${LocalDate.of(currentYear - 1, 1, 1)}\"")
+          .replace("\"endDate\": \"2025-04-06\"", s"\"endDate\": \"${LocalDate.of(currentYear - 1, 12, 31)}\"")
+          .replace("\"dueDate\": \"2024-04-06\"", s"\"dueDate\": \"${LocalDate.now()}\"")
+      )
+  }
+
+  private def unwrapSuccess(wrappedBody: String): String =
+    (Json.parse(wrappedBody) \ "success").get.toString()
+
   def retrieveSubscription(plrReference: String): Action[AnyContent] =
     (Action andThen authFilter) {
       logger.info(s"retrieveSubscription Request received \n $plrReference \n")
-      plrReference match {
+      val (status, body) = subscriptionResponse(plrReference)
+      if status == OK then Ok(body) else Status(status)(body)
+    }
 
-        case ref @ "XEPLR0000000001" =>
-          val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
-          pollCounters(plrReference) = count
-          logger.info(s"Quick Processing Corp - Poll attempt $count for $plrReference")
-          if count <= 3 then {
-            UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
-          } else {
-            Ok(readSuccessResponseWithRef(ref))
-          }
-
-        case ref @ "XEPLR0000000002" =>
-          val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
-          pollCounters(plrReference) = count
-          logger.info(s"Medium Processing Corp - Poll attempt $count for $plrReference")
-          if count <= 8 then {
-            UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
-          } else {
-            Ok(readSuccessResponseWithRef(ref))
-          }
-
-        case "XEPLR0123456400" =>
-          BadRequest(resourceAsString("/resources/error/subscription/BadRequest.json").get)
-        case "XEPLR0123456404" =>
-          NotFound(resourceAsString("/resources/error/subscription/NotFound.json").get)
-        case "XEPLR0123456422" =>
-          UnprocessableEntity(resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
-        case "XEPLR0123456500" =>
-          InternalServerError(resourceAsString("/resources/error/subscription/ServerError.json").get)
-        case "XEPLR0123456503" =>
-          ServiceUnavailable(resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
-        case ref @ "XEPLR5555555555" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
-
-        case "XEPLR5555551111" => Ok(replaceDate(readSuccessResponse, LocalDate.now().toString))
-
-        case ref @ "XEPLR6666666666" =>
-          Ok(readSuccessResponseWithRef(ref).replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
-
-        case ref @ "XEPLR1066196600" => Ok(readSuccessResponseWithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
-
-        case ref @ "XEPLR1066196602" => Ok(readSuccessResponseWithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
-
-        // No payments, no Return, BTN
-        case ref @ "XEPLR2000000109" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
-        // Payment overdue, Return overdue, BTN
-        case ref @ "XEPLR2000000110" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
-        // Payment overdue, no Return, BTN
-        case ref @ "XEPLR2000000111" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
-        // Payment overdue w/ interest, no Return, BTN
-        case ref @ "XEPLR2000000112" => Ok(makeInactive(readSuccessResponseWithRef(ref)))
-
-        // No secondary contact
-        case ref @ "XEPLR2000000200" => Ok(removeSecondaryContact(readSuccessResponseWithRef(ref)))
-
-        case _ =>
-          Ok(
-            readSuccessResponseWithRef("plrReference")
-              .replace("\"startDate\": \"2024-01-06\"", s"\"startDate\": \"${LocalDate.of(currentYear - 1, 1, 1)}\"")
-              .replace("\"endDate\": \"2025-04-06\"", s"\"endDate\": \"${LocalDate.of(currentYear - 1, 12, 31)}\"")
-              .replace("\"dueDate\": \"2024-04-06\"", s"\"dueDate\": \"${LocalDate.now()}\"")
-          )
-      }
+  /** Frontend cache path: same status/error logic as retrieveSubscription, but 200 responses return unwrapped JSON (SubscriptionData at root). */
+  def retrieveSubscriptionCache(id: String, plrReference: String): Action[AnyContent] =
+    (Action andThen authFilter) {
+      logger.info(s"retrieveSubscriptionCache Request received \n $id / $plrReference \n")
+      val (status, body) = subscriptionResponse(plrReference)
+      if status == OK then Ok(unwrapSuccess(body)) else Status(status)(body)
     }
 
   def amendSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>

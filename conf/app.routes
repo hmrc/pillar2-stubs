@@ -4,6 +4,8 @@ POST          /registration/02.00.00/organisation                               
 
 POST          /pillar2/subscription                                                        uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.createSubscription
 GET           /pillar2/subscription/:plrReference                                          uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscription(plrReference: String)
+GET           /report-pillar2-top-up-taxes/subscription/read-subscription/:plrReference    uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscription(plrReference: String)
+GET           /report-pillar2-top-up-taxes/subscription/read-subscription/:id/:plrReference uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionCache(id: String, plrReference: String)
 PUT           /pillar2/subscription                                                        uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.amendSubscription
 
 POST          /pillar2/repayment                                                           uk.gov.hmrc.pillar2stubs.controllers.RepaymentController.submitRepaymentDetails
@@ -16,6 +18,9 @@ DELETE        /tax-enrolments/groups/:groupId/enrolments/:serviceName           
 POST          /verify/business                                                             uk.gov.hmrc.pillar2stubs.controllers.BarsController.verify
 
 GET           /enterprise/financial-data/ZPLR/:idNumber/PLR                                uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.retrieveFinancialData(idNumber: String, dateFrom: String, dateTo: String)
+GET           /report-pillar2-top-up-taxes/financial-data/:plrReference/:dateFrom/:dateTo   uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.retrieveFinancialData(plrReference: String, dateFrom: String, dateTo: String)
+
+GET           /report-pillar2-top-up-taxes/account-activity                                uk.gov.hmrc.pillar2stubs.controllers.AccountActivityController.retrieveAccountActivityReport
 
 POST          /RESTAdapter/plr/uk-tax-return                                               uk.gov.hmrc.pillar2stubs.controllers.UKTRSubmitController.submitUKTR
 PUT           /RESTAdapter/plr/uk-tax-return                                               uk.gov.hmrc.pillar2stubs.controllers.UKTRAmendController.amendUKTR

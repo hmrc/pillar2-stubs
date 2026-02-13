@@ -18,6 +18,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.Results.Status
 import uk.gov.hmrc.pillar2stubs.controllers.FinancialDataController.*
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.{FinancialDataResponse, FinancialItem, FinancialTransaction}
@@ -38,6 +39,7 @@ class FinancialDataController @Inject() (cc: ControllerComponents, authFilter: A
         case "XEPLR4000000000" => BadRequest(invalidIdNumberJson)
         case "XEPLR4040000000" => NotFound(financialDataNotFoundJson)
         case "XEPLR5000000000" => InternalServerError(financialServerErrorJson)
+        case "XEPLR5020000000" => Status(502)(financialServerErrorJson)
         case "XEPLR5030000000" => ServiceUnavailable(financialServiceUnavailableJson)
         case "XEPLR2000000000" => Ok(Json.parse(etmpTestDataFull(idNumber)))
         case "XEPLR2000000001" => Ok(Json.parse(oneAccountingPeriod(idNumber)))
