@@ -54,7 +54,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     val result = route(app, request).value
     status(result) shouldEqual 200
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
-    response.success.transactionDetails.filter(_.transactionType == "Debit")
+    response.success.transactionDetails.filter(_.transactionType == "DEBIT")
   }
 
   private def assertDebitDescs(pillar2Id: String, expected: Set[String]): Unit = {
@@ -67,9 +67,9 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario1UktrCharges,
       Set(
-        "Pillar 2 UK Tax Return Pillar 2 DTT",
-        "Pillar 2 UK Tax Return Pillar 2 MTT IIR",
-        "Pillar 2 UK Tax Return Pillar 2 MTT UTPR"
+        "UKTR - DTT",
+        "UKTR - MTT (IIR)",
+        "UKTR - MTT (UTPR)"
       )
     )
   }
@@ -78,9 +78,9 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario2UktrInterestCharges,
       Set(
-        "Pillar 2 UKTR Interest Pillar 2 DTT Int",
-        "Pillar 2 UKTR Interest Pillar 2 MTT IIR Int",
-        "Pillar 2 UKTR Interest Pillar 2 MTT UTPR Int"
+        "Late UKTR pay int - DTT",
+        "Late UKTR pay int - MTT(IIR)",
+        "Late UKTR pay int - MTT(UTPR)"
       )
     )
   }
@@ -89,9 +89,9 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario3DeterminationCharges,
       Set(
-        "Pillar 2 Determination Pillar 2 DTT",
-        "Pillar 2 Determination Pillar 2 MTT IIR",
-        "Pillar 2 Determination Pillar 2 MTT UTPR"
+        "Determination - DTT",
+        "Determination - MTT (IIR)",
+        "Determination - MTT (UTPR)"
       )
     )
   }
@@ -100,9 +100,9 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario4DiscoveryAssessmentCharges,
       Set(
-        "Pillar 2 Discovery Assessment Pillar 2 DTT",
-        "Pillar 2 Discovery Assessment Pillar 2 MTT IIR",
-        "Pillar 2 Discovery Assessment Pillar 2 MTT UTPR"
+        "Discovery Assessment - DTT",
+        "Discovery Assessment-MTT(IIR)",
+        "Discovery Assessment-MTT(UTPR)"
       )
     )
   }
@@ -111,9 +111,9 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario5OverpaidClaimAssessment,
       Set(
-        "Pillar 2 Overpaid Claim Assmt Pillar 2 DTT",
-        "Pillar 2 Overpaid Claim Assmt Pillar 2 MTT IIR",
-        "Pillar 2 Overpaid Claim Assmt Pillar 2 MTT UTPR"
+        "Overpaid claim assmnt - DTT",
+        "O/paid claim assmnt-MTT (IIR)",
+        "O/paid claim assmnt-MTT (UTPR)"
       )
     )
   }
@@ -121,35 +121,35 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
   test("Scenario 7 ID returns UKTR LFP debit penalties for DTT + MTT") {
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario7UktrLateFilingPenalties,
-      Set("Pillar 2 UKTR DTT LFP AUTO PEN", "Pillar 2 UKTR MTT LFP AUTO PEN")
+      Set("Late UKTR sub pen - DTT", "Late UKTR sub pen - MTT")
     )
   }
 
   test("Scenario 8 ID returns ORN/GIR LFP debit penalties for DTT + MTT") {
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario8OrnGirLateFilingPenalties,
-      Set("Pillar 2 ORN/GIR DTT LFP AUTO PEN", "Pillar 2 ORN/GIR MTT LFP AUTO PEN")
+      Set("Late ORN/GIR sub pen - DTT", "Late ORN/GIR sub pen - MTT")
     )
   }
 
   test("Scenario 9 ID returns Potential Lost Revenue debit penalty") {
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario9PotentialLostRevenue,
-      Set("Pillar 2 Poten Lost Rev Pen TG PEN")
+      Set("Schedule 24 inaccurate return")
     )
   }
 
   test("Scenario 10 ID returns Schedule 36 debit penalty") {
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario10Schedule36,
-      Set("Sch 36 Penalty TG PEN")
+      Set("Schedule 36 information notice")
     )
   }
 
   test("Scenario 11 ID returns Record Keeping debit penalty") {
     assertDebitDescs(
       AccountActivitySuccessResponse.Scenario11RecordKeeping,
-      Set("Pillar 2 Record Keeping Pen TG PEN")
+      Set("Accurate records failure pen")
     )
   }
 
@@ -176,7 +176,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
 
   test("Scenario 1 includes a partial payment example (clearedAmount and clearingDetails present)") {
     val debits  = debitTransactionsFor(AccountActivitySuccessResponse.Scenario1UktrCharges)
-    val partial = debits.find(tx => tx.transactionDesc.contains("MTT IIR")).value
+    val partial = debits.find(tx => tx.transactionDesc.contains("MTT (IIR)")).value
     partial.outstandingAmount.value should be < partial.originalAmount
     partial.clearedAmount.value shouldEqual partial.originalAmount - partial.outstandingAmount.value
     partial.clearingDetails.value.head.clearingReason shouldEqual Some("Cleared by Payment")
@@ -215,7 +215,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     status(result) shouldEqual 200
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
     response.success.transactionDetails should not be empty
-    Set("Payment", "Debit", "Credit")   should contain(response.success.transactionDetails.head.transactionType)
+    Set("PAYMENT", "DEBIT", "CREDIT")   should contain(response.success.transactionDetails.head.transactionType)
   }
 
   test("BadRequest - returns 400 error for XEPLR0000000400") {
@@ -338,15 +338,15 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
 
     // Find the repayment interest transaction
     val repaymentInterest = response.success.transactionDetails.find { transaction =>
-      transaction.transactionType == "Credit" &&
-      transaction.transactionDesc.contains("RPI")
+      transaction.transactionType == "CREDIT" &&
+      transaction.transactionDesc.contains("Repayment interest")
     }
 
     repaymentInterest shouldBe defined
-    repaymentInterest.get.transactionDesc shouldEqual "Pillar 2 UKTR RPI Pillar 2 OECD RPI"
-    repaymentInterest.get.originalAmount shouldEqual 5
+    repaymentInterest.get.transactionDesc shouldEqual "Repayment interest - UKTR"
+    repaymentInterest.get.originalAmount shouldEqual -5 // Credit amounts are negative
     repaymentInterest.get.clearingDetails shouldBe defined
-    repaymentInterest.get.clearingDetails.get.head.transactionDesc shouldEqual "Pillar 2 Repayment"
+    repaymentInterest.get.clearingDetails.get.head.transactionDesc shouldEqual "Repayment"
     repaymentInterest.get.clearingDetails.get.head.clearingReason shouldBe Some("Outgoing payment - Paid")
   }
 
