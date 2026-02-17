@@ -293,10 +293,10 @@ object AccountActivityController {
     payments ++ repayments ++ repaymentInterests
   }
 
-  private def generateSuccessfulResponse(numberOfTransactions: Int, dateFrom: LocalDate, dateTo: LocalDate) =
+  private def generateSuccessfulResponse(numberOfTransactions: Int, fromDate: LocalDate, toDate: LocalDate) =
     AccountActivitySuccess(
       AccountActivityResponse.now,
-      transactionDetails = generateAccountActivityTransactions(numberOfTransactions, dateFrom, dateTo)
+      transactionDetails = generateAccountActivityTransactions(numberOfTransactions, fromDate, toDate)
     )
 
   private def generateBigDecimal: BigDecimal =
@@ -305,6 +305,6 @@ object AccountActivityController {
 
     BigDecimal.valueOf(Random.between(start, end)).setScale(2, BigDecimal.RoundingMode.HALF_EVEN)
 
-  private def generateRandomDate(dateFrom: LocalDate, dateTo: LocalDate): LocalDate =
-    LocalDate.ofEpochDay(Random.between(dateFrom.toEpochDay, dateTo.toEpochDay + 1))
+  private def generateRandomDate(fromDate: LocalDate, toDate: LocalDate): LocalDate =
+    LocalDate.ofEpochDay(Random.between(fromDate.toEpochDay, toDate.toEpochDay + 1))
 }
