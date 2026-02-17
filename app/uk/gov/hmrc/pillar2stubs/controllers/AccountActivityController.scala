@@ -68,10 +68,6 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                   // Continue with other validations and responses only if date range is valid
                   // ETMPHeaderFilter validates "x-pillar2-id" exists, and Play normalizes headers to lowercase
                   val pillar2Id = request.headers.get("x-pillar2-id").getOrElse("")
-                  logger.info("****************")
-                  logger.info(s"'$pillar2Id'")
-                  logger.info(s"length = ${pillar2Id.length}")
-                  logger.info("****************")
                   logger.info(s"Account Activity - Pillar2 ID received: $pillar2Id")
                   pillar2Id match {
                     case AccountActivitySuccessResponse.Scenario1UktrCharges =>
@@ -168,10 +164,6 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
             val pillar2Id = request.headers.get("x-pillar2-id").getOrElse("")
             val yearsAndTransactionPattern: Regex = "XMPLR0000000(.{3})\\s*$".r
             logger.info(s"Account Activity - Pillar2 ID received: $pillar2Id")
-            logger.info("****************")
-            logger.info(s"'$pillar2Id'")
-            logger.info(s"length = ${pillar2Id.length}")
-            logger.info("****************")
             pillar2Id match {
               case AccountActivitySuccessResponse.Scenario1UktrCharges =>
                 Ok(Json.toJson(AccountActivitySuccessResponse.scenario1UktrCharges()))
