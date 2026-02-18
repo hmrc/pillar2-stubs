@@ -255,8 +255,8 @@ object AccountActivityController {
         transactionType = "PAYMENT",
         transactionDesc = "Pillar 2 Payment on Account",
         transactionDate = generateRandomDate(fromDate, toDate),
-        originalAmount = generateBigDecimal,
-        clearedAmount = Some(generateBigDecimal),
+        originalAmount = -generateBigDecimal,
+        clearedAmount = Some(-generateBigDecimal),
         clearingDetails = Some(
           Seq(
             ClearingDetail(
