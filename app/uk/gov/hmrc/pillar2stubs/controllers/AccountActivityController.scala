@@ -240,27 +240,27 @@ object AccountActivityController {
 
     val payments: Seq[AccountActivityTransactionDetail] = (1 to paymentsCount).map(_ =>
       AccountActivityTransactionDetail(
-        transactionType = "Payment",
-        transactionDesc = "On Account Pillar 2 (Payment on Account)",
+        transactionType = "PAYMENT",
+        transactionDesc = "Pillar 2 Payment on Account",
         transactionDate = generateRandomDate(fromDate, toDate),
-        originalAmount = generateBigDecimal,
-        outstandingAmount = Some(generateBigDecimal),
-        clearedAmount = Some(generateBigDecimal),
+        originalAmount = -generateBigDecimal,
+        outstandingAmount = Some(-generateBigDecimal),
+        clearedAmount = Some(-generateBigDecimal),
         clearingDetails = Some(Seq.empty)
       )
     )
 
     val repayments: Seq[AccountActivityTransactionDetail] = (1 to repaymentsCount).map(_ =>
       AccountActivityTransactionDetail(
-        transactionType = "Payment",
-        transactionDesc = "On Account Pillar 2 (Payment on Account)",
+        transactionType = "PAYMENT",
+        transactionDesc = "Pillar 2 Payment on Account",
         transactionDate = generateRandomDate(fromDate, toDate),
         originalAmount = generateBigDecimal,
         clearedAmount = Some(generateBigDecimal),
         clearingDetails = Some(
           Seq(
             ClearingDetail(
-              transactionDesc = "Pillar 2 Repayment",
+              transactionDesc = "Repayment",
               amount = generateBigDecimal,
               clearingDate = generateRandomDate(fromDate, toDate),
               clearingReason = Some("Outgoing payment - Paid")
@@ -272,15 +272,15 @@ object AccountActivityController {
 
     val repaymentInterests: Seq[AccountActivityTransactionDetail] = (1 to interestRepaymentsCount).map(_ =>
       AccountActivityTransactionDetail(
-        transactionType = "Credit",
-        transactionDesc = "Pillar 2 UKTR RPI Pillar 2 OECD RPI",
+        transactionType = "CREDIT",
+        transactionDesc = "Repayment interest - UKTR",
         transactionDate = generateRandomDate(fromDate, toDate),
-        originalAmount = generateBigDecimal,
-        clearedAmount = Some(generateBigDecimal),
+        originalAmount = -generateBigDecimal,
+        clearedAmount = Some(-generateBigDecimal),
         clearingDetails = Some(
           Seq(
             ClearingDetail(
-              transactionDesc = "Pillar 2 Repayment",
+              transactionDesc = "Repayment",
               amount = generateBigDecimal,
               clearingDate = generateRandomDate(fromDate, toDate),
               clearingReason = Some("Outgoing payment - Paid")
