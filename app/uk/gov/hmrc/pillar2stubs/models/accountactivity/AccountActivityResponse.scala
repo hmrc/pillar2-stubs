@@ -426,6 +426,13 @@ object AccountActivitySuccessResponse {
     )
   )
 
+  def emptyAccountActivity(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
+    AccountActivitySuccess(
+      processingDate = AccountActivityResponse.now,
+      transactionDetails = Seq.empty
+    )
+  )
+
   def apply(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,

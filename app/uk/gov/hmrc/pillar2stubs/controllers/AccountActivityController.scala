@@ -208,6 +208,8 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                 UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
               case "XEPLR2000000001" =>
                 Ok(Json.toJson(AccountActivitySuccessResponse.overdueOutstandingCharge()))
+              case "XEPLR4040000000" =>
+                Ok(Json.toJson(AccountActivitySuccessResponse.emptyAccountActivity()))
               case yearsAndTransactionPattern(numberOfTransactions) =>
                 Ok(
                   Json.toJson(
