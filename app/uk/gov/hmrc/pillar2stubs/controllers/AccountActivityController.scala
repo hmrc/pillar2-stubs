@@ -20,6 +20,7 @@ import play.api.Logging
 import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.pillar2stubs.controllers.AccountActivityController.generateSuccessfulResponse
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.accountactivity.AccountActivityErrorCodes.*
 import uk.gov.hmrc.pillar2stubs.models.accountactivity.*
@@ -27,7 +28,8 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.LocalDate
 import javax.inject.Inject
-import scala.util.Try
+import scala.util.{Random, Try}
+import scala.util.matching.Regex
 
 class AccountActivityController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter, etmpHeaderFilter: ETMPHeaderFilter)
     extends BackendController(cc)
@@ -35,6 +37,7 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
 
   def retrieveAccountActivityReport: Action[AnyContent] =
     (Action andThen authFilter andThen etmpHeaderFilter) { implicit request =>
+      val yearsAndTransactionPattern: Regex = "XMPLR0000000(.{3})\\s*$".r
       val fromDate = request.getQueryString("fromDate").orElse(request.getQueryString("dateFrom"))
       val toDate   = request.getQueryString("toDate").orElse(request.getQueryString("dateTo"))
 
@@ -108,8 +111,16 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                     // No data found (match ETMP behaviour)
                     case "XMPLR0000000000" =>
                       UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
+                    case "XEPLR4040000000" =>
+                      UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
                     case "XEPLR2000000001" =>
                       Ok(Json.toJson(AccountActivitySuccessResponse.overdueOutstandingCharge()))
+                    case yearsAndTransactionPattern(numberOfTransactions) =>
+                      Ok(
+                        Json.toJson(
+                          generateSuccessfulResponse(numberOfTransactions.toInt, LocalDate.parse(fromDate.get), LocalDate.parse(toDate.get))
+                        )
+                      )
                     case _ =>
                       Ok(Json.toJson(AccountActivitySuccessResponse()))
                   }
@@ -151,6 +162,7 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
             // Continue with other validations and responses only if date range is valid
             // ETMPHeaderFilter validates "x-pillar2-id" exists, and Play normalizes headers to lowercase
             val pillar2Id = request.headers.get("x-pillar2-id").getOrElse("")
+            val yearsAndTransactionPattern: Regex = "XMPLR0000000(.{3})\\s*$".r
             logger.info(s"Account Activity - Pillar2 ID received: $pillar2Id")
             pillar2Id match {
               case AccountActivitySuccessResponse.Scenario1UktrCharges =>
@@ -196,10 +208,105 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                 UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(NO_DATA_FOUND_014)))
               case "XEPLR2000000001" =>
                 Ok(Json.toJson(AccountActivitySuccessResponse.overdueOutstandingCharge()))
+              case "XEPLR4040000000" =>
+                Ok(Json.toJson(AccountActivitySuccessResponse.emptyAccountActivity()))
+              case yearsAndTransactionPattern(numberOfTransactions) =>
+                Ok(
+                  Json.toJson(
+                    AccountActivitySuccessResponse(success =
+                      generateSuccessfulResponse(numberOfTransactions.toInt, LocalDate.parse(fromDate), LocalDate.parse(toDate))
+                    )
+                  )
+                )
               case _ =>
                 Ok(Json.toJson(AccountActivitySuccessResponse()))
             }
           }
       )
     }
+}
+
+object AccountActivityController {
+
+  private def generateAccountActivityTransactions(
+    numberOfTransactions: Int,
+    fromDate:             LocalDate,
+    toDate:               LocalDate
+  ): Seq[AccountActivityTransactionDetail] = {
+    require(numberOfTransactions > 0, "Number of account activity transactions must be positive")
+
+    val paymentsCount:         Int = math.max(1, math.min(numberOfTransactions, numberOfTransactions / 3)) // at least 1 Payment
+    val remainingTransactions: Int = numberOfTransactions - paymentsCount
+    val repaymentsCount: Int = if remainingTransactions > 0 then math.max(1, remainingTransactions / 2) else 0 // at least one Repayment if possible
+    val interestRepaymentsCount: Int = math.max(0, numberOfTransactions - paymentsCount - repaymentsCount) // Remaining transactions are Interest
+
+    val payments: Seq[AccountActivityTransactionDetail] = (1 to paymentsCount).map(_ =>
+      AccountActivityTransactionDetail(
+        transactionType = "PAYMENT",
+        transactionDesc = "Pillar 2 Payment on Account",
+        transactionDate = generateRandomDate(fromDate, toDate),
+        originalAmount = -generateBigDecimal,
+        outstandingAmount = Some(-generateBigDecimal),
+        clearedAmount = Some(-generateBigDecimal),
+        clearingDetails = Some(Seq.empty)
+      )
+    )
+
+    val repayments: Seq[AccountActivityTransactionDetail] = (1 to repaymentsCount).map(_ =>
+      AccountActivityTransactionDetail(
+        transactionType = "PAYMENT",
+        transactionDesc = "Pillar 2 Payment on Account",
+        transactionDate = generateRandomDate(fromDate, toDate),
+        originalAmount = -generateBigDecimal,
+        clearedAmount = Some(-generateBigDecimal),
+        clearingDetails = Some(
+          Seq(
+            ClearingDetail(
+              transactionDesc = "Repayment",
+              amount = generateBigDecimal,
+              clearingDate = generateRandomDate(fromDate, toDate),
+              clearingReason = Some("Outgoing payment - Paid")
+            )
+          )
+        )
+      )
+    )
+
+    val repaymentInterests: Seq[AccountActivityTransactionDetail] = (1 to interestRepaymentsCount).map(_ =>
+      AccountActivityTransactionDetail(
+        transactionType = "CREDIT",
+        transactionDesc = "Repayment interest - UKTR",
+        transactionDate = generateRandomDate(fromDate, toDate),
+        originalAmount = -generateBigDecimal,
+        clearedAmount = Some(-generateBigDecimal),
+        clearingDetails = Some(
+          Seq(
+            ClearingDetail(
+              transactionDesc = "Repayment",
+              amount = generateBigDecimal,
+              clearingDate = generateRandomDate(fromDate, toDate),
+              clearingReason = Some("Outgoing payment - Paid")
+            )
+          )
+        )
+      )
+    )
+
+    payments ++ repayments ++ repaymentInterests
+  }
+
+  private def generateSuccessfulResponse(numberOfTransactions: Int, fromDate: LocalDate, toDate: LocalDate) =
+    AccountActivitySuccess(
+      AccountActivityResponse.now,
+      transactionDetails = generateAccountActivityTransactions(numberOfTransactions, fromDate, toDate)
+    )
+
+  private def generateBigDecimal: BigDecimal =
+    val start: Double = 10000.00
+    val end:   Double = 100000000000.00
+
+    BigDecimal.valueOf(Random.between(start, end)).setScale(2, BigDecimal.RoundingMode.HALF_EVEN)
+
+  private def generateRandomDate(fromDate: LocalDate, toDate: LocalDate): LocalDate =
+    LocalDate.ofEpochDay(Random.between(fromDate.toEpochDay, toDate.toEpochDay + 1))
 }
