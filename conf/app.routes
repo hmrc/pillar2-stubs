@@ -8,6 +8,11 @@ GET           /report-pillar2-top-up-taxes/subscription/read-subscription/:plrRe
 GET           /report-pillar2-top-up-taxes/subscription/read-subscription/:id/:plrReference uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionCache(id: String, plrReference: String)
 PUT           /pillar2/subscription                                                        uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.amendSubscription
 
+# V2 Subscription Routes
+GET           /pillar2/subscription/v2/:plrReference                                          uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionV2(plrReference: String)
+GET           /report-pillar2-top-up-taxes/subscription/v2/read-subscription/:plrReference    uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionV2(plrReference: String)
+GET           /report-pillar2-top-up-taxes/subscription/v2/read-subscription/:id/:plrReference uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionCacheV2(id: String, plrReference: String)
+
 POST          /pillar2/repayment                                                           uk.gov.hmrc.pillar2stubs.controllers.RepaymentController.submitRepaymentDetails
 
 GET           /enrolment-store-proxy/enrolment-store/enrolments/:serviceName/groups        uk.gov.hmrc.pillar2stubs.controllers.EnrolmentStoreProxyController.status(serviceName)

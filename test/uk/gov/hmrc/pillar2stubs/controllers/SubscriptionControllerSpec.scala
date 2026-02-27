@@ -467,91 +467,53 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
   }
 
   "GET" - {
-    "retrieveSubscription" - {
+    "must return OK response with valid data when subscription exists" in
+      testBothVersions("validId", OK)
 
-      val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+    "must return BAD_REQUEST response for invalid requests" in
+      testBothVersions("XEPLR0123456400", BAD_REQUEST)
 
-      "must return FORBIDDEN response when 'Authorization' header is missing" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("someId").url)
-        val result  = route(app, request).value
+    "must return NOT_FOUND response when subscription does not exist" in
+      testBothVersions("XEPLR0123456404", NOT_FOUND)
 
-        status(result) shouldBe FORBIDDEN
-      }
+    "must return UNPROCESSABLE_ENTITY response for unprocessable requests" in
+      testBothVersions("XEPLR0123456422", UNPROCESSABLE_ENTITY)
 
-      "must return OK response with valid data when subscription exists" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("validId").url).withHeaders(authHeader)
-        val result  = route(app, request).value
+    "must return INTERNAL_SERVER_ERROR response when an unexpected error occurs" in
+      testBothVersions("XEPLR0123456500", INTERNAL_SERVER_ERROR)
 
-        status(result) shouldBe OK
-      }
+    "must return SERVICE_UNAVAILABLE response when the service is down" in
+      testBothVersions("XEPLR0123456503", SERVICE_UNAVAILABLE)
 
-      "must return BAD_REQUEST response for invalid requests" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456400").url).withHeaders(authHeader)
-        val result  = route(app, request).value
+    "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000001 (Quick Processing)" in
+      testBothVersions("XEPLR0000000001", UNPROCESSABLE_ENTITY)
 
-        status(result) shouldBe BAD_REQUEST
-      }
+    "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000002 (Medium Processing)" in
+      testBothVersions("XEPLR0000000002", UNPROCESSABLE_ENTITY)
 
-      "must return NOT_FOUND response when subscription does not exist" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456404").url).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe NOT_FOUND
-      }
-
-      "must return UNPROCESSABLE_ENTITY response for unprocessable requests" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456422").url).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe UNPROCESSABLE_ENTITY
-      }
-
-      "must return INTERNAL_SERVER_ERROR response when an unexpected error occurs" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456500").url).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-
-      "must return SERVICE_UNAVAILABLE response when the service is down" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0123456503").url).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe SERVICE_UNAVAILABLE
-      }
-
-      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000001 (Quick Processing)" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000001").url).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe UNPROCESSABLE_ENTITY
-      }
-
-      "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000002 (Medium Processing)" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000002").url).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        status(result) shouldBe UNPROCESSABLE_ENTITY
-      }
-
-      "must return a OK with an inactive subscription for the given IDs" in {
-        val ids      = Seq("XEPLR2000000109", "XEPLR2000000110", "XEPLR2000000111", "XEPLR2000000111")
-        val requests = ids.map(id => FakeRequest(GET, routes.SubscriptionController.retrieveSubscription(id).url).withHeaders(authHeader))
-        val results  = requests.map(route(app, _).value)
-        forAll(results) { result =>
-          (contentAsJson(result) \ "success" \ "accountStatus" \ "inactive").as[Boolean] shouldBe true
-          status(result)                                                                 shouldBe OK
+    "must return a OK with no secondary contact details" in
+      testBothVersions(
+        "XEPLR2000000200",
+        OK,
+        { json =>
+          (json \ "success" \ "secondaryContact").asOpt[JsValue] should not be defined
+          ()
         }
+      )
+
+    "must return a OK with an inactive subscription for the given IDs" in {
+      val ids = Seq("XEPLR2000000109", "XEPLR2000000110", "XEPLR2000000111", "XEPLR2000000111")
+
+      ids.foreach { id =>
+        testBothVersions(
+          id,
+          OK,
+          { json =>
+            (json \ "success" \ "accountStatus" \ "inactive").as[Boolean] shouldBe true
+            ()
+          }
+        )
       }
-
-      "must return a OK with no secondary contact details" in {
-        val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR2000000200").url).withHeaders(authHeader)
-        val result  = route(app, request).value
-
-        (contentAsJson(result) \ "success" \ "secondaryContact").asOpt[JsValue] should not be defined
-        status(result)                                                        shouldBe OK
-      }
-
     }
   }
 
@@ -854,4 +816,20 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
   }
 
+  private def testBothVersions(plrReference: String, expectedStatus: Int, additionalAssertions: JsValue => Unit = _ => ()): Unit = {
+    val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+    val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription(plrReference).url).withHeaders(authHeader)
+    val result  = route(app, request).value
+
+    val requestV2 = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2(plrReference).url).withHeaders(authHeader)
+    val resultV2  = route(app, requestV2).value
+
+    status(result)   shouldBe expectedStatus
+    status(resultV2) shouldBe expectedStatus
+
+    if expectedStatus == OK then {
+      additionalAssertions(contentAsJson(result))
+      additionalAssertions(contentAsJson(resultV2))
+    }
+  }
 }

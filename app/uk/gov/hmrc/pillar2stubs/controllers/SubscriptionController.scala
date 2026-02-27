@@ -21,7 +21,7 @@ import play.api.Logging
 import play.api.libs.json.*
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.api.mvc.Results.Status
-import uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSuccessResponse
+import uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.{readSuccessResponse, readSuccessResponseV2}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionSuccess, Subscription}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
@@ -209,6 +209,81 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
   private def removeSecondaryContact(response: String): String =
     (__ \ "success" \ "secondaryContactDetails").prune(Json.parse(response).as[JsObject]).get.toString
+
+  def retrieveSubscriptionV2(plrReference: String): Action[AnyContent] =
+    (Action andThen authFilter) {
+      logger.info(s"retrieveSubscriptionV2 Request received \n $plrReference \n")
+      val (status, body) = subscriptionResponseV2(plrReference)
+      if status == OK then Ok(body) else Status(status)(body)
+    }
+
+  def retrieveSubscriptionCacheV2(id: String, plrReference: String): Action[AnyContent] =
+    (Action andThen authFilter) {
+      logger.info(s"retrieveSubscriptionCacheV2 Request received \n $id / $plrReference \n")
+      val (status, body) = subscriptionResponseV2(plrReference)
+      if status == OK then Ok(unwrapSuccess(body)) else Status(status)(body)
+    }
+
+  private def subscriptionResponseV2(plrReference: String): (Int, String) = plrReference match {
+
+    case ref @ "XEPLR0000000001" =>
+      val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
+      pollCounters(plrReference) = count
+      logger.info(s"Quick Processing Corp V2 - Poll attempt $count for $plrReference")
+      if count <= 3 then (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+      else (OK, readSuccessResponseV2WithRef(ref))
+
+    case ref @ "XEPLR0000000002" =>
+      val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
+      pollCounters(plrReference) = count
+      logger.info(s"Medium Processing Corp V2 - Poll attempt $count for $plrReference")
+      if count <= 8 then (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+      else (OK, readSuccessResponseV2WithRef(ref))
+
+    case "XEPLR0123456400" => (BAD_REQUEST, resourceAsString("/resources/error/subscription/BadRequest.json").get)
+    case "XEPLR0123456404" => (NOT_FOUND, resourceAsString("/resources/error/subscription/NotFound.json").get)
+    case "XEPLR0123456422" => (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+    case "XEPLR0123456500" => (INTERNAL_SERVER_ERROR, resourceAsString("/resources/error/subscription/ServerError.json").get)
+    case "XEPLR0123456502" => (502, resourceAsString("/resources/error/subscription/BadGateway.json").get)
+    case "XEPLR0123456503" => (SERVICE_UNAVAILABLE, resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
+
+    case ref @ "XEPLR5555555555" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+    case "XEPLR5555551111"       => (OK, replaceDate(readSuccessResponseV2, LocalDate.now().toString))
+    case ref @ "XEPLR6666666666" =>
+      (OK, readSuccessResponseV2WithRef(ref).replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
+    case ref @ "XEPLR1066196600" => (OK, readSuccessResponseV2WithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
+    case ref @ "XEPLR1066196602" => (OK, readSuccessResponseV2WithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
+    case ref @ "XEPLR2000000109" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+    case ref @ "XEPLR2000000110" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+    case ref @ "XEPLR2000000111" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+    case ref @ "XEPLR2000000112" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+    case ref @ "XEPLR2000000200" => (OK, removeSecondaryContact(readSuccessResponseV2WithRef(ref)))
+
+    case "XEPLR9999999999" => (OK, readSuccessResponseV2WithEmptyPeriods)
+    case "XEPLR8888888888" => (OK, readSuccessResponseV2WithMultiplePeriods)
+
+    case _ =>
+      (
+        OK,
+        readSuccessResponseV2WithRef("plrReference")
+          .replace("\"startDate\": \"2024-01-06\"", s"\"startDate\": \"${LocalDate.of(currentYear - 1, 1, 1)}\"")
+          .replace("\"endDate\": \"2025-04-06\"", s"\"endDate\": \"${LocalDate.of(currentYear - 1, 12, 31)}\"")
+          .replace("\"dueDate\": \"2024-04-06\"", s"\"dueDate\": \"${LocalDate.now()}\"")
+      )
+  }
+
+  private def readSuccessResponseV2WithRef(reference: String): String = replacePillar2Id(readSuccessResponseV2, reference)
+
+  private def readSuccessResponseV2WithEmptyPeriods: String =
+    resourceAsString("/resources/subscription/ReadSuccessResponseV2EmptyPeriods.json").getOrElse(
+      throw new IllegalStateException("ReadSuccessResponseV2EmptyPeriods.json is missing.")
+    )
+
+  private def readSuccessResponseV2WithMultiplePeriods: String =
+    resourceAsString("/resources/subscription/ReadSuccessResponseV2MultiplePeriods.json").getOrElse(
+      throw new IllegalStateException("ReadSuccessResponseV2MultiplePeriods.json is missing.")
+    )
+
 }
 
 object SubscriptionController {
@@ -217,4 +292,7 @@ object SubscriptionController {
     throw new IllegalStateException("ReadSuccessResponse.json is missing.")
   )
 
+  private val readSuccessResponseV2: String = resourceAsString("/resources/subscription/ReadSuccessResponseV2.json").getOrElse(
+    throw new IllegalStateException("ReadSuccessResponseV2.json is missing.")
+  )
 }
