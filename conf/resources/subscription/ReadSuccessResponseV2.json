@@ -20,15 +20,14 @@
           "countryCode": "GB"
       },
       "primaryContactDetails": {
-          "name": "Fred Flintstone",
+          "name": "Ashley Jones",
           "telephone": "0115 9700 700",
-          "emailAddress": "fred.flintstone@aol.com"
+          "emailAddress": "ashley.jones@example.com"
       },
       "secondaryContactDetails": {
-          "name": "Donald Trump",
+          "name": "John Doe",
           "telephone": "0115 9700 701",
-          "emailAddress": "donald.trump@potus.com"
-
+          "emailAddress": "john.doe@potus.com"
       },
       "filingMemberDetails": {
           "safeId": "XL6967739016188",
