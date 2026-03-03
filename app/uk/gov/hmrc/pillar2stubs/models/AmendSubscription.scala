@@ -175,3 +175,50 @@ object AccountStatus {
   type AccountStatusOpt = Option[AccountStatus]
 
 }
+
+final case class OriginalAccountingPeriod(
+  taxObligationStartDate: LocalDate,
+  taxObligationEndDate:   LocalDate
+)
+
+object OriginalAccountingPeriod {
+  given OFormat[OriginalAccountingPeriod] = {
+    import LocalDateImplicits.given
+    Json.format[OriginalAccountingPeriod]
+  }
+}
+
+final case class NewAccountingPeriodDetails(
+  updateObligationStartDate: LocalDate,
+  updateObligationEndDate:   LocalDate
+)
+
+object NewAccountingPeriodDetails {
+  given OFormat[NewAccountingPeriodDetails] = {
+    import LocalDateImplicits.given
+    Json.format[NewAccountingPeriodDetails]
+  }
+}
+
+final case class AccountingPeriodV2(
+  amendAccountingPeriod:     Boolean,
+  originalAccountingPeriods: Option[Seq[OriginalAccountingPeriod]],
+  newAccountingPeriod:       Option[NewAccountingPeriodDetails]
+)
+
+object AccountingPeriodV2 {
+  given OFormat[AccountingPeriodV2] = Json.format[AccountingPeriodV2]
+}
+
+case class AmendSubscriptionSuccessV2(
+  upeDetails:               UpeDetailsAmend,
+  accountingPeriod:         AccountingPeriodV2,
+  upeCorrespAddressDetails: UpeCorrespAddressDetails,
+  primaryContactDetails:    ContactDetailsType,
+  secondaryContactDetails:  Option[ContactDetailsType],
+  filingMemberDetails:      Option[FilingMemberAmendDetails]
+)
+
+object AmendSubscriptionSuccessV2 {
+  given OFormat[AmendSubscriptionSuccessV2] = Json.format[AmendSubscriptionSuccessV2]
+}
