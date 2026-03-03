@@ -27,7 +27,7 @@
       "secondaryContactDetails": {
           "name": "John Doe",
           "telephone": "0115 9700 701",
-          "emailAddress": "john.doe@potus.com"
+          "emailAddress": "john.doe@example.com"
       },
       "filingMemberDetails": {
           "safeId": "XL6967739016188",
