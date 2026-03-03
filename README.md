@@ -206,7 +206,7 @@ To trigger the happy path, ensure you provide a valid request body:
   "isAnAgent": false,
   "isAGroup": true,
   "organisation": {
-    "organisationName": "Stark Corp"
+    "organisationName": "Commerce Corp"
   },
   "address": {
     "addressLine1": "100",
@@ -215,7 +215,7 @@ To trigger the happy path, ensure you provide a valid request body:
     "countryCode": "US"
   },
   "contactDetails": {
-    "emailAddress": "stark.tony@starkind.com"
+    "emailAddress": "contact@example.com"
   }
 }
 ```
@@ -359,7 +359,7 @@ To trigger the happy path, ensure you provide a valid request body:
 {
   "upeDetails": {
     "safeId": "XE6666666666666",
-    "organisationName": "Stark Corp",
+    "organisationName": "Commerce Corp",
     "registrationDate": "2023-12-08",
     "domesticOnly": false,
     "filingMember": true
@@ -375,8 +375,8 @@ To trigger the happy path, ensure you provide a valid request body:
     "countryCode": "US"
   },
   "primaryContactDetails": {
-    "name": "Tony Stark",
-    "emailAddress": "stark.tony@starkind.com"
+    "name": "Primary Contact",
+    "emailAddress": "primary.contact@example.com"
   }
 }
 ```
@@ -507,14 +507,14 @@ To trigger the happy path, ensure you provide a valid plrReference. The below is
       "countryCode": "GB"
     },
     "primaryContactDetails": {
-      "name": "Fred Flintstone",
+      "name": "Primary Contact",
       "telepphone": "0115 9700 700",
-      "emailAddress": "fred.flintstone@aol.com"
+      "emailAddress": "primary.contact@example.com"
     },
     "secondaryContactDetails": {
-      "name": "Donald Trump",
+      "name": "Secondary Contact",
       "telepphone": "0115 9700 700",
-      "emailAddress": "fred.flintstone@potus.com"
+      "emailAddress": "secondary.contact@example.com"
     },
       "filingMemberDetails": {
       "safeId": "XL6967739016188",
@@ -691,7 +691,7 @@ Example Request Body:
 {
   "upeDetails": {
     "safeId": "XE6666666666666",
-    "organisationName": "Stark Corp",
+    "organisationName": "Commerce Corp",
     "registrationDate": "2023-12-08",
     "domesticOnly": false,
     "filingMember": true
@@ -707,8 +707,8 @@ Example Request Body:
     "countryCode": "US"
   },
   "primaryContactDetails": {
-    "name": "Default Contact Name",
-    "emailAddress": "stark.tony@starkind.com"
+    "name": "Primary Contact",
+    "emailAddress": "primary.contact@example.com"
   }
 }
 ```
