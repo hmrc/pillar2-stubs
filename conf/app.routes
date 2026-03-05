@@ -7,6 +7,7 @@ GET           /pillar2/subscription/:plrReference                               
 GET           /report-pillar2-top-up-taxes/subscription/read-subscription/:plrReference    uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscription(plrReference: String)
 GET           /report-pillar2-top-up-taxes/subscription/read-subscription/:id/:plrReference uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionCache(id: String, plrReference: String)
 PUT           /pillar2/subscription                                                        uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.amendSubscription
+PUT           /pillar2/subscription/v2                                                     uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.amendSubscriptionV2
 
 # V2 Subscription Routes
 GET           /pillar2/subscription/v2/:plrReference                                          uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionV2(plrReference: String)
