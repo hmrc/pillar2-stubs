@@ -149,6 +149,14 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       if status == OK then Ok(body) else Status(status)(body)
     }
 
+  /** Display Subscription V2 (PIL-2855): returns multiple accounting periods for Manage Group details when feature flag is on. */
+  def retrieveDisplaySubscriptionV2(plrReference: String): Action[AnyContent] =
+    (Action andThen authFilter) {
+      logger.info(s"retrieveDisplaySubscriptionV2 Request received \n $plrReference \n")
+      val body = resourceAsString("/resources/subscription/DisplaySubscriptionV2SuccessResponse.json").getOrElse("{}")
+      Ok(body)
+    }
+
   /** Frontend cache path: same status/error logic as retrieveSubscription, but 200 responses return unwrapped JSON (SubscriptionData at root). */
   def retrieveSubscriptionCache(id: String, plrReference: String): Action[AnyContent] =
     (Action andThen authFilter) {
