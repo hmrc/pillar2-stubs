@@ -16,14 +16,14 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
-import play.api.http.Status.*
 import play.api.Logging
+import play.api.http.Status.*
 import play.api.libs.json.*
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import play.api.mvc.Results.Status
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSuccessResponse
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionSuccess, Subscription}
+import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionSuccess, AmendSubscriptionSuccessV2, Subscription}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
@@ -197,6 +197,46 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
           case _ =>
             logger.info(s"AmendSubscription Request received \n ${request.body} \n")
+            Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
+        }
+
+      case JsError(_) =>
+        Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Invalid JSON format"))))
+    }
+  }
+
+  def amendSubscriptionV2: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
+    logger.info(s"amendSubscriptionV2 Request received")
+    Json.fromJson[AmendSubscriptionSuccessV2](request.body) match {
+      case JsSuccess(subscriptionResponse, _) =>
+        subscriptionResponse.primaryContactDetails.name match {
+          case "400" =>
+            Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
+
+          case "409" =>
+            Future.successful(Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").getOrElse("Conflict error")))
+
+          case "422" =>
+            Future.successful(
+              UnprocessableEntity(resourceAsString("/resources/error/UnprocessableEntity.json").getOrElse("Unprocessable entity error"))
+            )
+
+          case "500" =>
+            Future.successful(InternalServerError(resourceAsString("/resources/error/InternalServerError.json").getOrElse("Internal server error")))
+
+          case "503" =>
+            Future.successful(ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error")))
+
+          case "timeout" =>
+            Thread.sleep(30000)
+            Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
+
+          case "10 seconds" =>
+            Thread.sleep(10000)
+            Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
+
+          case _ =>
+            logger.info(s"AmendSubscriptionV2 Request received \n ${request.body} \n")
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
         }
 

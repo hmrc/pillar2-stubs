@@ -28,8 +28,8 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.LocalDate
 import javax.inject.Inject
-import scala.util.{Random, Try}
 import scala.util.matching.Regex
+import scala.util.{Random, Try}
 
 class AccountActivityController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter, etmpHeaderFilter: ETMPHeaderFilter)
     extends BackendController(cc)
