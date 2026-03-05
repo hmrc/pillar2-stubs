@@ -1,0 +1,58 @@
+{
+  "success": {
+
+      "formBundleNumber": "119000004320",
+      "upeDetails": {
+          "domesticOnly": false,
+          "organisationName": "International Organisation Inc.",
+          "customerIdentification1": "12345678",
+          "customerIdentification2": "12345678",
+          "registrationDate": "2024-01-31",
+          "filingMember": false
+      },
+      "upeCorrespAddressDetails": {
+          "addressLine1": "1 High Street",
+          "addressLine2": "Egham",
+
+          "addressLine3": "Wycombe",
+          "addressLine4": "Surrey",
+          "postCode": "HP13 6TT",
+          "countryCode": "GB"
+      },
+      "primaryContactDetails": {
+          "name": "Ashley Jones",
+          "telephone": "0115 9700 700",
+          "emailAddress": "ashley.jones@example.com"
+      },
+      "secondaryContactDetails": {
+          "name": "John Doe",
+          "telephone": "0115 9700 701",
+          "emailAddress": "john.doe@example.com"
+      },
+      "filingMemberDetails": {
+          "safeId": "XL6967739016188",
+          "organisationName": "Domestic Operations Ltd",
+          "customerIdentification1": "1234Z678",
+          "customerIdentification2": "1234567Y"
+      },
+      "accountingPeriod": [
+          {
+              "startDate": "2024-01-01",
+              "endDate": "2024-12-31",
+              "dueDate": "2025-06-01",
+              "canAmendStartDate": true,
+              "canAmendEndDate": false
+          },
+          {
+              "startDate": "2025-01-01",
+              "endDate": "2025-12-31",
+              "dueDate": "2026-06-01",
+              "canAmendStartDate": false,
+              "canAmendEndDate": true
+          }
+      ],
+      "accountStatus": {
+          "inactive": false
+      }
+  }
+}
