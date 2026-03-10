@@ -15,6 +15,11 @@ PUT           /pillar2/subscription/v2                                          
 GET           /pillar2/subscription/v2/:plrReference                                          uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionV2(plrReference: String)
 GET           /report-pillar2-top-up-taxes/subscription/v2/read-subscription/:plrReference    uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionV2(plrReference: String)
 GET           /report-pillar2-top-up-taxes/subscription/v2/read-subscription/:id/:plrReference uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionCacheV2(id: String, plrReference: String)
+GET           /report-pillar2-top-up-taxes/subscription/read-subscription/v2/:id/:plrReference uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionCacheV2(id: String, plrReference: String)
+
+# User-cache for subscription 
+GET           /report-pillar2-top-up-taxes/user-cache/read-subscription/:userId              uk.gov.hmrc.pillar2stubs.controllers.UserCacheController.getReadSubscription(userId: String)
+POST          /report-pillar2-top-up-taxes/user-cache/read-subscription/:userId              uk.gov.hmrc.pillar2stubs.controllers.UserCacheController.putReadSubscription(userId: String)
 
 POST          /pillar2/repayment                                                           uk.gov.hmrc.pillar2stubs.controllers.RepaymentController.submitRepaymentDetails
 

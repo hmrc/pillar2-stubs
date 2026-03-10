@@ -95,8 +95,14 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     }
   }
 
+  /** PLR references for which read-subscription returns 200 (subscription ready) so homepage and Manage group details load. */
+  private val subscriptionReadyPlrReferences: Set[String] =
+    Set("XEPLR2855000001", "XEPLR2855000002", "XEPLR2855000003", "XEPLR2855000004", "XEPLR2855000005", "XEPLR2855000006")
+
   /** Returns (HTTP status code, response body). Used by both read and cache endpoints. */
   private def subscriptionResponse(plrReference: String): (Int, String) = plrReference match {
+
+    case ref if subscriptionReadyPlrReferences(ref) => (OK, readSuccessResponseWithRef(ref))
 
     case ref @ "XEPLR0000000001" =>
       val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
@@ -309,6 +315,10 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
     case "XEPLR9999999999" => (OK, readSuccessResponseV2WithEmptyPeriods)
     case "XEPLR8888888888" => (OK, readSuccessResponseV2WithMultiplePeriods)
+    case "XEPLR2855000001" => (OK, readSuccessResponseV2WithTwoAmendablePeriods)
+    case "XEPLR2855000002" => (OK, readSuccessResponseV2WithMicroPeriod)
+    case "XEPLR2855000004" => (OK, readSuccessResponseV2WithTwoAmendablePeriods)
+    case "XEPLR2855000006" => (OK, readSuccessResponseV2WithEmptyPeriods)
 
     case _ =>
       (
@@ -330,6 +340,16 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
   private def readSuccessResponseV2WithMultiplePeriods: String =
     resourceAsString("/resources/subscription/ReadSuccessResponseV2MultiplePeriods.json").getOrElse(
       throw new IllegalStateException("ReadSuccessResponseV2MultiplePeriods.json is missing.")
+    )
+
+  private def readSuccessResponseV2WithTwoAmendablePeriods: String =
+    resourceAsString("/resources/subscription/ReadSuccessResponseV2TwoAmendablePeriods.json").getOrElse(
+      throw new IllegalStateException("ReadSuccessResponseV2TwoAmendablePeriods.json is missing.")
+    )
+
+  private def readSuccessResponseV2WithMicroPeriod: String =
+    resourceAsString("/resources/subscription/ReadSuccessResponseV2MicroPeriod.json").getOrElse(
+      throw new IllegalStateException("ReadSuccessResponseV2MicroPeriod.json is missing.")
     )
 
 }

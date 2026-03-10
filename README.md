@@ -36,6 +36,7 @@ The Pillar2 stubs service provides stubs for the GRS systems to mock the respons
         * [HTTP 404 Record Not Found Error](#http-404-record-not-found-error-2)
     * [Retrieve Subscription Details (Cache)](#retrieve-subscription-details-cache)
       * [Happy Path](#happy-path-3)
+    * [Display Subscription V2 (PIL-2855)](#display-subscription-v2-pil-2855)
     * [Amend Existing Subscription](#amend-existing-subscription)
       * [Happy Path](#happy-path-4)
     * [Retrieve Enrolment Store Response](#retrieve-enrolment-store-response)
@@ -662,6 +663,48 @@ To trigger the unhappy paths, ensure you provide a valid request body. The below
 To trigger the happy path, provide a valid `id` and `plrReference`.
 
 The response format is identical to the `GET /pillar2/subscription/:plrReference` endpoint.
+
+---
+
+### Display Subscription V2 (PIL-2855)
+
+The **Display Subscription V2** endpoint is used by pillar2-frontend when the feature flag `amendMultipleAccountingPeriods` is ON (Manage group details – multiple accounting periods).
+
+**Endpoint**: `GET /report-pillar2-top-up-taxes/subscription/read-subscription/v2/:id/:plrReference`
+
+| plrReference     | Purpose                                                                 |
+|------------------|-------------------------------------------------------------------------|
+| XEPLR8888888888  | Multiple accounting periods (V2 multi-period view)                      |
+| XEPLR9999999999  | Empty accounting periods (V2 empty state)                               |
+| XEPLR1066196600  | Domestic only (location "Only in the UK")                               |
+| XEPLR1066196602  | Domestic only (location "Only in the UK")                              |
+| XEPLR2855000001  | Two amendable periods, normal 12‑month lengths (Current + Previous cards) |
+| XEPLR2855000002  | Multiple periods including one micro-period (&lt; 12 months), both amendable |
+
+When testing the frontend, set the feature flag `amendMultipleAccountingPeriods = true` and set **PLRID** (e.g. via Authority Wizard / session) to one of these values so the frontend calls the V2 endpoint with that `plrReference`.
+
+#### User-cache (subscription cache)
+
+For the full "Manage group details" flow (including after clicking "Change" to go to Data Entry), the frontend reads and writes subscription data via user-cache. The stubs expose:
+
+- **GET** `/report-pillar2-top-up-taxes/user-cache/read-subscription/:userId` – returns stored subscription JSON for the user, or `{}` if none.
+- **POST** `/report-pillar2-top-up-taxes/user-cache/read-subscription/:userId` – body: subscription JSON; stores it keyed by `userId`. Returns `{}`.
+
+Data is held in memory for the lifetime of the stub process.
+
+#### PIL-2855 test scenarios (Scenarios 1–7)
+
+| # | Scenario | Flag | Actor | Use plrReference |
+|---|----------|------|--------|-------------------|
+| 1 | Multiple accounting periods – no micro periods | On | Group (org) | XEPLR2855000001 (or XEPLR8888888888) |
+| 2 | Multiple accounting periods – with micro period | On | Group | XEPLR2855000002 |
+| 3 | Multiple accounting periods – no micro periods | On | Agent | XEPLR2855000001 (or XEPLR8888888888) – same V2 response; frontend shows Group name + ID in header |
+| 4 | Multiple accounting periods – micro period | On | Agent | XEPLR2855000002 |
+| 5 | Single accounting period | Off | Group / Agent | Any ID that works with existing V1 Display Subscription and cache (e.g. default fallback) |
+| 6 | Change location (Where are the group entities located?) | On | Group / Agent | XEPLR1066196600 or XEPLR1066196602 ("Only in the UK"); any other ID for "In the UK and outside the UK" |
+| 7 | Change location | Off | Group / Agent | Same as 6 via V1 subscription and cache |
+
+Empty state (no accounting periods available to amend): use **XEPLR9999999999** with flag On.
 
 ---
 
