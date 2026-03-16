@@ -301,6 +301,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
     case "XEPLR9999999999" => (OK, readSuccessResponseV2WithEmptyPeriods)
     case "XEPLR8888888888" => (OK, readSuccessResponseV2WithMultiplePeriods)
+    case "XEPLR2856000001" => (OK, resourceAsString("/resources/subscription/ReadSuccessResponseV2Example1.json").getOrElse(""))
+    case "XEPLR2856000002" => (OK, resourceAsString("/resources/subscription/ReadSuccessResponseV2Example2.json").getOrElse(""))
 
     case _ =>
       (
