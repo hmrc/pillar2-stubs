@@ -36,8 +36,13 @@ The Pillar2 stubs service provides stubs for the GRS systems to mock the respons
         * [HTTP 404 Record Not Found Error](#http-404-record-not-found-error-2)
     * [Retrieve Subscription Details (Cache)](#retrieve-subscription-details-cache)
       * [Happy Path](#happy-path-3)
+    * [Retrieve Subscription Details V2](#retrieve-subscription-details-v2)
+      * [Happy Path](#happy-path-2-v2)
+      * [Period Scenarios](#period-scenarios)
+    * [Retrieve Subscription Details V2 (Cache)](#retrieve-subscription-details-v2-cache)
     * [Amend Existing Subscription](#amend-existing-subscription)
       * [Happy Path](#happy-path-4)
+    * [Amend Existing Subscription V2](#amend-existing-subscription-v2)
     * [Retrieve Enrolment Store Response](#retrieve-enrolment-store-response)
       * [Happy Path](#happy-path-5)
         * [Enrolment Store Response with groupID](#enrolment-store-response-with-groupid)
@@ -665,6 +670,67 @@ The response format is identical to the `GET /pillar2/subscription/:plrReference
 
 ---
 
+### Retrieve Subscription Details V2
+
+**Endpoints**:
+- `GET /pillar2/subscription/v2/:plrReference`
+- `GET /report-pillar2-top-up-taxes/subscription/v2/read-subscription/:plrReference`
+
+**Description**: Retrieves the Subscription details for the specific plrReference using the V2 response format. The V2 format includes an `accountingPeriod` array (instead of a single object) and supports multiple accounting periods.
+
+| plrReference    | Status Code | Status                  | Description                                                                                           |
+|-----------------|-------------|-------------------------|-------------------------------------------------------------------------------------------------------|
+| XEPLR0000000001 | 422/200     | VARIABLE                | Registration in progress test - Returns 422 for first 3 polls, then 200 success                       |
+| XEPLR0000000002 | 422/200     | VARIABLE                | Registration in progress test - Returns 422 for first 8 polls, then 200 success                       |
+| XEPLR0123456400 | 400         | BAD_REQUEST             | Submission has not passed validation. Invalid plrReference.                                           |
+| XEPLR0123456404 | 404         | NOT_FOUND               | Submission has not passed validation. Record not found.                                               |
+| XEPLR0123456422 | 422         | CANNOT_COMPLETE_REQUEST | Request could not be completed because the subscription is being created or amended.                  |
+| XEPLR0123456500 | 500         | INTERNAL_SERVER_ERROR   | Internal Server error.                                                                                |
+| XEPLR0123456502 | 502         | BAD_GATEWAY             | Bad Gateway (for testing homepage retries).                                                           |
+| XEPLR0123456503 | 503         | SERVICE_UNAVAILABLE     | Dependent systems are currently not responding.                                                       |
+| XEPLR5555555555 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
+| XEPLR6666666666 | 200         | OK                      | Returns read success response with upe registration year of 2011.                                    |
+| XEPLR1066196600 | 200         | OK                      | Returns read success response with domesticOnly set to true.                                          |
+| XEPLR1066196602 | 200         | OK                      | Returns read success response with domesticOnly set to true.                                          |
+| XEPLR2000000109 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
+| XEPLR2000000110 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
+| XEPLR2000000111 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
+| XEPLR2000000112 | 200         | OK                      | Returns read success response with accountStatus.inactive set to true.                                |
+| XEPLR2000000200 | 200         | OK                      | Returns read success response without a secondary contact.                                             |
+
+#### Period Scenarios
+
+The following plrReferences return special accounting period configurations for testing:
+
+| plrReference    | Description                                                                 |
+|-----------------|-----------------------------------------------------------------------------|
+| XEPLR9999999999 | Returns subscription with **no accounting periods** (empty accountingPeriod array). |
+| XEPLR8888888888 | Returns subscription with **multiple accounting periods** (two full-year periods).   |
+| XEPLR7777777777 | Returns subscription with a **micro period** (short period: 2024-01-31 to 2024-02-15). |
+| Any other valid | Returns subscription with a single standard accounting period.              |
+
+#### Happy Path
+
+To trigger the happy path, provide a valid plrReference. The V2 success response includes an `accountingPeriod` array with `startDate`, `endDate`, `dueDate`, `canAmendStartDate`, and `canAmendEndDate` for each period.
+
+- Response status: `200`
+
+---
+
+### Retrieve Subscription Details V2 (Cache)
+
+**Endpoint**: `GET /report-pillar2-top-up-taxes/subscription/v2/read-subscription/:id/:plrReference`
+
+**Description**: Reads the Subscription details (V2 format) and caches them for the specific PLR reference and ID. Same status/error logic as Retrieve Subscription Details V2; 200 responses return unwrapped JSON (SubscriptionData at root).
+
+| plrReference    | Status Code | Status   | Description                                                                     |
+|-----------------|-------------|----------|---------------------------------------------------------------------------------|
+| XEPLR0000000001 | 422/200     | VARIABLE | Registration in progress test - Returns 422 for first 3 polls, then 200 success |
+| XEPLR0000000002 | 422/200     | VARIABLE | Registration in progress test - Returns 422 for first 8 polls, then 200 success |
+| Any other PLR   | 200         | OK       | Returns read success response (V2 format) for any other valid PLR reference     |
+
+---
+
 ### Amend Existing Subscription
 
 **Endpoint**: `PUT /pillar2/subscription`
@@ -726,6 +792,25 @@ Example Request Body:
       }
     }
     ```
+
+---
+
+### Amend Existing Subscription V2
+
+**Endpoint**: `PUT /pillar2/subscription/v2`
+
+**Description**: Amends an existing Subscription using the V2 request format. The outcome of the request can be controlled by the `name` field within the `primaryContactDetails` of the request body. Behaviour is the same as [Amend Existing Subscription](#amend-existing-subscription).
+
+| primaryContactDetails.name | Status Code | Status                | Description                                                                             |
+|----------------------------|-------------|-----------------------|-----------------------------------------------------------------------------------------|
+| "400"                      | 400         | BAD_REQUEST           | Triggers a Bad Request response.                                                        |
+| "409"                      | 409         | CONFLICT              | Triggers a Duplicate Submission error.                                                  |
+| "422"                      | 422         | UNPROCESSABLE_ENTITY  | Triggers an Unprocessable Entity error.                                                 |
+| "500"                      | 500         | INTERNAL_SERVER_ERROR | Triggers an Internal Server Error.                                                      |
+| "503"                      | 503         | SERVICE_UNAVAILABLE   | Triggers a Service Unavailable error.                                                   |
+| "10 seconds"               | 200         | OK                    | Returns a success response after a 10-second delay.                                     |
+| "timeout"                  | 200         | OK                    | Returns a success response after a 30-second delay (will induce a client-side timeout). |
+| Any other value            | 200         | OK                    | Returns a success response.                                                             |
 
 ---
 
