@@ -1,0 +1,46 @@
+{
+  "success": {
+    "formBundleNumber": "119000004320",
+    "upeDetails": {
+      "domesticOnly": false,
+      "organisationName": "Example Corp 1",
+      "registrationDate": "2024-01-01",
+      "plrReference": "XEPLR2856000001",
+      "filingMember": false
+    },
+    "upeCorrespAddressDetails": {
+      "addressLine1": "1 High Street",
+      "countryCode": "GB"
+    },
+    "primaryContactDetails": {
+      "name": "Test User",
+      "emailAddress": "test@example.com"
+    },
+    "accountingPeriod": [
+      {
+        "startDate": "2024-01-01",
+        "endDate": "2024-06-30",
+        "dueDate": "2024-12-31",
+        "canAmendStartDate": false,
+        "canAmendEndDate": true
+      },
+      {
+        "startDate": "2024-07-01",
+        "endDate": "2025-06-30",
+        "dueDate": "2025-12-31",
+        "canAmendStartDate": true,
+        "canAmendEndDate": true
+      },
+      {
+        "startDate": "2025-07-01",
+        "endDate": "2025-12-31",
+        "dueDate": "2026-06-30",
+        "canAmendStartDate": true,
+        "canAmendEndDate": true
+      }
+    ],
+    "accountStatus": {
+      "inactive": false
+    }
+  }
+}
