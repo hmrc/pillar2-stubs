@@ -302,7 +302,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     case "XEPLR9999999999" => (OK, readSuccessResponseV2WithEmptyPeriods)
     case "XEPLR8888888888" => (OK, readSuccessResponseV2WithMultiplePeriods)
     case "XEPLR7777777777" => (OK, readSuccessResponseV2WithMicroPeriod)
-    case "XEPLR2856000001" => (OK, readSuccessResponseV2WithPartialInitialPeriod)
+    case "XEPLR2856000001" => (OK, readSuccessResponseV2WithMicroInitialPeriod)
     case "XEPLR2856000002" => (OK, readSuccessResponseV2WithLockedCurrentPeriodEndDate)
 
     case _ =>
@@ -332,9 +332,9 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       throw new IllegalStateException("ReadSuccessResponseV2MicroPeriod.json is missing.")
     )
 
-  private def readSuccessResponseV2WithPartialInitialPeriod: String =
-    resourceAsString("/resources/subscription/ReadSuccessResponseV2PartialInitialPeriod.json").getOrElse(
-      throw new IllegalStateException("ReadSuccessResponseV2PartialInitialPeriod.json is missing.")
+  private def readSuccessResponseV2WithMicroInitialPeriod: String =
+    resourceAsString("/resources/subscription/ReadSuccessResponseV2MicroInitialPeriod.json").getOrElse(
+      throw new IllegalStateException("ReadSuccessResponseV2MicroInitialPeriod.json is missing.")
     )
 
   private def readSuccessResponseV2WithLockedCurrentPeriodEndDate: String =

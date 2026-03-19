@@ -707,7 +707,7 @@ The following plrReferences return special accounting period configurations for 
 | XEPLR9999999999 | Returns subscription with **no accounting periods** (empty accountingPeriod array). |
 | XEPLR8888888888 | Returns subscription with **multiple accounting periods** (two full-year periods).   |
 | XEPLR7777777777 | Returns subscription with a **micro period** (short period: 2024-01-31 to 2024-02-15). |
-| XEPLR2856000001 | Returns subscription for a **recently registered group with a partial initial period** — 3 periods from Jan 2024, first period is 6 months (2024-01-01 to 2024-06-30), all periods fully amendable. |
+| XEPLR2856000001 | Returns subscription for a **recently registered group with a micro initial period** — 3 periods from Jan 2024, first period is 6 months (2024-01-01 to 2024-06-30), all periods fully amendable. |
 | XEPLR2856000002 | Returns subscription for an **older group with anniversary-date-aligned periods and a locked current period end date** — 3 full 12-month periods from Sep 2021, with `canAmendEndDate: false` on the most recent period. |
 | Any other valid | Returns subscription with a single standard accounting period.              |
 
