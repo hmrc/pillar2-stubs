@@ -301,6 +301,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 
     case "XEPLR9999999999" => (OK, readSuccessResponseV2WithEmptyPeriods)
     case "XEPLR8888888888" => (OK, readSuccessResponseV2WithMultiplePeriods)
+    case "XEPLR7777777777" => (OK, readSuccessResponseV2WithMicroPeriod)
 
     case _ =>
       (
@@ -322,6 +323,11 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
   private def readSuccessResponseV2WithMultiplePeriods: String =
     resourceAsString("/resources/subscription/ReadSuccessResponseV2MultiplePeriods.json").getOrElse(
       throw new IllegalStateException("ReadSuccessResponseV2MultiplePeriods.json is missing.")
+    )
+
+  private def readSuccessResponseV2WithMicroPeriod: String =
+    resourceAsString("/resources/subscription/ReadSuccessResponseV2MicroPeriod.json").getOrElse(
+      throw new IllegalStateException("ReadSuccessResponseV2MicroPeriod.json is missing.")
     )
 
 }
