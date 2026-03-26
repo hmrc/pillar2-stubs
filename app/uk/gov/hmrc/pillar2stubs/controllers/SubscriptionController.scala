@@ -23,7 +23,7 @@ import play.api.mvc.Results.Status
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.{readSuccessResponse, readSuccessResponseV2}
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.{AmendSubscriptionSuccess, AmendSubscriptionSuccessV2, Subscription}
+import uk.gov.hmrc.pillar2stubs.models.{AccountingPeriodV2, AmendSubscriptionSuccess, AmendSubscriptionSuccessV2, Subscription}
 import uk.gov.hmrc.pillar2stubs.utils.ResourceHelper.resourceAsString
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import uk.gov.hmrc.play.bootstrap.http.ErrorResponse
@@ -35,7 +35,10 @@ import scala.concurrent.Future
 
 class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: AuthActionFilter) extends BackendController(cc) with Logging {
 
-  private val pollCounters = scala.collection.mutable.Map[String, Int]()
+  private val pollCounters         = scala.collection.mutable.Map[String, Int]()
+  private val dynamicSubscriptions = scala.collection.mutable.Map[String, JsObject]()
+  seedDynamicData()
+
   def now:         ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
   def currentYear: Int           = now.getYear
 
@@ -228,6 +231,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
 
           case _ =>
+            val plrRef = subscriptionResponse.upeDetails.plrReference
+            if dynamicSubscriptions.contains(plrRef) then applyAmendment(plrRef, subscriptionResponse.accountingPeriod)
             logger.info(s"AmendSubscriptionV2 Request received \n ${request.body} \n")
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
         }
@@ -250,6 +255,107 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
   private def removeSecondaryContact(response: String): String =
     (__ \ "success" \ "secondaryContactDetails").prune(Json.parse(response).as[JsObject]).get.toString
 
+  private def makePeriod(start: String, end: String, due: String, canAmendStart: Boolean, canAmendEnd: Boolean): JsObject =
+    Json.obj(
+      "startDate"         -> start,
+      "endDate"           -> end,
+      "dueDate"           -> due,
+      "canAmendStartDate" -> canAmendStart,
+      "canAmendEndDate"   -> canAmendEnd
+    )
+
+  private def buildDynamicSubscription(periods: Seq[JsObject]): JsObject = {
+    val base    = Json.parse(readSuccessResponseV2).as[JsObject]
+    val success = (base \ "success").as[JsObject] ++ Json.obj("accountingPeriod" -> JsArray(periods))
+    Json.obj("success" -> success)
+  }
+
+  private def seedDynamicData(): Unit = {
+    dynamicSubscriptions("XEPLR0000000010") = buildDynamicSubscription(
+      Seq(
+        makePeriod("2024-01-01", "2024-12-31", "2025-06-01", canAmendStart = false, canAmendEnd = true),
+        makePeriod("2025-01-01", "2025-12-31", "2026-06-01", canAmendStart = true, canAmendEnd = true),
+        makePeriod("2026-01-01", "2026-12-31", "2027-06-01", canAmendStart = true, canAmendEnd = false)
+      )
+    )
+    dynamicSubscriptions("XEPLR0000000011") = buildDynamicSubscription(
+      Seq(
+        makePeriod("2024-01-01", "2024-12-31", "2025-06-01", canAmendStart = true, canAmendEnd = true),
+        makePeriod("2025-01-01", "2025-12-31", "2026-06-01", canAmendStart = true, canAmendEnd = true)
+      )
+    )
+    dynamicSubscriptions("XEPLR0000000012") = buildDynamicSubscription(
+      Seq(
+        makePeriod("2025-01-01", "2025-12-31", "2026-06-01", canAmendStart = true, canAmendEnd = true)
+      )
+    )
+  }
+
+  private def applyAmendment(plrRef: String, ap: AccountingPeriodV2): Unit =
+    (ap.amendAccountingPeriod, ap.originalAccountingPeriods, ap.newAccountingPeriod) match {
+      case (true, Some(originals), Some(newPeriod)) =>
+        val stored         = dynamicSubscriptions(plrRef)
+        val success        = (stored \ "success").as[JsObject]
+        val currentPeriods = (success \ "accountingPeriod").as[Seq[JsObject]]
+
+        val originalDatePairs    = originals.map(o => (o.taxObligationStartDate, o.taxObligationEndDate)).toSet
+        val (matched, remaining) = currentPeriods.partition { p =>
+          val start = LocalDate.parse((p \ "startDate").as[String])
+          val end   = LocalDate.parse((p \ "endDate").as[String])
+          originalDatePairs.contains((start, end))
+        }
+
+        if matched.nonEmpty then
+          val matchedStarts = matched.map(p => LocalDate.parse((p \ "startDate").as[String]))
+          val matchedEnds   = matched.map(p => LocalDate.parse((p \ "endDate").as[String]))
+          val minStart      = matchedStarts.min
+          val maxEnd        = matchedEnds.max
+
+          val newStart = newPeriod.updateObligationStartDate
+          val newEnd   = newPeriod.updateObligationEndDate
+
+          val newPeriodObj = makePeriod(
+            newStart.toString,
+            newEnd.toString,
+            newEnd.plusMonths(6).toString,
+            canAmendStart = true,
+            canAmendEnd = true
+          )
+
+          val gapBefore = Option.when(newStart.isAfter(minStart))(
+            makePeriod(
+              minStart.toString,
+              newStart.minusDays(1).toString,
+              newStart.minusDays(1).plusMonths(6).toString,
+              canAmendStart = true,
+              canAmendEnd = true
+            )
+          )
+
+          val gapAfter = Option.when(newEnd.isBefore(maxEnd))(
+            makePeriod(
+              newEnd.plusDays(1).toString,
+              maxEnd.toString,
+              maxEnd.plusMonths(6).toString,
+              canAmendStart = true,
+              canAmendEnd = true
+            )
+          )
+
+          val resultPeriods = (remaining :+ newPeriodObj) ++ gapBefore.toSeq ++ gapAfter.toSeq
+          val sorted        = resultPeriods.sortBy(p => LocalDate.parse((p \ "startDate").as[String]))
+
+          val updatedSuccess = success ++ Json.obj("accountingPeriod" -> JsArray(sorted))
+          dynamicSubscriptions(plrRef) = Json.obj("success" -> updatedSuccess)
+
+      case _ => ()
+    }
+
+  def resetDynamicSubscriptions: Action[AnyContent] = Action {
+    seedDynamicData()
+    Ok("Dynamic subscriptions reset to initial state")
+  }
+
   def retrieveSubscriptionV2(plrReference: String): Action[AnyContent] =
     (Action andThen authFilter) {
       logger.info(s"retrieveSubscriptionV2 Request received \n $plrReference \n")
@@ -264,56 +370,60 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
       if status == OK then Ok(unwrapSuccess(body)) else Status(status)(body)
     }
 
-  private def subscriptionResponseV2(plrReference: String): (Int, String) = plrReference match {
+  private def subscriptionResponseV2(plrReference: String): (Int, String) =
+    dynamicSubscriptions
+      .get(plrReference)
+      .map(stored => (OK, Json.stringify(stored)))
+      .getOrElse(plrReference match {
 
-    case ref @ "XEPLR0000000001" =>
-      val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
-      pollCounters(plrReference) = count
-      logger.info(s"Quick Processing Corp V2 - Poll attempt $count for $plrReference")
-      if count <= 3 then (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
-      else (OK, readSuccessResponseV2WithRef(ref))
+        case ref @ "XEPLR0000000001" =>
+          val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
+          pollCounters(plrReference) = count
+          logger.info(s"Quick Processing Corp V2 - Poll attempt $count for $plrReference")
+          if count <= 3 then (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+          else (OK, readSuccessResponseV2WithRef(ref))
 
-    case ref @ "XEPLR0000000002" =>
-      val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
-      pollCounters(plrReference) = count
-      logger.info(s"Medium Processing Corp V2 - Poll attempt $count for $plrReference")
-      if count <= 8 then (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
-      else (OK, readSuccessResponseV2WithRef(ref))
+        case ref @ "XEPLR0000000002" =>
+          val count = pollCounters.getOrElseUpdate(plrReference, 0) + 1
+          pollCounters(plrReference) = count
+          logger.info(s"Medium Processing Corp V2 - Poll attempt $count for $plrReference")
+          if count <= 8 then (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+          else (OK, readSuccessResponseV2WithRef(ref))
 
-    case "XEPLR0123456400" => (BAD_REQUEST, resourceAsString("/resources/error/subscription/BadRequest.json").get)
-    case "XEPLR0123456404" => (NOT_FOUND, resourceAsString("/resources/error/subscription/NotFound.json").get)
-    case "XEPLR0123456422" => (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
-    case "XEPLR0123456500" => (INTERNAL_SERVER_ERROR, resourceAsString("/resources/error/subscription/ServerError.json").get)
-    case "XEPLR0123456502" => (502, resourceAsString("/resources/error/subscription/BadGateway.json").get)
-    case "XEPLR0123456503" => (SERVICE_UNAVAILABLE, resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
+        case "XEPLR0123456400" => (BAD_REQUEST, resourceAsString("/resources/error/subscription/BadRequest.json").get)
+        case "XEPLR0123456404" => (NOT_FOUND, resourceAsString("/resources/error/subscription/NotFound.json").get)
+        case "XEPLR0123456422" => (UNPROCESSABLE_ENTITY, resourceAsString("/resources/error/subscription/CannotCompleteRequest.json").get)
+        case "XEPLR0123456500" => (INTERNAL_SERVER_ERROR, resourceAsString("/resources/error/subscription/ServerError.json").get)
+        case "XEPLR0123456502" => (502, resourceAsString("/resources/error/subscription/BadGateway.json").get)
+        case "XEPLR0123456503" => (SERVICE_UNAVAILABLE, resourceAsString("/resources/error/subscription/ServiceUnavailable.json").get)
 
-    case ref @ "XEPLR5555555555" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
-    case "XEPLR5555551111"       => (OK, replaceDate(readSuccessResponseV2, LocalDate.now().toString))
-    case ref @ "XEPLR6666666666" =>
-      (OK, readSuccessResponseV2WithRef(ref).replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
-    case ref @ "XEPLR1066196600" => (OK, readSuccessResponseV2WithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
-    case ref @ "XEPLR1066196602" => (OK, readSuccessResponseV2WithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
-    case ref @ "XEPLR2000000109" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
-    case ref @ "XEPLR2000000110" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
-    case ref @ "XEPLR2000000111" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
-    case ref @ "XEPLR2000000112" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
-    case ref @ "XEPLR2000000200" => (OK, removeSecondaryContact(readSuccessResponseV2WithRef(ref)))
+        case ref @ "XEPLR5555555555" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+        case "XEPLR5555551111"       => (OK, replaceDate(readSuccessResponseV2, LocalDate.now().toString))
+        case ref @ "XEPLR6666666666" =>
+          (OK, readSuccessResponseV2WithRef(ref).replace("\"registrationDate\": \"2024-01-31\"", "\"registrationDate\": \"2011-01-31\""))
+        case ref @ "XEPLR1066196600" => (OK, readSuccessResponseV2WithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
+        case ref @ "XEPLR1066196602" => (OK, readSuccessResponseV2WithRef(ref).replace("\"domesticOnly\": false", "\"domesticOnly\": true"))
+        case ref @ "XEPLR2000000109" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+        case ref @ "XEPLR2000000110" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+        case ref @ "XEPLR2000000111" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+        case ref @ "XEPLR2000000112" => (OK, makeInactive(readSuccessResponseV2WithRef(ref)))
+        case ref @ "XEPLR2000000200" => (OK, removeSecondaryContact(readSuccessResponseV2WithRef(ref)))
 
-    case "XEPLR9999999999" => (OK, readSuccessResponseV2WithEmptyPeriods)
-    case "XEPLR8888888888" => (OK, readSuccessResponseV2WithMultiplePeriods)
-    case "XEPLR7777777777" => (OK, readSuccessResponseV2WithMicroPeriod)
-    case "XEPLR2856000001" => (OK, readSuccessResponseV2WithMicroInitialPeriod)
-    case "XEPLR2856000002" => (OK, readSuccessResponseV2WithLockedCurrentPeriodEndDate)
+        case "XEPLR9999999999" => (OK, readSuccessResponseV2WithEmptyPeriods)
+        case "XEPLR8888888888" => (OK, readSuccessResponseV2WithMultiplePeriods)
+        case "XEPLR7777777777" => (OK, readSuccessResponseV2WithMicroPeriod)
+        case "XEPLR2856000001" => (OK, readSuccessResponseV2WithMicroInitialPeriod)
+        case "XEPLR2856000002" => (OK, readSuccessResponseV2WithLockedCurrentPeriodEndDate)
 
-    case _ =>
-      (
-        OK,
-        readSuccessResponseV2WithRef("plrReference")
-          .replace("\"startDate\": \"2024-01-06\"", s"\"startDate\": \"${LocalDate.of(currentYear - 1, 1, 1)}\"")
-          .replace("\"endDate\": \"2025-04-06\"", s"\"endDate\": \"${LocalDate.of(currentYear - 1, 12, 31)}\"")
-          .replace("\"dueDate\": \"2024-04-06\"", s"\"dueDate\": \"${LocalDate.now()}\"")
-      )
-  }
+        case _ =>
+          (
+            OK,
+            readSuccessResponseV2WithRef("plrReference")
+              .replace("\"startDate\": \"2024-01-06\"", s"\"startDate\": \"${LocalDate.of(currentYear - 1, 1, 1)}\"")
+              .replace("\"endDate\": \"2025-04-06\"", s"\"endDate\": \"${LocalDate.of(currentYear - 1, 12, 31)}\"")
+              .replace("\"dueDate\": \"2024-04-06\"", s"\"dueDate\": \"${LocalDate.now()}\"")
+          )
+      })
 
   private def readSuccessResponseV2WithRef(reference: String): String = replacePillar2Id(readSuccessResponseV2, reference)
 

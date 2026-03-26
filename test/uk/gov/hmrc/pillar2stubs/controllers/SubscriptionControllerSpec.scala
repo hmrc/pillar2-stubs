@@ -16,16 +16,31 @@
 
 package uk.gov.hmrc.pillar2stubs.controllers
 
+import org.scalatest.BeforeAndAfterEach
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.{Inspectors, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsArray, JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 
-class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues with Inspectors {
+class SubscriptionControllerSpec
+    extends AnyFreeSpec
+    with Matchers
+    with GuiceOneAppPerSuite
+    with OptionValues
+    with Inspectors
+    with BeforeAndAfterEach {
+
+  private val authHeader: (String, String) = HeaderNames.authorisation -> "token"
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    val request = FakeRequest(POST, routes.SubscriptionController.resetDynamicSubscriptions.url)
+    route(app, request).value: Unit
+  }
 
   "POST " - {
     "createSubscription" - {
@@ -919,6 +934,278 @@ class SubscriptionControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
       }
     }
 
+  }
+
+  "Dynamic V2 subscriptions" - {
+
+    "must return seeded initial periods for XEPLR0000000010" in {
+      val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000010").url).withHeaders(authHeader)
+      val result  = route(app, request).value
+
+      status(result) shouldBe OK
+      val periods = (contentAsJson(result) \ "success" \ "accountingPeriod").as[JsArray].value
+      periods.length shouldBe 3
+
+      (periods(0) \ "startDate").as[String]          shouldBe "2024-01-01"
+      (periods(0) \ "endDate").as[String]            shouldBe "2024-12-31"
+      (periods(0) \ "canAmendStartDate").as[Boolean] shouldBe false
+      (periods(0) \ "canAmendEndDate").as[Boolean]   shouldBe true
+
+      (periods(1) \ "startDate").as[String]          shouldBe "2025-01-01"
+      (periods(1) \ "endDate").as[String]            shouldBe "2025-12-31"
+      (periods(1) \ "canAmendStartDate").as[Boolean] shouldBe true
+      (periods(1) \ "canAmendEndDate").as[Boolean]   shouldBe true
+
+      (periods(2) \ "startDate").as[String]          shouldBe "2026-01-01"
+      (periods(2) \ "endDate").as[String]            shouldBe "2026-12-31"
+      (periods(2) \ "canAmendStartDate").as[Boolean] shouldBe true
+      (periods(2) \ "canAmendEndDate").as[Boolean]   shouldBe false
+    }
+
+    "must return seeded initial periods for XEPLR0000000011" in {
+      val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000011").url).withHeaders(authHeader)
+      val result  = route(app, request).value
+
+      status(result) shouldBe OK
+      val periods = (contentAsJson(result) \ "success" \ "accountingPeriod").as[JsArray].value
+      periods.length                        shouldBe 2
+      (periods(0) \ "startDate").as[String] shouldBe "2024-01-01"
+      (periods(1) \ "startDate").as[String] shouldBe "2025-01-01"
+    }
+
+    "must return seeded initial period for XEPLR0000000012" in {
+      val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000012").url).withHeaders(authHeader)
+      val result  = route(app, request).value
+
+      status(result) shouldBe OK
+      val periods = (contentAsJson(result) \ "success" \ "accountingPeriod").as[JsArray].value
+      periods.length                        shouldBe 1
+      (periods(0) \ "startDate").as[String] shouldBe "2025-01-01"
+      (periods(0) \ "endDate").as[String]   shouldBe "2025-12-31"
+    }
+
+    "must update periods when amend v2 is called for a dynamic ID" in {
+      val amendJson = Json.parse("""{
+          |  "upeDetails": {
+          |    "plrReference": "XEPLR0000000011",
+          |    "customerIdentification1": "12345678",
+          |    "customerIdentification2": "12345678",
+          |    "organisationName": "Test Org",
+          |    "registrationDate": "2024-01-31",
+          |    "domesticOnly": false,
+          |    "filingMember": false
+          |  },
+          |  "upeCorrespAddressDetails": {
+          |    "addressLine1": "1 High Street",
+          |    "addressLine2": "Egham",
+          |    "addressLine3": "Wycombe",
+          |    "addressLine4": "Surrey",
+          |    "postCode": "HP13 6TT",
+          |    "countryCode": "GB"
+          |  },
+          |  "primaryContactDetails": {
+          |    "name": "Test Contact",
+          |    "telephone": "0115 9700 700",
+          |    "emailAddress": "test@example.com"
+          |  },
+          |  "accountingPeriod": {
+          |    "amendAccountingPeriod": true,
+          |    "originalAccountingPeriods": [
+          |      { "taxObligationStartDate": "2024-01-01", "taxObligationEndDate": "2024-12-31" },
+          |      { "taxObligationStartDate": "2025-01-01", "taxObligationEndDate": "2025-12-31" }
+          |    ],
+          |    "newAccountingPeriod": {
+          |      "updateObligationStartDate": "2024-01-01",
+          |      "updateObligationEndDate": "2025-12-31"
+          |    }
+          |  }
+          |}""".stripMargin)
+
+      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(amendJson)
+      val amendResult  = route(app, amendRequest).value
+      status(amendResult) shouldBe OK
+
+      val readRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000011").url).withHeaders(authHeader)
+      val readResult  = route(app, readRequest).value
+
+      status(readResult) shouldBe OK
+      val periods = (contentAsJson(readResult) \ "success" \ "accountingPeriod").as[JsArray].value
+      periods.length                                 shouldBe 1
+      (periods(0) \ "startDate").as[String]          shouldBe "2024-01-01"
+      (periods(0) \ "endDate").as[String]            shouldBe "2025-12-31"
+      (periods(0) \ "canAmendStartDate").as[Boolean] shouldBe true
+      (periods(0) \ "canAmendEndDate").as[Boolean]   shouldBe true
+    }
+
+    "must create micro-periods when new period does not cover full original range" in {
+      val amendJson = Json.parse("""{
+          |  "upeDetails": {
+          |    "plrReference": "XEPLR0000000011",
+          |    "customerIdentification1": "12345678",
+          |    "customerIdentification2": "12345678",
+          |    "organisationName": "Test Org",
+          |    "registrationDate": "2024-01-31",
+          |    "domesticOnly": false,
+          |    "filingMember": false
+          |  },
+          |  "upeCorrespAddressDetails": {
+          |    "addressLine1": "1 High Street",
+          |    "addressLine2": "Egham",
+          |    "addressLine3": "Wycombe",
+          |    "addressLine4": "Surrey",
+          |    "postCode": "HP13 6TT",
+          |    "countryCode": "GB"
+          |  },
+          |  "primaryContactDetails": {
+          |    "name": "Test Contact",
+          |    "telephone": "0115 9700 700",
+          |    "emailAddress": "test@example.com"
+          |  },
+          |  "accountingPeriod": {
+          |    "amendAccountingPeriod": true,
+          |    "originalAccountingPeriods": [
+          |      { "taxObligationStartDate": "2024-01-01", "taxObligationEndDate": "2024-12-31" },
+          |      { "taxObligationStartDate": "2025-01-01", "taxObligationEndDate": "2025-12-31" }
+          |    ],
+          |    "newAccountingPeriod": {
+          |      "updateObligationStartDate": "2024-06-01",
+          |      "updateObligationEndDate": "2025-05-31"
+          |    }
+          |  }
+          |}""".stripMargin)
+
+      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(amendJson)
+      val amendResult  = route(app, amendRequest).value
+      status(amendResult) shouldBe OK
+
+      val readRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000011").url).withHeaders(authHeader)
+      val readResult  = route(app, readRequest).value
+
+      status(readResult) shouldBe OK
+      val periods = (contentAsJson(readResult) \ "success" \ "accountingPeriod").as[JsArray].value
+      periods.length shouldBe 3
+
+      (periods(0) \ "startDate").as[String] shouldBe "2024-01-01"
+      (periods(0) \ "endDate").as[String]   shouldBe "2024-05-31"
+
+      (periods(1) \ "startDate").as[String] shouldBe "2024-06-01"
+      (periods(1) \ "endDate").as[String]   shouldBe "2025-05-31"
+
+      (periods(2) \ "startDate").as[String] shouldBe "2025-06-01"
+      (periods(2) \ "endDate").as[String]   shouldBe "2025-12-31"
+    }
+
+    "must not affect non-dynamic IDs when amending a dynamic ID" in {
+      val amendJson = Json.parse("""{
+          |  "upeDetails": {
+          |    "plrReference": "XEPLR0000000012",
+          |    "customerIdentification1": "12345678",
+          |    "customerIdentification2": "12345678",
+          |    "organisationName": "Test Org",
+          |    "registrationDate": "2024-01-31",
+          |    "domesticOnly": false,
+          |    "filingMember": false
+          |  },
+          |  "upeCorrespAddressDetails": {
+          |    "addressLine1": "1 High Street",
+          |    "addressLine2": "Egham",
+          |    "addressLine3": "Wycombe",
+          |    "addressLine4": "Surrey",
+          |    "postCode": "HP13 6TT",
+          |    "countryCode": "GB"
+          |  },
+          |  "primaryContactDetails": {
+          |    "name": "Test Contact",
+          |    "telephone": "0115 9700 700",
+          |    "emailAddress": "test@example.com"
+          |  },
+          |  "accountingPeriod": {
+          |    "amendAccountingPeriod": true,
+          |    "originalAccountingPeriods": [
+          |      { "taxObligationStartDate": "2025-01-01", "taxObligationEndDate": "2025-12-31" }
+          |    ],
+          |    "newAccountingPeriod": {
+          |      "updateObligationStartDate": "2025-01-01",
+          |      "updateObligationEndDate": "2025-06-30"
+          |    }
+          |  }
+          |}""".stripMargin)
+
+      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(amendJson)
+      status(route(app, amendRequest).value) shouldBe OK
+
+      val staticRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR8888888888").url).withHeaders(authHeader)
+      val staticResult  = route(app, staticRequest).value
+      status(staticResult) shouldBe OK
+
+      val periods = (contentAsJson(staticResult) \ "success" \ "accountingPeriod").as[JsArray].value
+      periods.length                        shouldBe 2
+      (periods(0) \ "startDate").as[String] shouldBe "2024-01-01"
+      (periods(1) \ "startDate").as[String] shouldBe "2025-01-01"
+    }
+
+    "must restore initial state after reset" in {
+      val amendJson = Json.parse("""{
+          |  "upeDetails": {
+          |    "plrReference": "XEPLR0000000012",
+          |    "customerIdentification1": "12345678",
+          |    "customerIdentification2": "12345678",
+          |    "organisationName": "Test Org",
+          |    "registrationDate": "2024-01-31",
+          |    "domesticOnly": false,
+          |    "filingMember": false
+          |  },
+          |  "upeCorrespAddressDetails": {
+          |    "addressLine1": "1 High Street",
+          |    "addressLine2": "Egham",
+          |    "addressLine3": "Wycombe",
+          |    "addressLine4": "Surrey",
+          |    "postCode": "HP13 6TT",
+          |    "countryCode": "GB"
+          |  },
+          |  "primaryContactDetails": {
+          |    "name": "Test Contact",
+          |    "telephone": "0115 9700 700",
+          |    "emailAddress": "test@example.com"
+          |  },
+          |  "accountingPeriod": {
+          |    "amendAccountingPeriod": true,
+          |    "originalAccountingPeriods": [
+          |      { "taxObligationStartDate": "2025-01-01", "taxObligationEndDate": "2025-12-31" }
+          |    ],
+          |    "newAccountingPeriod": {
+          |      "updateObligationStartDate": "2025-03-01",
+          |      "updateObligationEndDate": "2025-09-30"
+          |    }
+          |  }
+          |}""".stripMargin)
+
+      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(amendJson)
+      status(route(app, amendRequest).value) shouldBe OK
+
+      val resetRequest = FakeRequest(POST, routes.SubscriptionController.resetDynamicSubscriptions.url)
+      val resetResult  = route(app, resetRequest).value
+      status(resetResult) shouldBe OK
+
+      val readRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000012").url).withHeaders(authHeader)
+      val readResult  = route(app, readRequest).value
+
+      status(readResult) shouldBe OK
+      val periods = (contentAsJson(readResult) \ "success" \ "accountingPeriod").as[JsArray].value
+      periods.length                        shouldBe 1
+      (periods(0) \ "startDate").as[String] shouldBe "2025-01-01"
+      (periods(0) \ "endDate").as[String]   shouldBe "2025-12-31"
+    }
+
+    "must also serve dynamic IDs via the cache endpoint" in {
+      val request =
+        FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionCacheV2("someId", "XEPLR0000000010").url).withHeaders(authHeader)
+      val result = route(app, request).value
+
+      status(result) shouldBe OK
+      val periods = (contentAsJson(result) \ "accountingPeriod").as[JsArray].value
+      periods.length shouldBe 3
+    }
   }
 
   private def testBothVersions(plrReference: String, expectedStatus: Int, additionalAssertions: JsValue => Unit = _ => ()): Unit = {
