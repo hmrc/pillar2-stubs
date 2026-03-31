@@ -197,6 +197,8 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                 Ok(Json.toJson(AccountActivitySuccessResponse.scenario16UnallocatedPayment()))
               case AccountActivitySuccessResponse.Scenario17SolePayment =>
                 Ok(Json.toJson(AccountActivitySuccessResponse.scenario17SolePayment()))
+              case AccountActivitySuccessResponse.Scenario18ChargesAndOtherPenalties =>
+                Ok(Json.toJson(AccountActivitySuccessResponse.scenario18ChargesAndOtherPenalties()))
               case "XEPLR0000422001" =>
                 UnprocessableEntity(Json.toJson(AccountActivity422ErrorResponse(REGIME_MISSING_OR_INVALID_001)))
               case "XEPLR0000422003" =>
