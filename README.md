@@ -43,6 +43,8 @@ The Pillar2 stubs service provides stubs for the GRS systems to mock the respons
     * [Amend Existing Subscription](#amend-existing-subscription)
       * [Happy Path](#happy-path-4)
     * [Amend Existing Subscription V2](#amend-existing-subscription-v2)
+      * [Dynamic V2 Subscriptions](#dynamic-v2-subscriptions)
+    * [Reset Dynamic V2 Subscriptions](#reset-dynamic-v2-subscriptions)
     * [Retrieve Enrolment Store Response](#retrieve-enrolment-store-response)
       * [Happy Path](#happy-path-5)
         * [Enrolment Store Response with groupID](#enrolment-store-response-with-groupid)
@@ -709,6 +711,9 @@ The following plrReferences return special accounting period configurations for 
 | XEPLR7777777777 | Returns subscription with a **micro period** (short period: 2024-01-31 to 2024-02-15). |
 | XEPLR2856000001 | Returns subscription for a **recently registered group with a micro initial period** — 3 periods from Jan 2024, first period is 6 months (2024-01-01 to 2024-06-30), all periods fully amendable. |
 | XEPLR2856000002 | Returns subscription for an **older group with anniversary-date-aligned periods and a locked current period end date** — 3 full 12-month periods from Sep 2021, with `canAmendEndDate: false` on the most recent period. |
+| XEPLR0000000010 | **Dynamic** -- 3 periods with mixed `canAmend*` flags. State updates when amended via V2. See [Dynamic V2 Subscriptions](#dynamic-v2-subscriptions). |
+| XEPLR0000000011 | **Dynamic** -- 2 fully amendable periods. State updates when amended via V2. See [Dynamic V2 Subscriptions](#dynamic-v2-subscriptions). |
+| XEPLR0000000012 | **Dynamic** -- 1 fully amendable period. State updates when amended via V2. See [Dynamic V2 Subscriptions](#dynamic-v2-subscriptions). |
 | Any other valid | Returns subscription with a single standard accounting period.              |
 
 #### Happy Path
@@ -812,7 +817,47 @@ Example Request Body:
 | "503"                      | 503         | SERVICE_UNAVAILABLE   | Triggers a Service Unavailable error.                                                   |
 | "10 seconds"               | 200         | OK                    | Returns a success response after a 10-second delay.                                     |
 | "timeout"                  | 200         | OK                    | Returns a success response after a 30-second delay (will induce a client-side timeout). |
-| Any other value            | 200         | OK                    | Returns a success response.                                                             |
+| Any other value            | 200         | OK                    | Returns a success response. If the PLR reference is a dynamic ID, the accounting periods are updated in the store. |
+
+#### Dynamic V2 Subscriptions
+
+A subset of PLR IDs have **stateful** behaviour: amending them via `PUT /pillar2/subscription/v2` updates the accounting periods returned by subsequent `GET /pillar2/subscription/v2/:plrReference` calls. This allows end-to-end testing of the multi-period amend flow without a real ETMP backend.
+
+**Dynamic PLR IDs and initial data:**
+
+| plrReference    | Initial periods | canAmendStartDate / canAmendEndDate |
+|-----------------|-----------------|-------------------------------------|
+| XEPLR0000000010 | 2024-01-01 to 2024-12-31, 2025-01-01 to 2025-12-31, 2026-01-01 to 2026-12-31 | false/true, true/true, true/false |
+| XEPLR0000000011 | 2024-01-01 to 2024-12-31, 2025-01-01 to 2025-12-31 | true/true, true/true |
+| XEPLR0000000012 | 2025-01-01 to 2025-12-31 | true/true |
+
+**Amendment behaviour (ETMP simulation):**
+
+When a V2 amend request is received with `amendAccountingPeriod: true` and the PLR reference matches one of the dynamic IDs:
+
+1. The `originalAccountingPeriods` from the request are matched against the stored periods by start/end date.
+2. Matched periods are removed.
+3. The `newAccountingPeriod` is added.
+4. If the new period does not cover the full date range of the removed periods, **micro-periods** are created to fill the gaps (before and/or after the new period).
+5. All resulting periods are sorted by start date with `canAmendStartDate` and `canAmendEndDate` set to `true`.
+
+**Example:** Amending `XEPLR0000000011` by replacing both periods (2024-01-01 to 2025-12-31) with a new period of 2024-06-01 to 2025-05-31 will produce three periods:
+- 2024-01-01 to 2024-05-31 (micro-period, gap before)
+- 2024-06-01 to 2025-05-31 (new period)
+- 2025-06-01 to 2025-12-31 (micro-period, gap after)
+
+Error-triggering behaviour via `primaryContactDetails.name` (400, 422, etc.) still takes precedence over dynamic updates.
+
+---
+
+### Reset Dynamic V2 Subscriptions
+
+**Endpoint**: `POST /pillar2/subscription/v2/reset`
+
+**Description**: Resets all dynamic V2 subscription data back to its initial seeded state. Useful for test setup to ensure a clean starting point.
+
+- Response status: `200`
+- Response body: `Dynamic subscriptions reset to initial state`
 
 ---
 
