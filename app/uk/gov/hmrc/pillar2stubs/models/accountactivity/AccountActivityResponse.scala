@@ -56,6 +56,7 @@ object AccountActivitySuccessResponse {
   val Scenario15CombinedRepayment:              String = "XEPLR2697000015"
   val Scenario16UnallocatedPayment:             String = "XEPLR2697000016"
   val Scenario17SolePayment:                    String = "XEPLR2697000017"
+  val Scenario18ChargesAndOtherPenalties:       String = "XEPLR2697000018"
 
   private val apStart: LocalDate = LocalDate.of(2024, 1, 1)
   private val apEnd:   LocalDate = LocalDate.of(2024, 12, 31)
@@ -595,6 +596,45 @@ object AccountActivitySuccessResponse {
           originalAmount = -10000,
           outstandingAmount = Some(-10000),
           clearingDetails = None
+        )
+      )
+    )
+  )
+
+  def scenario18ChargesAndOtherPenalties(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
+    AccountActivitySuccess(
+      processingDate = AccountActivityResponse.now,
+      transactionDetails = Seq(
+        AccountActivityTransactionDetail(
+          transactionType = "DEBIT",
+          transactionDesc = LateUktrSubPenDttDesc,
+          startDate = Some(LocalDate.of(2024, 1, 1)),
+          endDate = Some(LocalDate.of(2024, 12, 31)),
+          chargeRefNo = Some("XPN3456789012"),
+          transactionDate = LocalDate.of(2026, 7, 1),
+          dueDate = Some(LocalDate.of(2026, 7, 31)),
+          originalAmount = 100,
+          outstandingAmount = Some(100)
+        ),
+        AccountActivityTransactionDetail(
+          transactionType = "DEBIT",
+          transactionDesc = LateUktrPayIntDttDesc,
+          startDate = Some(LocalDate.of(2024, 1, 1)),
+          endDate = Some(LocalDate.of(2024, 12, 31)),
+          chargeRefNo = Some("XIN3456789012"),
+          transactionDate = LocalDate.of(2025, 10, 15),
+          dueDate = Some(LocalDate.of(2026, 10, 15)),
+          originalAmount = 35,
+          outstandingAmount = Some(35)
+        ),
+        AccountActivityTransactionDetail(
+          transactionType = "DEBIT",
+          transactionDesc = RecordKeepingPenDesc,
+          chargeRefNo = Some("XIN3456789012"),
+          transactionDate = LocalDate.of(2026, 6, 30),
+          dueDate = Some(LocalDate.of(2026, 7, 30)),
+          originalAmount = 3500,
+          outstandingAmount = Some(3500)
         )
       )
     )
