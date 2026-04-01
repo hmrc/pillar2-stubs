@@ -1389,6 +1389,7 @@ The API returns different responses based on the Pillar2 ID provided in the `X-P
 | XEPLR2697000016    | Success (200)                                      | Scenario 16: Combined Repayment but with some of the payment unallocated.                                |
 | XEPLR2697000017    | Success (200)                                      | Scenario 17: Sole Payment.                                                                               |
 | XEPLR2000000006    | Success (200)                                      | Returns a successful response containing an overdue and outstanding charge                               |
+| XEPLR2000000021    | Success (200)                                      | Returns a successful response containing multiple stoodover charges                                      |
 | Any other valid ID | Success (200)                                      | Returns a successful response containing a list of financial transactions (Payment, Debit, Credit, etc). |
 
 **Note:**
