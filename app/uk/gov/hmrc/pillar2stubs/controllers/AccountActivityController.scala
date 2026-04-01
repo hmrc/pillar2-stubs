@@ -18,8 +18,7 @@ package uk.gov.hmrc.pillar2stubs.controllers
 
 import play.api.Logging
 import play.api.libs.json.Json
-import play.api.mvc.Result
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
 import uk.gov.hmrc.pillar2stubs.controllers.AccountActivityController.generateSuccessfulResponse
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.accountactivity.AccountActivityErrorCodes.*
@@ -121,6 +120,8 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                           generateSuccessfulResponse(numberOfTransactions.toInt, LocalDate.parse(fromDate.get), LocalDate.parse(toDate.get))
                         )
                       )
+                    case "XEPLR2000000021" =>
+                      Ok(Json.toJson(AccountActivitySuccessResponse.stoodoverCharges()))
                     case _ =>
                       Ok(Json.toJson(AccountActivitySuccessResponse()))
                   }
@@ -226,6 +227,8 @@ class AccountActivityController @Inject() (cc: ControllerComponents, authFilter:
                     )
                   )
                 )
+              case "XEPLR2000000021" =>
+                Ok(Json.toJson(AccountActivitySuccessResponse.stoodoverCharges()))
               case _ =>
                 Ok(Json.toJson(AccountActivitySuccessResponse()))
             }

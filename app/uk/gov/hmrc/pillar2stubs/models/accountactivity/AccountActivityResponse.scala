@@ -17,10 +17,10 @@
 package uk.gov.hmrc.pillar2stubs.models.accountactivity
 
 import play.api.libs.json.{Json, OFormat, Writes}
+import uk.gov.hmrc.pillar2stubs.models.accountactivity.TransactionDesc.*
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
-import TransactionDesc.*
 
 sealed trait AccountActivityResponse
 
@@ -679,6 +679,53 @@ object AccountActivitySuccessResponse {
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
       transactionDetails = Seq.empty
+    )
+  )
+
+  def stoodoverCharges(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
+    AccountActivitySuccess(
+      processingDate = AccountActivityResponse.now,
+      transactionDetails = Seq(
+        AccountActivityTransactionDetail(
+          transactionType = "DEBIT",
+          transactionDesc = OverpaidClaimMttUtprDesc,
+          startDate = Some(LocalDate.of(2026, 1, 1)),
+          endDate = Some(LocalDate.of(2026, 12, 31)),
+          chargeRefNo = Some("XOC3456789012"),
+          transactionDate = LocalDate.of(2027, 2, 15),
+          dueDate = Some(LocalDate.of(2028, 3, 31)),
+          originalAmount = 200000,
+          outstandingAmount = Some(50000),
+          standOverAmount = Some(10000),
+          appealFlag = Some(true)
+        ),
+        AccountActivityTransactionDetail(
+          transactionType = "DEBIT",
+          transactionDesc = DeterminationMttIirDesc,
+          startDate = Some(LocalDate.of(2026, 1, 1)),
+          endDate = Some(LocalDate.of(2026, 12, 31)),
+          chargeRefNo = Some("XOC3456789012"),
+          transactionDate = LocalDate.of(2027, 2, 15),
+          dueDate = Some(LocalDate.of(2028, 3, 31)),
+          originalAmount = 22000,
+          outstandingAmount = Some(10000),
+          standOverAmount = Some(4100),
+          appealFlag = Some(false)
+        ),
+        AccountActivityTransactionDetail(
+          transactionType = "DEBIT",
+          transactionDesc = DiscoveryDttDesc,
+          startDate = Some(LocalDate.of(2025, 1, 1)),
+          endDate = Some(LocalDate.of(2025, 12, 31)),
+          chargeRefNo = Some("XOC3456789012"),
+          transactionDate = LocalDate.of(2026, 2, 15),
+          dueDate = Some(LocalDate.of(2027, 3, 31)),
+          originalAmount = 20000,
+          outstandingAmount = Some(20000),
+          standOverAmount = Some(20000),
+          appealFlag = Some(true)
+        )
+      )
     )
   )
 
