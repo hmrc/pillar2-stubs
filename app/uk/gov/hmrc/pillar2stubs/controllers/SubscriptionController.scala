@@ -161,83 +161,69 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     }
 
   def amendSubscription: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
-    logger.info(s"amendSubscription Request recieved")
+    logger.info(s"AmendSubscription V1 request received")
     Json.fromJson[AmendSubscriptionSuccess](request.body) match {
       case JsSuccess(subscriptionResponse, _) =>
         subscriptionResponse.primaryContactDetails.name match {
           case "400" =>
             Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
-
           case "409" =>
             Future.successful(Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").getOrElse("Conflict error")))
-
           case "422" =>
             Future.successful(
               UnprocessableEntity(resourceAsString("/resources/error/UnprocessableEntity.json").getOrElse("Unprocessable entity error"))
             )
-
           case "500" =>
             Future.successful(InternalServerError(resourceAsString("/resources/error/InternalServerError.json").getOrElse("Internal server error")))
-
           case "503" =>
             Future.successful(ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error")))
-
           case "timeout" =>
             Thread.sleep(30000)
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
-
           case "10 seconds" =>
             Thread.sleep(10000)
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
-
           case _ =>
             logger.info(s"AmendSubscription Request received \n ${request.body} \n")
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
         }
-
-      case JsError(_) =>
+      case JsError(errors) =>
+        logger.warn("Failed to validate AmendSubscriptionSuccess payload. Errors: " + errors)
         Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Invalid JSON format"))))
     }
   }
 
   def amendSubscriptionV2: Action[JsValue] = (Action(parse.json) andThen authFilter).async { implicit request =>
-    logger.info(s"amendSubscriptionV2 Request received")
+    logger.info(s"AmendSubscription V2 request received")
     Json.fromJson[AmendSubscriptionSuccessV2](request.body) match {
       case JsSuccess(subscriptionResponse, _) =>
         subscriptionResponse.primaryContactDetails.name match {
           case "400" =>
             Future.successful(BadRequest(resourceAsString("/resources/error/BadRequest.json").getOrElse("Bad request error")))
-
           case "409" =>
             Future.successful(Conflict(resourceAsString("/resources/error/DuplicateSubmission.json").getOrElse("Conflict error")))
-
           case "422" =>
             Future.successful(
               UnprocessableEntity(resourceAsString("/resources/error/UnprocessableEntity.json").getOrElse("Unprocessable entity error"))
             )
-
           case "500" =>
             Future.successful(InternalServerError(resourceAsString("/resources/error/InternalServerError.json").getOrElse("Internal server error")))
-
           case "503" =>
             Future.successful(ServiceUnavailable(resourceAsString("/resources/error/ServiceUnavailable.json").getOrElse("Service unavailable error")))
-
           case "timeout" =>
             Thread.sleep(30000)
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
-
           case "10 seconds" =>
             Thread.sleep(10000)
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
-
           case _ =>
             val plrRef = subscriptionResponse.upeDetails.plrReference
             if dynamicSubscriptions.contains(plrRef) then applyAmendment(plrRef, subscriptionResponse.accountingPeriod)
             logger.info(s"AmendSubscriptionV2 Request received \n ${request.body} \n")
             Future.successful(Ok(resourceAsString("/resources/subscription/AmendSuccessResponse.json").getOrElse("Success response")))
         }
-
-      case JsError(_) =>
+      case JsError(errors) =>
+        logger.warn("Failed to validate AmendSubscriptionSuccessV2 payload. Errors:" + errors)
         Future.successful(BadRequest(Json.toJson(ErrorResponse(400, "Invalid JSON format"))))
     }
   }
@@ -455,9 +441,9 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 }
 
 object SubscriptionController {
-
-  private val readSuccessResponse: String = resourceAsString("/resources/subscription/ReadSuccessResponse.json").getOrElse(
-    throw new IllegalStateException("ReadSuccessResponse.json is missing.")
+  // TODO: Temporarily switching V1 responses to return V2 responses for debugging - remove after the V1 cleanup
+  private val readSuccessResponse: String = resourceAsString("/resources/subscription/ReadSuccessResponseV2.json").getOrElse(
+    throw new IllegalStateException("ReadSuccessResponseV2.json is missing.")
   )
 
   private val readSuccessResponseV2: String = resourceAsString("/resources/subscription/ReadSuccessResponseV2.json").getOrElse(
