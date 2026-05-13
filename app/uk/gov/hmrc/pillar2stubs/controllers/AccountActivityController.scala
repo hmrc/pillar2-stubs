@@ -21,8 +21,8 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
 import uk.gov.hmrc.pillar2stubs.controllers.AccountActivityController.generateSuccessfulResponse
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
-import uk.gov.hmrc.pillar2stubs.models.accountactivity.AccountActivityErrorCodes.*
 import uk.gov.hmrc.pillar2stubs.models.accountactivity.*
+import uk.gov.hmrc.pillar2stubs.models.accountactivity.AccountActivityErrorCodes.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.LocalDate
