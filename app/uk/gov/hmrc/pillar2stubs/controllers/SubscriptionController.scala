@@ -441,9 +441,8 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
 }
 
 object SubscriptionController {
-  // TODO: Temporarily switching V1 responses to return V2 responses for debugging - remove after the V1 cleanup
-  private val readSuccessResponse: String = resourceAsString("/resources/subscription/ReadSuccessResponseV2.json").getOrElse(
-    throw new IllegalStateException("ReadSuccessResponseV2.json is missing.")
+  private val readSuccessResponse: String = resourceAsString("/resources/subscription/ReadSuccessResponse.json").getOrElse(
+    throw new IllegalStateException("ReadSuccessResponse.json is missing.")
   )
 
   private val readSuccessResponseV2: String = resourceAsString("/resources/subscription/ReadSuccessResponseV2.json").getOrElse(
