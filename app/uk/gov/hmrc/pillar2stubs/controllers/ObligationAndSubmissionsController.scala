@@ -24,8 +24,8 @@ import play.api.mvc.*
 import uk.gov.hmrc.pillar2stubs.controllers.actions.AuthActionFilter
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.{HIP, HoD}
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPError, HIPErrorWrapper, HIPFailure}
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes.*
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.LocalDate
@@ -76,6 +76,7 @@ class ObligationAndSubmissionsController @Inject() (cc: ControllerComponents, au
           case "XEPLR7777777777" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.withOneAccountingPeriodAndOneSubmission()))
           case "XEPLR9999999991" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.singleActiveAccountingPeriodWithNoSubmission()))
           case "XEPLR9999999992" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.twoActiveAccountingPeriodsWithNoSubmissions()))
+          case "XEPLR8888888882" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.twoActivePeriodsWihDifferentScenarios()))
           case "XEPLR9999999993" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.threeActiveAccountingPeriodsWithDifferentScenarios()))
           case "XEPLR9999999994" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.fourActiveAccountingPeriodsWithDifferentScenarios()))
           case "XEPLR9999999995" => Ok(Json.toJson(ObligationsAndSubmissionsSuccessResponse.btnUnderEnquiryScenario()))

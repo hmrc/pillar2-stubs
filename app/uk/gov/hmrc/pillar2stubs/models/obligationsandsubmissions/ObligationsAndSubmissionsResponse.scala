@@ -19,6 +19,7 @@ package uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions
 import play.api.libs.json.{Json, OFormat, Writes}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsErrorCodes.{BAD_REQUEST_400, INTERNAL_SERVER_ERROR_500}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.{currentYear, now}
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.SubmissionType.{GIR_AMEND, GIR_CREATE, GIR_DELETE, UKTR_CREATE}
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
@@ -265,7 +266,7 @@ object ObligationsAndSubmissionsSuccessResponse {
                 submissions = Seq(
                   Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now, country = None),
                   Submission(submissionType = SubmissionType.BTN, receivedDate = now, country = None),
-                  Submission(submissionType = SubmissionType.GIR, receivedDate = now, country = None)
+                  Submission(submissionType = SubmissionType.GIR_CREATE, receivedDate = now, country = None)
                 )
               )
             )
@@ -300,7 +301,7 @@ object ObligationsAndSubmissionsSuccessResponse {
                 status = ObligationStatus.Fulfilled,
                 canAmend = true,
                 submissions = Seq(
-                  Submission(submissionType = SubmissionType.GIR, receivedDate = now.minusDays(90), country = None)
+                  Submission(submissionType = SubmissionType.GIR_CREATE, receivedDate = now.minusDays(90), country = None)
                 )
               )
             )
@@ -318,7 +319,7 @@ object ObligationsAndSubmissionsSuccessResponse {
                 submissions = Seq(
                   Submission(submissionType = SubmissionType.UKTR_CREATE, receivedDate = now.minusDays(365), country = None),
                   Submission(submissionType = SubmissionType.BTN, receivedDate = now.minusDays(365), country = None),
-                  Submission(submissionType = SubmissionType.GIR, receivedDate = now.minusDays(365), country = None)
+                  Submission(submissionType = SubmissionType.GIR_CREATE, receivedDate = now.minusDays(365), country = None)
                 )
               )
             )
@@ -380,6 +381,48 @@ object ObligationsAndSubmissionsSuccessResponse {
               status = ObligationStatus.Open,
               canAmend = true,
               submissions = Seq.empty
+            )
+          )
+        )
+      )
+    )
+  )
+
+  def twoActivePeriodsWihDifferentScenarios(): ObligationsAndSubmissionsSuccessResponse = ObligationsAndSubmissionsSuccessResponse(
+    ObligationsAndSubmissionsSuccess(
+      processingDate = now,
+      accountingPeriodDetails = Seq(
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear, 1, 1),
+          endDate = LocalDate.of(currentYear, 12, 31),
+          dueDate = LocalDate.of(currentYear + 3, 12, 31),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.UKTR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq(
+                Submission(submissionType = UKTR_CREATE, receivedDate = now, country = None)
+              )
+            )
+          )
+        ),
+        AccountingPeriodDetails(
+          startDate = LocalDate.of(currentYear - 1, 1, 1),
+          endDate = LocalDate.of(currentYear - 1, 12, 31),
+          dueDate = LocalDate.of(currentYear + 2, 12, 31),
+          underEnquiry = false,
+          obligations = Seq(
+            Obligation(
+              obligationType = ObligationType.GIR,
+              status = ObligationStatus.Open,
+              canAmend = true,
+              submissions = Seq(
+                Submission(submissionType = GIR_CREATE, receivedDate = now.minusDays(7), country = None),
+                Submission(submissionType = GIR_AMEND, receivedDate = now.minusDays(3), country = None),
+                Submission(submissionType = GIR_DELETE, receivedDate = now.minusDays(1), country = None)
+              )
             )
           )
         )
