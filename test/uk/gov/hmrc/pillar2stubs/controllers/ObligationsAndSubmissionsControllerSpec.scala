@@ -28,7 +28,7 @@ import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.now
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.SubmissionType.{GIR, UKTR_CREATE}
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.SubmissionType.{GIR_CREATE, UKTR_CREATE}
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 
 import java.time.LocalDate
@@ -184,7 +184,7 @@ class ObligationsAndSubmissionsControllerSpec
         period.obligations
           .flatMap(_.submissions)
           .exists(s =>
-            (s.submissionType == UKTR_CREATE || s.submissionType == GIR) &&
+            (s.submissionType == UKTR_CREATE || s.submissionType == GIR_CREATE) &&
               receivedPeriodStart.isBefore(s.receivedDate)
           )
       }
