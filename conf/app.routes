@@ -3,7 +3,6 @@
 POST          /registration/02.00.00/organisation                                          uk.gov.hmrc.pillar2stubs.controllers.RegisterWithoutIdController.registerWithoutId
 
 POST          /pillar2/subscription                                                        uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.createSubscription
-POST          /pillar2/subscription/v2                                                      uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.createSubscription
 GET           /pillar2/subscription/:plrReference                                          uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscription(plrReference: String)
 GET           /report-pillar2-top-up-taxes/subscription/read-subscription/:plrReference    uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscription(plrReference: String)
 GET           /report-pillar2-top-up-taxes/subscription/read-subscription/:id/:plrReference uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscriptionCache(id: String, plrReference: String)
