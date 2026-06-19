@@ -101,7 +101,7 @@ object AccountActivitySuccessResponse {
     AccountActivitySuccessResponse(
       AccountActivitySuccess(
         processingDate = AccountActivityResponse.now,
-        transactionDetails = transactions
+        transactionDetails = Some(transactions)
       )
     )
 
@@ -397,104 +397,106 @@ object AccountActivitySuccessResponse {
   def scenario15CombinedRepayment(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
-      transactionDetails = Seq(
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrDttDesc,
-          transactionDate = LocalDate.of(2025, 2, 15),
-          originalAmount = 5000,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("X123456789012"),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          clearedAmount = Some(5000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = PaymentOnAccountDesc,
-                amount = 5000,
-                clearingDate = LocalDate.of(2025, 3, 15),
-                clearingReason = Some("Cleared by Payment")
+      transactionDetails = Some(
+        Seq(
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrDttDesc,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            originalAmount = 5000,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("X123456789012"),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            clearedAmount = Some(5000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = PaymentOnAccountDesc,
+                  amount = 5000,
+                  clearingDate = LocalDate.of(2025, 3, 15),
+                  clearingReason = Some("Cleared by Payment")
+                )
               )
             )
-          )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrDttDesc,
-          transactionDate = LocalDate.of(2025, 2, 15),
-          originalAmount = 2000,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("X123456789013"),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          clearedAmount = Some(2000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = PaymentOnAccountDesc,
-                amount = 2000,
-                clearingDate = LocalDate.of(2025, 3, 15),
-                clearingReason = Some("Cleared by Payment")
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrDttDesc,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            originalAmount = 2000,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("X123456789013"),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            clearedAmount = Some(2000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = PaymentOnAccountDesc,
+                  amount = 2000,
+                  clearingDate = LocalDate.of(2025, 3, 15),
+                  clearingReason = Some("Cleared by Payment")
+                )
               )
             )
-          )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrDttDesc,
-          transactionDate = LocalDate.of(2025, 2, 15),
-          originalAmount = 3000,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("X123456789014"),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          clearedAmount = Some(3000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = PaymentOnAccountDesc,
-                amount = 3000,
-                clearingDate = LocalDate.of(2025, 3, 15),
-                clearingReason = Some("Cleared by Payment")
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrDttDesc,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            originalAmount = 3000,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("X123456789014"),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            clearedAmount = Some(3000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = PaymentOnAccountDesc,
+                  amount = 3000,
+                  clearingDate = LocalDate.of(2025, 3, 15),
+                  clearingReason = Some("Cleared by Payment")
+                )
               )
             )
-          )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "PAYMENT",
-          transactionDesc = PaymentOnAccountDesc,
-          transactionDate = LocalDate.of(2025, 6, 30),
-          originalAmount = -20000,
-          clearedAmount = Some(-20000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = "Repayment",
-                amount = -10000,
-                clearingDate = LocalDate.of(2025, 6, 30),
-                clearingReason = Some("Outgoing payment - Paid")
-              ),
-              ClearingDetail(
-                transactionDesc = UktrDttDesc,
-                chargeRefNo = Some("X123456789012"),
-                amount = 5000,
-                clearingDate = LocalDate.of(2025, 6, 30),
-                clearingReason = Some("Allocated to Charge")
-              ),
-              ClearingDetail(
-                transactionDesc = UktrDttDesc,
-                chargeRefNo = Some("X123456789013"),
-                amount = 2000,
-                clearingDate = LocalDate.of(2025, 6, 30),
-                clearingReason = Some("Allocated to Charge")
-              ),
-              ClearingDetail(
-                transactionDesc = UktrDttDesc,
-                chargeRefNo = Some("X123456789014"),
-                amount = 3000,
-                clearingDate = LocalDate.of(2025, 6, 30),
-                clearingReason = Some("Allocated to Charge")
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "PAYMENT",
+            transactionDesc = PaymentOnAccountDesc,
+            transactionDate = LocalDate.of(2025, 6, 30),
+            originalAmount = -20000,
+            clearedAmount = Some(-20000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = "Repayment",
+                  amount = -10000,
+                  clearingDate = LocalDate.of(2025, 6, 30),
+                  clearingReason = Some("Outgoing payment - Paid")
+                ),
+                ClearingDetail(
+                  transactionDesc = UktrDttDesc,
+                  chargeRefNo = Some("X123456789012"),
+                  amount = 5000,
+                  clearingDate = LocalDate.of(2025, 6, 30),
+                  clearingReason = Some("Allocated to Charge")
+                ),
+                ClearingDetail(
+                  transactionDesc = UktrDttDesc,
+                  chargeRefNo = Some("X123456789013"),
+                  amount = 2000,
+                  clearingDate = LocalDate.of(2025, 6, 30),
+                  clearingReason = Some("Allocated to Charge")
+                ),
+                ClearingDetail(
+                  transactionDesc = UktrDttDesc,
+                  chargeRefNo = Some("X123456789014"),
+                  amount = 3000,
+                  clearingDate = LocalDate.of(2025, 6, 30),
+                  clearingReason = Some("Allocated to Charge")
+                )
               )
             )
           )
@@ -506,77 +508,79 @@ object AccountActivitySuccessResponse {
   def scenario16UnallocatedPayment(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
-      transactionDetails = Seq(
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrDttDesc,
-          transactionDate = LocalDate.of(2025, 2, 15),
-          originalAmount = 3500,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("X123456789012"),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          clearedAmount = Some(3500),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = PaymentOnAccountDesc,
-                amount = 3500,
-                clearingDate = LocalDate.of(2025, 3, 15),
-                clearingReason = Some("Cleared by Payment")
+      transactionDetails = Some(
+        Seq(
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrDttDesc,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            originalAmount = 3500,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("X123456789012"),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            clearedAmount = Some(3500),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = PaymentOnAccountDesc,
+                  amount = 3500,
+                  clearingDate = LocalDate.of(2025, 3, 15),
+                  clearingReason = Some("Cleared by Payment")
+                )
               )
             )
-          )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrMttIirDesc,
-          transactionDate = LocalDate.of(2025, 2, 15),
-          originalAmount = 1500,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("X123456789013"),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          clearedAmount = Some(1500),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = PaymentOnAccountDesc,
-                amount = 1500,
-                clearingDate = LocalDate.of(2025, 3, 15),
-                clearingReason = Some("Cleared by Payment")
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrMttIirDesc,
+            transactionDate = LocalDate.of(2025, 2, 15),
+            originalAmount = 1500,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("X123456789013"),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            clearedAmount = Some(1500),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = PaymentOnAccountDesc,
+                  amount = 1500,
+                  clearingDate = LocalDate.of(2025, 3, 15),
+                  clearingReason = Some("Cleared by Payment")
+                )
               )
             )
-          )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "PAYMENT",
-          transactionDesc = PaymentOnAccountDesc,
-          transactionDate = LocalDate.of(2025, 1, 1),
-          originalAmount = -10000,
-          outstandingAmount = Some(-2000),
-          clearedAmount = Some(-5000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = "Repayment",
-                amount = -3000,
-                clearingDate = LocalDate.of(2025, 6, 30),
-                clearingReason = Some("Outgoing payment - Paid")
-              ),
-              ClearingDetail(
-                transactionDesc = UktrDttDesc,
-                chargeRefNo = Some("X123456789012"),
-                amount = 3500,
-                clearingDate = LocalDate.of(2025, 2, 16),
-                clearingReason = Some("Allocated to Charge")
-              ),
-              ClearingDetail(
-                transactionDesc = UktrMttIirDesc,
-                chargeRefNo = Some("X123456789013"),
-                amount = 1500,
-                clearingDate = LocalDate.of(2025, 2, 16),
-                clearingReason = Some("Allocated to Charge")
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "PAYMENT",
+            transactionDesc = PaymentOnAccountDesc,
+            transactionDate = LocalDate.of(2025, 1, 1),
+            originalAmount = -10000,
+            outstandingAmount = Some(-2000),
+            clearedAmount = Some(-5000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = "Repayment",
+                  amount = -3000,
+                  clearingDate = LocalDate.of(2025, 6, 30),
+                  clearingReason = Some("Outgoing payment - Paid")
+                ),
+                ClearingDetail(
+                  transactionDesc = UktrDttDesc,
+                  chargeRefNo = Some("X123456789012"),
+                  amount = 3500,
+                  clearingDate = LocalDate.of(2025, 2, 16),
+                  clearingReason = Some("Allocated to Charge")
+                ),
+                ClearingDetail(
+                  transactionDesc = UktrMttIirDesc,
+                  chargeRefNo = Some("X123456789013"),
+                  amount = 1500,
+                  clearingDate = LocalDate.of(2025, 2, 16),
+                  clearingReason = Some("Allocated to Charge")
+                )
               )
             )
           )
@@ -588,14 +592,16 @@ object AccountActivitySuccessResponse {
   def scenario17SolePayment(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
-      transactionDetails = Seq(
-        AccountActivityTransactionDetail(
-          transactionType = "PAYMENT",
-          transactionDesc = PaymentOnAccountDesc,
-          transactionDate = LocalDate.of(2025, 1, 1),
-          originalAmount = -10000,
-          outstandingAmount = Some(-10000),
-          clearingDetails = None
+      transactionDetails = Some(
+        Seq(
+          AccountActivityTransactionDetail(
+            transactionType = "PAYMENT",
+            transactionDesc = PaymentOnAccountDesc,
+            transactionDate = LocalDate.of(2025, 1, 1),
+            originalAmount = -10000,
+            outstandingAmount = Some(-10000),
+            clearingDetails = None
+          )
         )
       )
     )
@@ -604,37 +610,39 @@ object AccountActivitySuccessResponse {
   def scenario18ChargesAndOtherPenalties(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
-      transactionDetails = Seq(
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = LateUktrSubPenDttDesc,
-          startDate = Some(LocalDate.of(2024, 1, 1)),
-          endDate = Some(LocalDate.of(2024, 12, 31)),
-          chargeRefNo = Some("XPN3456789012"),
-          transactionDate = LocalDate.of(2026, 7, 1),
-          dueDate = Some(LocalDate.of(2026, 7, 31)),
-          originalAmount = 100,
-          outstandingAmount = Some(100)
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = LateUktrPayIntDttDesc,
-          startDate = Some(LocalDate.of(2024, 1, 1)),
-          endDate = Some(LocalDate.of(2024, 12, 31)),
-          chargeRefNo = Some("XIN3456789012"),
-          transactionDate = LocalDate.of(2025, 10, 15),
-          dueDate = Some(LocalDate.of(2026, 10, 15)),
-          originalAmount = 35,
-          outstandingAmount = Some(35)
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = RecordKeepingPenDesc,
-          chargeRefNo = Some("XIN3456789012"),
-          transactionDate = LocalDate.of(2026, 6, 30),
-          dueDate = Some(LocalDate.of(2026, 7, 30)),
-          originalAmount = 3500,
-          outstandingAmount = Some(3500)
+      transactionDetails = Some(
+        Seq(
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = LateUktrSubPenDttDesc,
+            startDate = Some(LocalDate.of(2024, 1, 1)),
+            endDate = Some(LocalDate.of(2024, 12, 31)),
+            chargeRefNo = Some("XPN3456789012"),
+            transactionDate = LocalDate.of(2026, 7, 1),
+            dueDate = Some(LocalDate.of(2026, 7, 31)),
+            originalAmount = 100,
+            outstandingAmount = Some(100)
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = LateUktrPayIntDttDesc,
+            startDate = Some(LocalDate.of(2024, 1, 1)),
+            endDate = Some(LocalDate.of(2024, 12, 31)),
+            chargeRefNo = Some("XIN3456789012"),
+            transactionDate = LocalDate.of(2025, 10, 15),
+            dueDate = Some(LocalDate.of(2026, 10, 15)),
+            originalAmount = 35,
+            outstandingAmount = Some(35)
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = RecordKeepingPenDesc,
+            chargeRefNo = Some("XIN3456789012"),
+            transactionDate = LocalDate.of(2026, 6, 30),
+            dueDate = Some(LocalDate.of(2026, 7, 30)),
+            originalAmount = 3500,
+            outstandingAmount = Some(3500)
+          )
         )
       )
     )
@@ -643,33 +651,35 @@ object AccountActivitySuccessResponse {
   def overdueOutstandingCharge(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
-      transactionDetails = Seq(
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrDttDesc,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("X123456789012"),
-          transactionDate = LocalDate.of(2025, 2, 15),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          originalAmount = BigDecimal(9000),
-          outstandingAmount = Some(BigDecimal(9000)),
-          clearedAmount = None,
-          clearingDetails = None
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrMttIirDesc,
-          startDate = Some(LocalDate.of(2024, 1, 1)),
-          endDate = Some(LocalDate.of(2024, 12, 31)),
-          chargeRefNo = Some("X123456789012"),
-          transactionDate = LocalDate.of(2024, 2, 15),
-          dueDate = Some(LocalDate.of(2025, 12, 31)),
-          accruedInterest = Some(BigDecimal(425)),
-          originalAmount = BigDecimal(6500),
-          outstandingAmount = Some(BigDecimal(6500)),
-          clearedAmount = None,
-          clearingDetails = None
+      transactionDetails = Some(
+        Seq(
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrDttDesc,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            originalAmount = BigDecimal(9000),
+            outstandingAmount = Some(BigDecimal(9000)),
+            clearedAmount = None,
+            clearingDetails = None
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrMttIirDesc,
+            startDate = Some(LocalDate.of(2024, 1, 1)),
+            endDate = Some(LocalDate.of(2024, 12, 31)),
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2024, 2, 15),
+            dueDate = Some(LocalDate.of(2025, 12, 31)),
+            accruedInterest = Some(BigDecimal(425)),
+            originalAmount = BigDecimal(6500),
+            outstandingAmount = Some(BigDecimal(6500)),
+            clearedAmount = None,
+            clearingDetails = None
+          )
         )
       )
     )
@@ -678,52 +688,54 @@ object AccountActivitySuccessResponse {
   def emptyAccountActivity(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
-      transactionDetails = Seq.empty
+      transactionDetails = None
     )
   )
 
   def stoodoverCharges(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
-      transactionDetails = Seq(
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = OverpaidClaimMttUtprDesc,
-          startDate = Some(LocalDate.of(2026, 1, 1)),
-          endDate = Some(LocalDate.of(2026, 12, 31)),
-          chargeRefNo = Some("XOC3456789012"),
-          transactionDate = LocalDate.of(2027, 2, 15),
-          dueDate = Some(LocalDate.of(2028, 3, 31)),
-          originalAmount = 200000,
-          outstandingAmount = Some(50000),
-          standOverAmount = Some(10000),
-          appealFlag = Some(true)
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = DeterminationMttIirDesc,
-          startDate = Some(LocalDate.of(2026, 1, 1)),
-          endDate = Some(LocalDate.of(2026, 12, 31)),
-          chargeRefNo = Some("XOC3456789012"),
-          transactionDate = LocalDate.of(2027, 2, 15),
-          dueDate = Some(LocalDate.of(2028, 3, 31)),
-          originalAmount = 22000,
-          outstandingAmount = Some(10000),
-          standOverAmount = Some(4100),
-          appealFlag = Some(false)
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = DiscoveryDttDesc,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("XOC3456789012"),
-          transactionDate = LocalDate.of(2026, 2, 15),
-          dueDate = Some(LocalDate.of(2027, 3, 31)),
-          originalAmount = 20000,
-          outstandingAmount = Some(20000),
-          standOverAmount = Some(20000),
-          appealFlag = Some(true)
+      transactionDetails = Some(
+        Seq(
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = OverpaidClaimMttUtprDesc,
+            startDate = Some(LocalDate.of(2026, 1, 1)),
+            endDate = Some(LocalDate.of(2026, 12, 31)),
+            chargeRefNo = Some("XOC3456789012"),
+            transactionDate = LocalDate.of(2027, 2, 15),
+            dueDate = Some(LocalDate.of(2028, 3, 31)),
+            originalAmount = 200000,
+            outstandingAmount = Some(50000),
+            standOverAmount = Some(10000),
+            appealFlag = Some(true)
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = DeterminationMttIirDesc,
+            startDate = Some(LocalDate.of(2026, 1, 1)),
+            endDate = Some(LocalDate.of(2026, 12, 31)),
+            chargeRefNo = Some("XOC3456789012"),
+            transactionDate = LocalDate.of(2027, 2, 15),
+            dueDate = Some(LocalDate.of(2028, 3, 31)),
+            originalAmount = 22000,
+            outstandingAmount = Some(10000),
+            standOverAmount = Some(4100),
+            appealFlag = Some(false)
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = DiscoveryDttDesc,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("XOC3456789012"),
+            transactionDate = LocalDate.of(2026, 2, 15),
+            dueDate = Some(LocalDate.of(2027, 3, 31)),
+            originalAmount = 20000,
+            outstandingAmount = Some(20000),
+            standOverAmount = Some(20000),
+            appealFlag = Some(true)
+          )
         )
       )
     )
@@ -732,238 +744,240 @@ object AccountActivitySuccessResponse {
   def apply(): AccountActivitySuccessResponse = AccountActivitySuccessResponse(
     AccountActivitySuccess(
       processingDate = AccountActivityResponse.now,
-      transactionDetails = Seq(
-        // Payment transaction - amounts should be NEGATIVE
-        AccountActivityTransactionDetail(
-          transactionType = "PAYMENT",
-          transactionDesc = PaymentOnAccountDesc,
-          transactionDate = LocalDate.of(2025, 10, 15),
-          originalAmount = -10000,
-          outstandingAmount = Some(-1000),
-          clearedAmount = Some(-9000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = UktrDttDesc,
-                amount = 2000,
-                clearingDate = LocalDate.of(2025, 10, 15),
-                chargeRefNo = Some("X123456789012"),
-                dueDate = Some(LocalDate.of(2025, 12, 31)),
-                clearingReason = Some("Allocated to Charge")
-              ),
-              ClearingDetail(
-                transactionDesc = UktrMttIirDesc,
-                amount = 2000,
-                clearingDate = LocalDate.of(2025, 10, 15),
-                chargeRefNo = Some("X123456789012"),
-                dueDate = Some(LocalDate.of(2025, 12, 31)),
-                clearingReason = Some("Allocated to Charge")
-              ),
-              ClearingDetail(
-                transactionDesc = UktrMttUtprDesc,
-                amount = 2000,
-                clearingDate = LocalDate.of(2025, 10, 15),
-                chargeRefNo = Some("X123456789012"),
-                dueDate = Some(LocalDate.of(2025, 12, 31)),
-                clearingReason = Some("Allocated to Charge")
-              ),
-              ClearingDetail(
-                transactionDesc = DiscoveryDttDesc,
-                amount = 3000,
-                clearingDate = LocalDate.of(2025, 10, 15),
-                chargeRefNo = Some("X123456789012"),
-                dueDate = Some(LocalDate.of(2025, 12, 31)),
-                clearingReason = Some("Allocated to Charge")
+      transactionDetails = Some(
+        Seq(
+          // Payment transaction - amounts should be NEGATIVE
+          AccountActivityTransactionDetail(
+            transactionType = "PAYMENT",
+            transactionDesc = PaymentOnAccountDesc,
+            transactionDate = LocalDate.of(2025, 10, 15),
+            originalAmount = -10000,
+            outstandingAmount = Some(-1000),
+            clearedAmount = Some(-9000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = UktrDttDesc,
+                  amount = 2000,
+                  clearingDate = LocalDate.of(2025, 10, 15),
+                  chargeRefNo = Some("X123456789012"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  clearingReason = Some("Allocated to Charge")
+                ),
+                ClearingDetail(
+                  transactionDesc = UktrMttIirDesc,
+                  amount = 2000,
+                  clearingDate = LocalDate.of(2025, 10, 15),
+                  chargeRefNo = Some("X123456789012"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  clearingReason = Some("Allocated to Charge")
+                ),
+                ClearingDetail(
+                  transactionDesc = UktrMttUtprDesc,
+                  amount = 2000,
+                  clearingDate = LocalDate.of(2025, 10, 15),
+                  chargeRefNo = Some("X123456789012"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  clearingReason = Some("Allocated to Charge")
+                ),
+                ClearingDetail(
+                  transactionDesc = DiscoveryDttDesc,
+                  amount = 3000,
+                  clearingDate = LocalDate.of(2025, 10, 15),
+                  chargeRefNo = Some("X123456789012"),
+                  dueDate = Some(LocalDate.of(2025, 12, 31)),
+                  clearingReason = Some("Allocated to Charge")
+                )
               )
             )
-          )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "PAYMENT",
-          transactionDesc = PaymentOnAccountDesc,
-          transactionDate = LocalDate.of(2025, 11, 1),
-          originalAmount = -500,
-          outstandingAmount = Some(0),
-          clearedAmount = Some(-500),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = "Repayment",
-                amount = 500,
-                clearingDate = LocalDate.of(2025, 11, 1),
-                clearingReason = Some("Outgoing payment - Paid")
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "PAYMENT",
+            transactionDesc = PaymentOnAccountDesc,
+            transactionDate = LocalDate.of(2025, 11, 1),
+            originalAmount = -500,
+            outstandingAmount = Some(0),
+            clearedAmount = Some(-500),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = "Repayment",
+                  amount = 500,
+                  clearingDate = LocalDate.of(2025, 11, 1),
+                  clearingReason = Some("Outgoing payment - Paid")
+                )
               )
             )
-          )
-        ),
-        // Repayment interest - Credit amounts should be NEGATIVE
-        AccountActivityTransactionDetail(
-          transactionType = "CREDIT",
-          transactionDesc = RepaymentInterestDesc,
-          transactionDate = LocalDate.of(2025, 12, 1),
-          originalAmount = -5,
-          clearedAmount = Some(-5),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = "Repayment",
-                amount = 5,
-                clearingDate = LocalDate.of(2025, 12, 1),
-                clearingReason = Some("Outgoing payment - Paid")
+          ),
+          // Repayment interest - Credit amounts should be NEGATIVE
+          AccountActivityTransactionDetail(
+            transactionType = "CREDIT",
+            transactionDesc = RepaymentInterestDesc,
+            transactionDate = LocalDate.of(2025, 12, 1),
+            originalAmount = -5,
+            clearedAmount = Some(-5),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = "Repayment",
+                  amount = 5,
+                  clearingDate = LocalDate.of(2025, 12, 1),
+                  clearingReason = Some("Outgoing payment - Paid")
+                )
               )
             )
-          )
-        ),
-        // Debit transactions
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrDttDesc,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("X123456789012"),
-          transactionDate = LocalDate.of(2025, 2, 15),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          originalAmount = 2000,
-          clearedAmount = Some(2000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = PaymentOnAccountDesc,
-                amount = 2000,
-                clearingDate = LocalDate.of(2025, 10, 15),
-                clearingReason = Some("Cleared by Payment")
+          ),
+          // Debit transactions
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrDttDesc,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            originalAmount = 2000,
+            clearedAmount = Some(2000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = PaymentOnAccountDesc,
+                  amount = 2000,
+                  clearingDate = LocalDate.of(2025, 10, 15),
+                  clearingReason = Some("Cleared by Payment")
+                )
               )
             )
-          )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrMttIirDesc,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("X123456789012"),
-          transactionDate = LocalDate.of(2025, 2, 15),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          originalAmount = 2000,
-          clearedAmount = Some(2000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = PaymentOnAccountDesc,
-                amount = 2000,
-                clearingDate = LocalDate.of(2025, 10, 15),
-                clearingReason = Some("Cleared by Payment")
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrMttIirDesc,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            originalAmount = 2000,
+            clearedAmount = Some(2000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = PaymentOnAccountDesc,
+                  amount = 2000,
+                  clearingDate = LocalDate.of(2025, 10, 15),
+                  clearingReason = Some("Cleared by Payment")
+                )
               )
             )
-          )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = UktrMttUtprDesc,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("X123456789012"),
-          transactionDate = LocalDate.of(2025, 2, 15),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          originalAmount = 2000,
-          clearedAmount = Some(2000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = PaymentOnAccountDesc,
-                amount = 2000,
-                clearingDate = LocalDate.of(2025, 10, 15),
-                clearingReason = Some("Cleared by Payment")
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = UktrMttUtprDesc,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("X123456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            originalAmount = 2000,
+            clearedAmount = Some(2000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = PaymentOnAccountDesc,
+                  amount = 2000,
+                  clearingDate = LocalDate.of(2025, 10, 15),
+                  clearingReason = Some("Cleared by Payment")
+                )
               )
             )
-          )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = DiscoveryDttDesc,
-          startDate = Some(LocalDate.of(2025, 1, 1)),
-          endDate = Some(LocalDate.of(2025, 12, 31)),
-          chargeRefNo = Some("XD23456789012"),
-          transactionDate = LocalDate.of(2025, 2, 15),
-          dueDate = Some(LocalDate.of(2026, 12, 31)),
-          originalAmount = 3000,
-          clearedAmount = Some(3000),
-          clearingDetails = Some(
-            Seq(
-              ClearingDetail(
-                transactionDesc = PaymentOnAccountDesc,
-                amount = 3000,
-                clearingDate = LocalDate.of(2025, 10, 15),
-                clearingReason = Some("Cleared by Payment")
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = DiscoveryDttDesc,
+            startDate = Some(LocalDate.of(2025, 1, 1)),
+            endDate = Some(LocalDate.of(2025, 12, 31)),
+            chargeRefNo = Some("XD23456789012"),
+            transactionDate = LocalDate.of(2025, 2, 15),
+            dueDate = Some(LocalDate.of(2026, 12, 31)),
+            originalAmount = 3000,
+            clearedAmount = Some(3000),
+            clearingDetails = Some(
+              Seq(
+                ClearingDetail(
+                  transactionDesc = PaymentOnAccountDesc,
+                  amount = 3000,
+                  clearingDate = LocalDate.of(2025, 10, 15),
+                  clearingReason = Some("Cleared by Payment")
+                )
               )
             )
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = DeterminationMttIirDesc,
+            startDate = Some(LocalDate.of(2026, 1, 1)),
+            endDate = Some(LocalDate.of(2026, 12, 31)),
+            accruedInterest = Some(35),
+            chargeRefNo = Some("XDT3456789012"),
+            transactionDate = LocalDate.of(2026, 1, 2),
+            dueDate = Some(LocalDate.of(2026, 1, 31)),
+            originalAmount = 3100,
+            outstandingAmount = Some(3100)
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = OverpaidClaimMttUtprDesc,
+            startDate = Some(LocalDate.of(2026, 1, 1)),
+            endDate = Some(LocalDate.of(2026, 12, 31)),
+            chargeRefNo = Some("XOC3456789012"),
+            transactionDate = LocalDate.of(2027, 2, 15),
+            dueDate = Some(LocalDate.of(2028, 3, 31)),
+            originalAmount = 4100,
+            outstandingAmount = Some(4100),
+            standOverAmount = Some(4100),
+            appealFlag = Some(true)
+          ),
+          // Credit transaction - amounts should be NEGATIVE
+          AccountActivityTransactionDetail(
+            transactionType = "CREDIT",
+            transactionDesc = RepaymentInterestDesc,
+            chargeRefNo = Some("XR23456789012"),
+            transactionDate = LocalDate.of(2025, 3, 15),
+            originalAmount = -100,
+            outstandingAmount = Some(-100)
+          ),
+          // Penalty and Interest transactions
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = LateUktrSubPenDttDesc,
+            startDate = Some(LocalDate.of(2024, 1, 1)),
+            endDate = Some(LocalDate.of(2024, 12, 31)),
+            chargeRefNo = Some("XPN3456789012"),
+            transactionDate = LocalDate.of(2026, 7, 1),
+            dueDate = Some(LocalDate.of(2026, 7, 31)),
+            originalAmount = 100,
+            outstandingAmount = Some(100)
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = LateUktrPayIntDttDesc,
+            startDate = Some(LocalDate.of(2024, 1, 1)),
+            endDate = Some(LocalDate.of(2024, 12, 31)),
+            chargeRefNo = Some("XIN3456789012"),
+            transactionDate = LocalDate.of(2025, 10, 15),
+            dueDate = Some(LocalDate.of(2026, 10, 15)),
+            originalAmount = 35,
+            outstandingAmount = Some(35)
+          ),
+          AccountActivityTransactionDetail(
+            transactionType = "DEBIT",
+            transactionDesc = RecordKeepingPenDesc,
+            chargeRefNo = Some("XIN3456789012"),
+            transactionDate = LocalDate.of(2026, 6, 30),
+            dueDate = Some(LocalDate.of(2026, 7, 30)),
+            originalAmount = 3500,
+            outstandingAmount = Some(3500)
           )
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = DeterminationMttIirDesc,
-          startDate = Some(LocalDate.of(2026, 1, 1)),
-          endDate = Some(LocalDate.of(2026, 12, 31)),
-          accruedInterest = Some(35),
-          chargeRefNo = Some("XDT3456789012"),
-          transactionDate = LocalDate.of(2026, 1, 2),
-          dueDate = Some(LocalDate.of(2026, 1, 31)),
-          originalAmount = 3100,
-          outstandingAmount = Some(3100)
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = OverpaidClaimMttUtprDesc,
-          startDate = Some(LocalDate.of(2026, 1, 1)),
-          endDate = Some(LocalDate.of(2026, 12, 31)),
-          chargeRefNo = Some("XOC3456789012"),
-          transactionDate = LocalDate.of(2027, 2, 15),
-          dueDate = Some(LocalDate.of(2028, 3, 31)),
-          originalAmount = 4100,
-          outstandingAmount = Some(4100),
-          standOverAmount = Some(4100),
-          appealFlag = Some(true)
-        ),
-        // Credit transaction - amounts should be NEGATIVE
-        AccountActivityTransactionDetail(
-          transactionType = "CREDIT",
-          transactionDesc = RepaymentInterestDesc,
-          chargeRefNo = Some("XR23456789012"),
-          transactionDate = LocalDate.of(2025, 3, 15),
-          originalAmount = -100,
-          outstandingAmount = Some(-100)
-        ),
-        // Penalty and Interest transactions
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = LateUktrSubPenDttDesc,
-          startDate = Some(LocalDate.of(2024, 1, 1)),
-          endDate = Some(LocalDate.of(2024, 12, 31)),
-          chargeRefNo = Some("XPN3456789012"),
-          transactionDate = LocalDate.of(2026, 7, 1),
-          dueDate = Some(LocalDate.of(2026, 7, 31)),
-          originalAmount = 100,
-          outstandingAmount = Some(100)
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = LateUktrPayIntDttDesc,
-          startDate = Some(LocalDate.of(2024, 1, 1)),
-          endDate = Some(LocalDate.of(2024, 12, 31)),
-          chargeRefNo = Some("XIN3456789012"),
-          transactionDate = LocalDate.of(2025, 10, 15),
-          dueDate = Some(LocalDate.of(2026, 10, 15)),
-          originalAmount = 35,
-          outstandingAmount = Some(35)
-        ),
-        AccountActivityTransactionDetail(
-          transactionType = "DEBIT",
-          transactionDesc = RecordKeepingPenDesc,
-          chargeRefNo = Some("XIN3456789012"),
-          transactionDate = LocalDate.of(2026, 6, 30),
-          dueDate = Some(LocalDate.of(2026, 7, 30)),
-          originalAmount = 3500,
-          outstandingAmount = Some(3500)
         )
       )
     )
@@ -972,7 +986,7 @@ object AccountActivitySuccessResponse {
 
 case class AccountActivitySuccess(
   processingDate:     ZonedDateTime,
-  transactionDetails: Seq[AccountActivityTransactionDetail]
+  transactionDetails: Option[Seq[AccountActivityTransactionDetail]]
 )
 
 object AccountActivitySuccess {

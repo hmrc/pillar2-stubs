@@ -54,7 +54,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     val result = route(app, request).value
     status(result) shouldEqual 200
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
-    response.success.transactionDetails.filter(_.transactionType == "DEBIT")
+    response.success.transactionDetails.getOrElse(Seq.empty).filter(_.transactionType == "DEBIT")
   }
 
   private def assertDebitDescs(pillar2Id: String, expected: Set[String]): Unit = {
@@ -215,7 +215,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     status(result) shouldEqual 200
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
     response.success.transactionDetails should not be empty
-    Set("PAYMENT", "DEBIT", "CREDIT")   should contain(response.success.transactionDetails.head.transactionType)
+    Set("PAYMENT", "DEBIT", "CREDIT")   should contain(response.success.transactionDetails.getOrElse(Seq.empty).head.transactionType)
   }
 
   test("BadRequest - returns 400 error for XEPLR0000000400") {
@@ -302,7 +302,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     response.success.transactionDetails should not be empty
 
     // Check that required fields are present in transaction details
-    response.success.transactionDetails.foreach { transaction =>
+    response.success.transactionDetails.getOrElse(Seq.empty).foreach { transaction =>
       transaction.transactionType should not be empty
       transaction.transactionDesc should not be empty
       transaction.originalAmount  should not be BigDecimal(0)
@@ -317,7 +317,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
 
     // Find transactions with clearing details
-    val transactionsWithClearing = response.success.transactionDetails.filter(_.clearingDetails.isDefined)
+    val transactionsWithClearing = response.success.transactionDetails.getOrElse(Seq.empty).filter(_.clearingDetails.isDefined)
     transactionsWithClearing should not be empty
 
     transactionsWithClearing.foreach { transaction =>
@@ -337,7 +337,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
 
     // Find the repayment interest transaction
-    val repaymentInterest = response.success.transactionDetails.find { transaction =>
+    val repaymentInterest = response.success.transactionDetails.getOrElse(Seq.empty).find { transaction =>
       transaction.transactionType == "CREDIT" &&
       transaction.transactionDesc.contains("Repayment interest")
     }
