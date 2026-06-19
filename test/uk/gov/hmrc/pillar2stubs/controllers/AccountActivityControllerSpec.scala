@@ -215,7 +215,7 @@ class AccountActivityControllerSpec extends AnyFunSuite with Matchers with Guice
     status(result) shouldEqual 200
     val response = contentAsJson(result).as[AccountActivitySuccessResponse]
     response.success.transactionDetails should not be empty
-    Set("PAYMENT", "DEBIT", "CREDIT") should contain(response.success.transactionDetails.getOrElse(Seq.empty).head.transactionType)
+    Set("PAYMENT", "DEBIT", "CREDIT")   should contain(response.success.transactionDetails.getOrElse(Seq.empty).head.transactionType)
   }
 
   test("BadRequest - returns 400 error for XEPLR0000000400") {
