@@ -27,9 +27,9 @@ import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.error.Origin.HIP
 import uk.gov.hmrc.pillar2stubs.models.error.{HIPErrorWrapper, HIPFailure}
+import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.ObligationsAndSubmissionsResponse.now
 import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.SubmissionType.{GIR_CREATE, UKTR_CREATE}
-import uk.gov.hmrc.pillar2stubs.models.obligationsandsubmissions.*
 
 import java.time.LocalDate
 import scala.util.Random

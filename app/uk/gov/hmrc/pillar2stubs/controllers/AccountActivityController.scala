@@ -309,7 +309,7 @@ object AccountActivityController {
   private def generateSuccessfulResponse(numberOfTransactions: Int, fromDate: LocalDate, toDate: LocalDate) =
     AccountActivitySuccess(
       AccountActivityResponse.now,
-      transactionDetails = generateAccountActivityTransactions(numberOfTransactions, fromDate, toDate)
+      transactionDetails = Some(generateAccountActivityTransactions(numberOfTransactions, fromDate, toDate))
     )
 
   private def generateBigDecimal: BigDecimal =
