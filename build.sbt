@@ -4,6 +4,7 @@ import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / scalaVersion := "3.3.6"
 ThisBuild / majorVersion := 0
+ThisBuild / semanticdbEnabled := true
 
 lazy val microservice = Project("pillar2-stubs", file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
@@ -25,12 +26,9 @@ lazy val it = project
   )
   .settings(libraryDependencies ++= AppDependencies.it)
 
-ThisBuild / semanticdbEnabled := true
-ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
-
-addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")
+addCommandAlias("prePrChecks", "; scalafmtCheckAll; it/scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check; it/scalafixAll --check")
 addCommandAlias("checkCodeCoverage", "; clean; coverage; test; it/test; coverageReport")
-addCommandAlias("lint", "; scalafmtAll; scalafmtSbt; scalafixAll")
+addCommandAlias("lint", "; scalafmtAll; it/scalafmtAll; scalafmtSbt; it/scalafixAll; scalafixAll")
 
 lazy val compilerSettings = Seq(
   scalacOptions ~= (_.distinct),
