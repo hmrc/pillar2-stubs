@@ -1,5 +1,4 @@
 import org.typelevel.scalacoptions.ScalacOptions
-import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 
 ThisBuild / scalaVersion := "3.3.6"
