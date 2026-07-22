@@ -20,15 +20,14 @@
           "countryCode": "GB"
       },
       "primaryContactDetails": {
-          "name": "Primary Contact",
+          "name": "Ashley Jones",
           "telephone": "0115 9700 700",
-          "emailAddress": "primary.contact@example.com"
+          "emailAddress": "ashley.jones@example.com"
       },
       "secondaryContactDetails": {
-          "name": "Secondary Contact",
+          "name": "John Doe",
           "telephone": "0115 9700 701",
-          "emailAddress": "secondary.contact@example.com"
-
+          "emailAddress": "john.doe@example.com"
       },
       "filingMemberDetails": {
           "safeId": "XL6967739016188",
@@ -36,11 +35,15 @@
           "customerIdentification1": "1234Z678",
           "customerIdentification2": "1234567Y"
       },
-      "accountingPeriod": {
-          "startDate": "2024-01-06",
-          "endDate": "2025-04-06",
-          "dueDate": "2024-04-06"
-      },
+      "accountingPeriod": [
+          {
+              "startDate": "2024-01-06",
+              "endDate": "2025-04-06",
+              "dueDate": "2024-04-06",
+              "canAmendStartDate": true,
+              "canAmendEndDate": true
+          }
+      ],
       "accountStatus": {
           "inactive": false
       }

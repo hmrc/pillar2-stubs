@@ -40,7 +40,7 @@ case class SubscriptionSuccess(
   primaryContactDetails:    ContactDetailsType,
   secondaryContactDetails:  Option[ContactDetailsType],
   filingMemberDetails:      Option[FilingMemberDetails],
-  accountingPeriod:         AccountingPeriod,
+  accountingPeriod:         Option[Seq[AccountingPeriod]],
   accountStatus:            Option[AccountStatus]
 )
 
@@ -147,16 +147,6 @@ object FilingMemberDetails {
   given OFormat[FilingMemberDetails] = Json.format[FilingMemberDetails]
 }
 
-final case class AccountingPeriod(
-  startDate: LocalDate,
-  endDate:   LocalDate,
-  dueDate:   Option[LocalDate] = None
-)
-
-object AccountingPeriod {
-  given OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
-}
-
 final case class AccountStatus(
   inactive: Boolean
 )
@@ -200,25 +190,12 @@ object NewAccountingPeriodDetails {
   }
 }
 
-final case class AccountingPeriodV2(
+final case class AccountingPeriod(
   amendAccountingPeriod:     Boolean,
   originalAccountingPeriods: Option[Seq[OriginalAccountingPeriod]],
   newAccountingPeriod:       Option[NewAccountingPeriodDetails]
 )
 
-object AccountingPeriodV2 {
-  given OFormat[AccountingPeriodV2] = Json.format[AccountingPeriodV2]
-}
-
-case class AmendSubscriptionSuccessV2(
-  upeDetails:               UpeDetailsAmend,
-  accountingPeriod:         AccountingPeriodV2,
-  upeCorrespAddressDetails: UpeCorrespAddressDetails,
-  primaryContactDetails:    ContactDetailsType,
-  secondaryContactDetails:  Option[ContactDetailsType],
-  filingMemberDetails:      Option[FilingMemberAmendDetails]
-)
-
-object AmendSubscriptionSuccessV2 {
-  given OFormat[AmendSubscriptionSuccessV2] = Json.format[AmendSubscriptionSuccessV2]
+object AccountingPeriod {
+  given OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
 }

@@ -34,17 +34,15 @@ The Pillar2 stubs service provides stubs for the GRS systems to mock the respons
         * [HTTP 503 Service Unavailable Error](#http-503-service-unavailable-error-2)
         * [HTTP 503 Request Could not be processed Error](#http-503-request-could-not-be-processed-error-1)
         * [HTTP 404 Record Not Found Error](#http-404-record-not-found-error-2)
-    * [Retrieve Subscription Details (Cache)](#retrieve-subscription-details-cache)
-      * [Happy Path](#happy-path-3)
-    * [Retrieve Subscription Details V2](#retrieve-subscription-details-v2)
-      * [Happy Path](#happy-path-2-v2)
+    * [Retrieve Subscription Details](#retrieve-subscription-details)
+      * [Happy Path](#happy-path-2)
       * [Period Scenarios](#period-scenarios)
-    * [Retrieve Subscription Details V2 (Cache)](#retrieve-subscription-details-v2-cache)
+    * [Retrieve Subscription Details (Cache)](#retrieve-subscription-details-cache)
     * [Amend Existing Subscription](#amend-existing-subscription)
       * [Happy Path](#happy-path-4)
-    * [Amend Existing Subscription V2](#amend-existing-subscription-v2)
-      * [Dynamic V2 Subscriptions](#dynamic-v2-subscriptions)
-    * [Reset Dynamic V2 Subscriptions](#reset-dynamic-v2-subscriptions)
+    * [Amend Existing Subscription](#amend-existing-subscription)
+      * [Dynamic Subscriptions](#dynamic-subscriptions)
+    * [Reset Dynamic Subscriptions](#reset-dynamic-subscriptions)
     * [Retrieve Enrolment Store Response](#retrieve-enrolment-store-response)
       * [Happy Path](#happy-path-5)
         * [Enrolment Store Response with groupID](#enrolment-store-response-with-groupid)
@@ -52,9 +50,6 @@ The Pillar2 stubs service provides stubs for the GRS systems to mock the respons
       * [Unhappy Path](#unhappy-path-3)
     * [Business Bank Account Reputation Service (BARS)](#business-bank-account-reputation-service-bars)
       * [BARS Test Data](#bars-test-data)
-    * [Financial Data - Get Financial Test Data](#financial-data---get-financial-test-data)
-      * [Test last seven years of transactions](#test-last-seven-years-of-transactions)
-      * [Get Obligation - Get Obligation Test Data](#get-obligation---get-obligation-test-data)
     * [Obligations and Submissions API](#obligations-and-submissions-api)
       * [Test Data for Different Responses](#test-data-for-different-responses)
       * [Happy Path](#happy-path-6)
@@ -672,13 +667,13 @@ The response format is identical to the `GET /pillar2/subscription/:plrReference
 
 ---
 
-### Retrieve Subscription Details V2
+### Retrieve Subscription Details
 
 **Endpoints**:
-- `GET /pillar2/subscription/v2/:plrReference`
-- `GET /report-pillar2-top-up-taxes/subscription/v2/read-subscription/:plrReference`
+- `GET /pillar2/subscription/:plrReference`
+- `GET /report-pillar2-top-up-taxes/subscription/read-subscription/:plrReference`
 
-**Description**: Retrieves the Subscription details for the specific plrReference using the V2 response format. The V2 format includes an `accountingPeriod` array (instead of a single object) and supports multiple accounting periods.
+**Description**: Retrieves the Subscription details for the specific plrReference using the response format. The format includes an `accountingPeriod` array and supports multiple accounting periods.
 
 | plrReference    | Status Code | Status                  | Description                                                                                           |
 |-----------------|-------------|-------------------------|-------------------------------------------------------------------------------------------------------|
@@ -711,30 +706,30 @@ The following plrReferences return special accounting period configurations for 
 | XEPLR7777777777 | Returns subscription with a **micro period** (short period: 2024-01-31 to 2024-02-15). |
 | XEPLR2856000001 | Returns subscription for a **recently registered group with a micro initial period** — 3 periods from Jan 2024, first period is 6 months (2024-01-01 to 2024-06-30), all periods fully amendable. |
 | XEPLR2856000002 | Returns subscription for an **older group with anniversary-date-aligned periods and a locked current period end date** — 3 full 12-month periods from Sep 2021, with `canAmendEndDate: false` on the most recent period. |
-| XEPLR0000000010 | **Dynamic** -- 3 periods with mixed `canAmend*` flags. State updates when amended via V2. See [Dynamic V2 Subscriptions](#dynamic-v2-subscriptions). |
-| XEPLR0000000011 | **Dynamic** -- 2 fully amendable periods. State updates when amended via V2. See [Dynamic V2 Subscriptions](#dynamic-v2-subscriptions). |
-| XEPLR0000000012 | **Dynamic** -- 1 fully amendable period. State updates when amended via V2. See [Dynamic V2 Subscriptions](#dynamic-v2-subscriptions). |
+| XEPLR0000000010 | **Dynamic** -- 3 periods with mixed `canAmend*` flags. State updates when amended. See [Dynamic Subscriptions](#dynamic-subscriptions). |
+| XEPLR0000000011 | **Dynamic** -- 2 fully amendable periods. State updates when amended. See [Dynamic Subscriptions](#dynamic-subscriptions). |
+| XEPLR0000000012 | **Dynamic** -- 1 fully amendable period. State updates when amended. See [Dynamic Subscriptions](#dynamic-subscriptions). |
 | Any other valid | Returns subscription with a single standard accounting period.              |
 
 #### Happy Path
 
-To trigger the happy path, provide a valid plrReference. The V2 success response includes an `accountingPeriod` array with `startDate`, `endDate`, `dueDate`, `canAmendStartDate`, and `canAmendEndDate` for each period.
+To trigger the happy path, provide a valid plrReference. The success response includes an `accountingPeriod` array with `startDate`, `endDate`, `dueDate`, `canAmendStartDate`, and `canAmendEndDate` for each period.
 
 - Response status: `200`
 
 ---
 
-### Retrieve Subscription Details V2 (Cache)
+### Retrieve Subscription Details (Cache)
 
-**Endpoint**: `GET /report-pillar2-top-up-taxes/subscription/v2/read-subscription/:id/:plrReference`
+**Endpoint**: `GET /report-pillar2-top-up-taxes/subscription/read-subscription/:id/:plrReference`
 
-**Description**: Reads the Subscription details (V2 format) and caches them for the specific PLR reference and ID. Same status/error logic as Retrieve Subscription Details V2; 200 responses return unwrapped JSON (SubscriptionData at root).
+**Description**: Reads the Subscription details and caches them for the specific PLR reference and ID. Same status/error logic as Retrieve Subscription Details; 200 responses return unwrapped JSON (SubscriptionData at root).
 
 | plrReference    | Status Code | Status   | Description                                                                     |
 |-----------------|-------------|----------|---------------------------------------------------------------------------------|
 | XEPLR0000000001 | 422/200     | VARIABLE | Registration in progress test - Returns 422 for first 3 polls, then 200 success |
 | XEPLR0000000002 | 422/200     | VARIABLE | Registration in progress test - Returns 422 for first 8 polls, then 200 success |
-| Any other PLR   | 200         | OK       | Returns read success response (V2 format) for any other valid PLR reference     |
+| Any other PLR   | 200         | OK       | Returns read success response for any other valid PLR reference                 |
 
 ---
 
@@ -802,11 +797,11 @@ Example Request Body:
 
 ---
 
-### Amend Existing Subscription V2
+### Amend Existing Subscription
 
-**Endpoint**: `PUT /pillar2/subscription/v2`
+**Endpoint**: `PUT /pillar2/subscription`
 
-**Description**: Amends an existing Subscription using the V2 request format. The outcome of the request can be controlled by the `name` field within the `primaryContactDetails` of the request body. Behaviour is the same as [Amend Existing Subscription](#amend-existing-subscription).
+**Description**: Amends an existing Subscription using the request format. The outcome of the request can be controlled by the `name` field within the `primaryContactDetails` of the request body. Behaviour is the same as [Amend Existing Subscription](#amend-existing-subscription).
 
 | primaryContactDetails.name | Status Code | Status                | Description                                                                             |
 |----------------------------|-------------|-----------------------|-----------------------------------------------------------------------------------------|
@@ -819,9 +814,9 @@ Example Request Body:
 | "timeout"                  | 200         | OK                    | Returns a success response after a 30-second delay (will induce a client-side timeout). |
 | Any other value            | 200         | OK                    | Returns a success response. If the PLR reference is a dynamic ID, the accounting periods are updated in the store. |
 
-#### Dynamic V2 Subscriptions
+#### Dynamic Subscriptions
 
-A subset of PLR IDs have **stateful** behaviour: amending them via `PUT /pillar2/subscription/v2` updates the accounting periods returned by subsequent `GET /pillar2/subscription/v2/:plrReference` calls. This allows end-to-end testing of the multi-period amend flow without a real ETMP backend.
+A subset of PLR IDs have **stateful** behaviour: amending them via `PUT /pillar2/subscription` updates the accounting periods returned by subsequent `GET /pillar2/subscription/:plrReference` calls. This allows end-to-end testing of the multi-period amend flow without a real ETMP backend.
 
 **Dynamic PLR IDs and initial data:**
 
@@ -833,7 +828,7 @@ A subset of PLR IDs have **stateful** behaviour: amending them via `PUT /pillar2
 
 **Amendment behaviour (ETMP simulation):**
 
-When a V2 amend request is received with `amendAccountingPeriod: true` and the PLR reference matches one of the dynamic IDs:
+When an amend request is received with `amendAccountingPeriod: true` and the PLR reference matches one of the dynamic IDs:
 
 1. The `originalAccountingPeriods` from the request are matched against the stored periods by start/end date.
 2. Matched periods are removed.
@@ -850,11 +845,11 @@ Error-triggering behaviour via `primaryContactDetails.name` (400, 422, etc.) sti
 
 ---
 
-### Reset Dynamic V2 Subscriptions
+### Reset Dynamic Subscriptions
 
-**Endpoint**: `POST /pillar2/subscription/v2/reset`
+**Endpoint**: `POST /pillar2/subscription/reset`
 
-**Description**: Resets all dynamic V2 subscription data back to its initial seeded state. Useful for test setup to ensure a clean starting point.
+**Description**: Resets all dynamic subscription data back to its initial seeded state. Useful for test setup to ensure a clean starting point.
 
 - Response status: `200`
 - Response body: `Dynamic subscriptions reset to initial state`
@@ -930,68 +925,6 @@ To trigger the unhappy paths, use `XEPLR0444444400`.
 | 207106    | 74597611       | Resource Refresh      | Yes   | sortCodeIsPresentOnEISCD = No, nameMatches = No, accountExists = No                                                                                |
 | 609593    | 96863604       | O'Connor Construction | Yes   | accountNumberIsWellFormatted = indeterminate, but accountExists = Yes                                                                              |
 | 609593    | 96113600       | Candyland Consulting  | Yes   | accountNumberIsWellFormatted = indeterminate, but accountExists = No                                                                               |
-
----
-
-### Financial Data - Get Financial Test Data
-
-**Endpoints** (same behaviour):
-
-- `GET /enterprise/financial-data/ZPLR/:idNumber/PLR` (query params: `dateFrom`, `dateTo`)
-- `GET /report-pillar2-top-up-taxes/financial-data/:plrReference/:dateFrom/:dateTo` (used by pillar2-frontend)
-
-**Description**: These endpoints provide the ability to get financial data (charges, estimates and payments).
-
-
-| idNumber (PLR Reference Number)                                          | Response Returned                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-|--------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| XEPLR4000000000                                                          | INVALID_IDNUMBER Error Response                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| XEPLR4040000000                                                          | NOT_FOUND Error Response                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| XEPLR5000000000                                                          | SERVER_ERROR Error Response                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| XEPLR5020000000                                                          | BAD_GATEWAY (502) – for testing homepage retries when pillar2-frontend calls this stub                                                                                                                                                                                                                                                                                                                                                                                         |
-| XEPLR5030000000                                                          | SERVICE_UNAVAILABLE Error Response                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| XMPLR0000000(Last three digits are the number of transactions displayed) | For example <br/> - XMPLR0000000022 will display 22 transactions 12 refund and 12 payments. <br/> - XMPLR0000000122 will display 122 transactions 61 refunds and 61 payments <br/> **Please note** <br/> - Use even numbers since 13 will default to 6 refund and 6 payment <br/> - All returned values are randomised so figures won't be consistent <br/> Please note a user must be able to see only last 7 years of transactions on their account, to test read note below |
-| XEPLR2000000000                                                          | Outstanding payments (ETMP QA Test Data)                                                                                                                                                                                                                                                                                                                                                                                                                                       |                                               
-| XEPLR2000000001                                                          | Outstanding payments - UKTR single AP                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                               
-| XEPLR2000000002                                                          | Outstanding payments - UKTR two APs                                                                                                                                                                                                                                                                                                                                                                                                                                            |                                               
-| XEPLR2000000010                                                          | Repayment Interest (RPI)                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| XEPLR2000000101                                                          | Overdue DTT charge                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| XEPLR2000000102                                                          | Overdue DTT charge plus interest charge                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| XEPLR2000000103                                                          | Overdue DTT charge                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| XEPLR2000000104                                                          | Overdue DTT charge plus interest charge                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| XEPLR2000000105                                                          | Overdue DTT charge plus interest charge                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| XEPLR2000000106                                                          | Overdue DTT charge                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| XEPLR2000000107                                                          | Overdue DTT charge                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| XEPLR2000000108                                                          | One accounting period with a paid charge                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| XEPLR2000000109                                                          | No transactions                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| XEPLR2000000110                                                          | Overdue DTT charge                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| XEPLR2000000111                                                          | Overdue DTT charge                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| XEPLR2000000112                                                          | Overdue DTT charge plus interest charge                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| Any valid ID                                                             | Will return 10 transactions these values are consistent                                                                                                                                                                                                                                                                                                                                                                                                                        |
-
-#### Test last seven years of transactions
-As it currently stands the end date is always set to today's date, this means that it will generate transactions from the registration date to today's date.
-
-In the stubs the registration date is always 2024-01-31 therefore to override this date you need to override the config value set in the `pillar2-frontend` service.
-
-Example:
-```shell
-sbt "-Dapplication.router=testOnlyDoNotUseInAppConf.Routes" "-Dfeatures.transactionHistoryEndDate=2044-01-31" run
-```
-
-This will set the end date to `2044-01-31` and generate transactions from `2037-01-31` to `2044-01-31`. The last seven years.
-Worth noting this won't happen in any other environment unless you override the config.
-
-
-#### Get Obligation - Get Obligation Test Data
-
-For now this API has not been developed by ETMP therefore we are making assumptions in order to provide test data and satisfy the requirements of the frontend.
-
-| idNumber (PLR Reference Number) | Response Returned                       |
-|---------------------------------|-----------------------------------------|
-| XEPLR1000000000                 | Obligation with Fulfilled status        |
-| XEPLR4040000000                 | NOT_FOUND Error Response                |
-| Any valid ID                    | Will return a response with Open status |
 
 ---
 
