@@ -43,6 +43,7 @@ class SubscriptionControllerSpec
   }
 
   "POST " - {
+
     "createSubscription" - {
       "must return FORBIDDEN response when 'Authorization' header is missing" in {
         val json: JsValue = Json.obj()
@@ -64,10 +65,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "2025-12-12"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -106,10 +109,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "2025-12-12"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -148,10 +153,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "2025-12-12"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -190,10 +197,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "2025-12-12"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -232,10 +241,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "2025-12-12"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -274,10 +285,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "Hello"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -315,10 +328,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "2025-12-12"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -358,10 +373,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "2025-12-12"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -401,10 +418,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "2025-12-12"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -444,10 +463,12 @@ class SubscriptionControllerSpec
             | 				"domesticOnly": false,
             | 				"filingMember": false
             | 			},
-            | 			"accountingPeriod": {
+            | 			"accountingPeriod": [
+            | 			  {
             | 				"startDate": "2024-12-31",
             | 				"endDate": "2025-12-12"
-            | 			},
+            | 			  }
+            | 			],
             | 			"upeCorrespAddressDetails": {
             | 				"addressLine1": "10 High Street",
             | 				"addressLine2": "Egham",
@@ -482,32 +503,33 @@ class SubscriptionControllerSpec
   }
 
   "GET" - {
+
     "must return OK response with valid data when subscription exists" in
-      testBothVersions("validId", OK)
+      testEndpoint("validId", OK)
 
     "must return BAD_REQUEST response for invalid requests" in
-      testBothVersions("XEPLR0123456400", BAD_REQUEST)
+      testEndpoint("XEPLR0123456400", BAD_REQUEST)
 
     "must return NOT_FOUND response when subscription does not exist" in
-      testBothVersions("XEPLR0123456404", NOT_FOUND)
+      testEndpoint("XEPLR0123456404", NOT_FOUND)
 
     "must return UNPROCESSABLE_ENTITY response for unprocessable requests" in
-      testBothVersions("XEPLR0123456422", UNPROCESSABLE_ENTITY)
+      testEndpoint("XEPLR0123456422", UNPROCESSABLE_ENTITY)
 
     "must return INTERNAL_SERVER_ERROR response when an unexpected error occurs" in
-      testBothVersions("XEPLR0123456500", INTERNAL_SERVER_ERROR)
+      testEndpoint("XEPLR0123456500", INTERNAL_SERVER_ERROR)
 
     "must return SERVICE_UNAVAILABLE response when the service is down" in
-      testBothVersions("XEPLR0123456503", SERVICE_UNAVAILABLE)
+      testEndpoint("XEPLR0123456503", SERVICE_UNAVAILABLE)
 
     "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000001 (Quick Processing)" in
-      testBothVersions("XEPLR0000000001", UNPROCESSABLE_ENTITY)
+      testEndpoint("XEPLR0000000001", UNPROCESSABLE_ENTITY)
 
     "must return UNPROCESSABLE_ENTITY initially for XEPLR0000000002 (Medium Processing)" in
-      testBothVersions("XEPLR0000000002", UNPROCESSABLE_ENTITY)
+      testEndpoint("XEPLR0000000002", UNPROCESSABLE_ENTITY)
 
     "must return a OK with no secondary contact details" in
-      testBothVersions(
+      testEndpoint(
         "XEPLR2000000200",
         OK,
         { json =>
@@ -520,7 +542,7 @@ class SubscriptionControllerSpec
       val ids = Seq("XEPLR2000000109", "XEPLR2000000110", "XEPLR2000000111", "XEPLR2000000111")
 
       ids.foreach { id =>
-        testBothVersions(
+        testEndpoint(
           id,
           OK,
           { json =>
@@ -533,303 +555,8 @@ class SubscriptionControllerSpec
   }
 
   "PUT" - {
+
     "amendSubscription" - {
-
-      val authHeader: (String, String) = HeaderNames.authorisation -> "token"
-
-      "must return OK response with valid data when subscription exists" in {
-        val json: JsValue = Json.parse(""" {
-                                                       |          "upeDetails": {
-                                                       |            "plrReference": "XMPLR0012345678",
-                                                       |            "customerIdentification1": "SA7743248",
-                                                       |            "customerIdentification2": "1234567890",
-                                                       |            "organisationName": "tin tin",
-                                                       |            "registrationDate": "1994-12-05",
-                                                       |            "domesticOnly": true,
-                                                       |            "filingMember": false
-                                                       |          },
-                                                       |          "upeCorrespAddressDetails": {
-                                                       |            "addressLine1": "10 High Street",
-                                                       |            "addressLine2": "Egham",
-                                                       |            "addressLine3": "Surrey",
-                                                       |            "addressLine4": "Wembley",
-                                                       |            "postCode": "SU10 6HH",
-                                                       |            "countryCode": "GB"
-                                                       |          },
-                                                       |          "primaryContactDetails": {
-                                                       |            "name": "Fred Jones",
-                                                       |            "telephone": "01159700700",
-                                                       |            "emailAddress": "fred.jones@acme.com"
-                                                       |          },
-                                                       |          "secondaryContactDetails": {
-                                                       |            "name": "Jill Jones",
-                                                       |            "telephone": "01159788799",
-                                                       |            "emailAddress": "jill.jones@acme.com"
-                                                       |          },
-                                                       |          "filingMemberDetails": {
-                                                       |            "addNewFilingMember": true,
-                                                       |            "safeId": "XV5277988337712",
-                                                       |            "customerIdentification1": "DD17743248",
-                                                       |            "customerIdentification2": "431234567890",
-                                                       |            "organisationName": "Acme Upe Ltd"
-                                                       |          },
-                                                       |          "accountingPeriod": {
-                                                       |            "startDate": "2022-04-06",
-                                                       |            "endDate": "2023-04-05"
-                                                       |          }
-                                                       |        }
-                                                       |""".stripMargin)
-        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
-        val result  = route(app, request).value
-
-        status(result) shouldBe OK
-      }
-
-      "must return BAD_REQUEST response for invalid requests" in {
-        val json: JsValue = Json.parse(""" {
-                                          |          "upeDetails": {
-                                          |            "plrReference": "XMPLR0012345678",
-                                          |            "customerIdentification1": "SA7743248",
-                                          |            "customerIdentification2": "1234567890",
-                                          |            "organisationName": "400",
-                                          |            "registrationDate": "1994-12-05",
-                                          |            "domesticOnly": true,
-                                          |            "filingMember": false
-                                          |          },
-                                          |          "upeCorrespAddressDetails": {
-                                          |            "addressLine1": "10 High Street",
-                                          |            "addressLine2": "Egham",
-                                          |            "addressLine3": "Surrey",
-                                          |            "addressLine4": "Wembley",
-                                          |            "postCode": "SU10 6HH",
-                                          |            "countryCode": "GB"
-                                          |          },
-                                          |          "primaryContactDetails": {
-                                          |            "name": "400",
-                                          |            "telephone": "01159700700",
-                                          |            "emailAddress": "fred.jones@acme.com"
-                                          |          },
-                                          |          "secondaryContactDetails": {
-                                          |            "name": "Jill Jones",
-                                          |            "telephone": "01159788799",
-                                          |            "emailAddress": "jill.jones@acme.com"
-                                          |          },
-                                          |          "filingMemberDetails": {
-                                          |            "addNewFilingMember": true,
-                                          |            "safeId": "XV5277988337712",
-                                          |            "customerIdentification1": "DD17743248",
-                                          |            "customerIdentification2": "431234567890",
-                                          |            "organisationName": "Acme Upe Ltd"
-                                          |          },
-                                          |          "accountingPeriod": {
-                                          |            "startDate": "2022-04-06",
-                                          |            "endDate": "2023-04-05"
-                                          |          }
-                                          |        }
-                                          |""".stripMargin)
-        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
-        val result  = route(app, request).value
-
-        status(result) shouldBe BAD_REQUEST
-      }
-
-      "must return CONFLICT response when subscription does not exist" in {
-        val json: JsValue = Json.parse(""" {
-                                          |          "upeDetails": {
-                                          |            "plrReference": "XMPLR0012345678",
-                                          |            "customerIdentification1": "SA7743248",
-                                          |            "customerIdentification2": "1234567890",
-                                          |            "organisationName": "409",
-                                          |            "registrationDate": "1994-12-05",
-                                          |            "domesticOnly": true,
-                                          |            "filingMember": false
-                                          |          },
-                                          |          "upeCorrespAddressDetails": {
-                                          |            "addressLine1": "10 High Street",
-                                          |            "addressLine2": "Egham",
-                                          |            "addressLine3": "Surrey",
-                                          |            "addressLine4": "Wembley",
-                                          |            "postCode": "SU10 6HH",
-                                          |            "countryCode": "GB"
-                                          |          },
-                                          |          "primaryContactDetails": {
-                                          |            "name": "409",
-                                          |            "telephone": "01159700700",
-                                          |            "emailAddress": "fred.jones@acme.com"
-                                          |          },
-                                          |          "secondaryContactDetails": {
-                                          |            "name": "Jill Jones",
-                                          |            "telephone": "01159788799",
-                                          |            "emailAddress": "jill.jones@acme.com"
-                                          |          },
-                                          |          "filingMemberDetails": {
-                                          |            "addNewFilingMember": true,
-                                          |            "safeId": "XV5277988337712",
-                                          |            "customerIdentification1": "DD17743248",
-                                          |            "customerIdentification2": "431234567890",
-                                          |            "organisationName": "Acme Upe Ltd"
-                                          |          },
-                                          |          "accountingPeriod": {
-                                          |            "startDate": "2022-04-06",
-                                          |            "endDate": "2023-04-05"
-                                          |          }
-                                          |        }
-                                          |""".stripMargin)
-        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
-        val result  = route(app, request).value
-
-        status(result) shouldBe CONFLICT
-      }
-
-      "must return UNPROCESSABLE_ENTITY response for unprocessable requests" in {
-        val json: JsValue = Json.parse(""" {
-                                          |          "upeDetails": {
-                                          |            "plrReference": "XMPLR0012345678",
-                                          |            "customerIdentification1": "SA7743248",
-                                          |            "customerIdentification2": "1234567890",
-                                          |            "organisationName": "422",
-                                          |            "registrationDate": "1994-12-05",
-                                          |            "domesticOnly": true,
-                                          |            "filingMember": false
-                                          |          },
-                                          |          "upeCorrespAddressDetails": {
-                                          |            "addressLine1": "10 High Street",
-                                          |            "addressLine2": "Egham",
-                                          |            "addressLine3": "Surrey",
-                                          |            "addressLine4": "Wembley",
-                                          |            "postCode": "SU10 6HH",
-                                          |            "countryCode": "GB"
-                                          |          },
-                                          |          "primaryContactDetails": {
-                                          |            "name": "422",
-                                          |            "telephone": "01159700700",
-                                          |            "emailAddress": "fred.jones@acme.com"
-                                          |          },
-                                          |          "secondaryContactDetails": {
-                                          |            "name": "Jill Jones",
-                                          |            "telephone": "01159788799",
-                                          |            "emailAddress": "jill.jones@acme.com"
-                                          |          },
-                                          |          "filingMemberDetails": {
-                                          |            "addNewFilingMember": true,
-                                          |            "safeId": "XV5277988337712",
-                                          |            "customerIdentification1": "DD17743248",
-                                          |            "customerIdentification2": "431234567890",
-                                          |            "organisationName": "Acme Upe Ltd"
-                                          |          },
-                                          |          "accountingPeriod": {
-                                          |            "startDate": "2022-04-06",
-                                          |            "endDate": "2023-04-05"
-                                          |          }
-                                          |        }
-                                          |""".stripMargin)
-        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
-        val result  = route(app, request).value
-
-        status(result) shouldBe UNPROCESSABLE_ENTITY
-      }
-
-      "must return INTERNAL_SERVER_ERROR response when an unexpected error occurs" in {
-        val json: JsValue = Json.parse(""" {
-                                          |          "upeDetails": {
-                                          |            "plrReference": "XMPLR0012345678",
-                                          |            "customerIdentification1": "SA7743248",
-                                          |            "customerIdentification2": "1234567890",
-                                          |            "organisationName": "500",
-                                          |            "registrationDate": "1994-12-05",
-                                          |            "domesticOnly": true,
-                                          |            "filingMember": false
-                                          |          },
-                                          |          "upeCorrespAddressDetails": {
-                                          |            "addressLine1": "10 High Street",
-                                          |            "addressLine2": "Egham",
-                                          |            "addressLine3": "Surrey",
-                                          |            "addressLine4": "Wembley",
-                                          |            "postCode": "SU10 6HH",
-                                          |            "countryCode": "GB"
-                                          |          },
-                                          |          "primaryContactDetails": {
-                                          |            "name": "500",
-                                          |            "telephone": "01159700700",
-                                          |            "emailAddress": "fred.jones@acme.com"
-                                          |          },
-                                          |          "secondaryContactDetails": {
-                                          |            "name": "Jill Jones",
-                                          |            "telephone": "01159788799",
-                                          |            "emailAddress": "jill.jones@acme.com"
-                                          |          },
-                                          |          "filingMemberDetails": {
-                                          |            "addNewFilingMember": true,
-                                          |            "safeId": "XV5277988337712",
-                                          |            "customerIdentification1": "DD17743248",
-                                          |            "customerIdentification2": "431234567890",
-                                          |            "organisationName": "Acme Upe Ltd"
-                                          |          },
-                                          |          "accountingPeriod": {
-                                          |            "startDate": "2022-04-06",
-                                          |            "endDate": "2023-04-05"
-                                          |          }
-                                          |        }
-                                          |""".stripMargin)
-        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
-
-        val result = route(app, request).value
-
-        status(result) shouldBe INTERNAL_SERVER_ERROR
-      }
-
-      "must return SERVICE_UNAVAILABLE response when the service is down" in {
-
-        val json: JsValue = Json.parse(""" {
-                                          |          "upeDetails": {
-                                          |            "plrReference": "XMPLR0012345678",
-                                          |            "customerIdentification1": "SA7743248",
-                                          |            "customerIdentification2": "1234567890",
-                                          |            "organisationName": "503",
-                                          |            "registrationDate": "1994-12-05",
-                                          |            "domesticOnly": true,
-                                          |            "filingMember": false
-                                          |          },
-                                          |          "upeCorrespAddressDetails": {
-                                          |            "addressLine1": "10 High Street",
-                                          |            "addressLine2": "Egham",
-                                          |            "addressLine3": "Surrey",
-                                          |            "addressLine4": "Wembley",
-                                          |            "postCode": "SU10 6HH",
-                                          |            "countryCode": "GB"
-                                          |          },
-                                          |          "primaryContactDetails": {
-                                          |            "name": "503",
-                                          |            "telephone": "01159700700",
-                                          |            "emailAddress": "fred.jones@acme.com"
-                                          |          },
-                                          |          "secondaryContactDetails": {
-                                          |            "name": "Jill Jones",
-                                          |            "telephone": "01159788799",
-                                          |            "emailAddress": "jill.jones@acme.com"
-                                          |          },
-                                          |          "filingMemberDetails": {
-                                          |            "addNewFilingMember": true,
-                                          |            "safeId": "XV5277988337712",
-                                          |            "customerIdentification1": "DD17743248",
-                                          |            "customerIdentification2": "431234567890",
-                                          |            "organisationName": "Acme Upe Ltd"
-                                          |          },
-                                          |          "accountingPeriod": {
-                                          |            "startDate": "2022-04-06",
-                                          |            "endDate": "2023-04-05"
-                                          |          }
-                                          |        }
-                                          |""".stripMargin)
-        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
-
-        val result = route(app, request).value
-
-        status(result) shouldBe SERVICE_UNAVAILABLE
-      }
-    }
-
-    "amendSubscriptionV2" - {
 
       val authHeader: (String, String) = HeaderNames.authorisation -> "token"
 
@@ -884,7 +611,7 @@ class SubscriptionControllerSpec
                                           |          }
                                           |        }
                                           |""".stripMargin)
-        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(json)
+        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
         val result  = route(app, request).value
 
         status(result) shouldBe OK
@@ -919,7 +646,7 @@ class SubscriptionControllerSpec
                                           |          }
                                           |        }
                                           |""".stripMargin)
-        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(json)
+        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
         val result  = route(app, request).value
 
         status(result) shouldBe BAD_REQUEST
@@ -927,7 +654,7 @@ class SubscriptionControllerSpec
 
       "must return BAD_REQUEST response for invalid JSON" in {
         val json: JsValue = Json.parse("""{"invalid": "body"}""")
-        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(json)
+        val request = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(json)
         val result  = route(app, request).value
 
         status(result) shouldBe BAD_REQUEST
@@ -939,7 +666,7 @@ class SubscriptionControllerSpec
   "Dynamic V2 subscriptions" - {
 
     "must return seeded initial periods for XEPLR0000000010" in {
-      val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000010").url).withHeaders(authHeader)
+      val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000010").url).withHeaders(authHeader)
       val result  = route(app, request).value
 
       status(result) shouldBe OK
@@ -963,7 +690,7 @@ class SubscriptionControllerSpec
     }
 
     "must return seeded initial periods for XEPLR0000000011" in {
-      val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000011").url).withHeaders(authHeader)
+      val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000011").url).withHeaders(authHeader)
       val result  = route(app, request).value
 
       status(result) shouldBe OK
@@ -974,7 +701,7 @@ class SubscriptionControllerSpec
     }
 
     "must return seeded initial period for XEPLR0000000012" in {
-      val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000012").url).withHeaders(authHeader)
+      val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000012").url).withHeaders(authHeader)
       val result  = route(app, request).value
 
       status(result) shouldBe OK
@@ -1021,11 +748,11 @@ class SubscriptionControllerSpec
           |  }
           |}""".stripMargin)
 
-      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(amendJson)
+      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(amendJson)
       val amendResult  = route(app, amendRequest).value
       status(amendResult) shouldBe OK
 
-      val readRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000011").url).withHeaders(authHeader)
+      val readRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000011").url).withHeaders(authHeader)
       val readResult  = route(app, readRequest).value
 
       status(readResult) shouldBe OK
@@ -1074,11 +801,11 @@ class SubscriptionControllerSpec
           |  }
           |}""".stripMargin)
 
-      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(amendJson)
+      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(amendJson)
       val amendResult  = route(app, amendRequest).value
       status(amendResult) shouldBe OK
 
-      val readRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000011").url).withHeaders(authHeader)
+      val readRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000011").url).withHeaders(authHeader)
       val readResult  = route(app, readRequest).value
 
       status(readResult) shouldBe OK
@@ -1131,10 +858,10 @@ class SubscriptionControllerSpec
           |  }
           |}""".stripMargin)
 
-      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(amendJson)
+      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(amendJson)
       status(route(app, amendRequest).value) shouldBe OK
 
-      val staticRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR8888888888").url).withHeaders(authHeader)
+      val staticRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR8888888888").url).withHeaders(authHeader)
       val staticResult  = route(app, staticRequest).value
       status(staticResult) shouldBe OK
 
@@ -1180,14 +907,14 @@ class SubscriptionControllerSpec
           |  }
           |}""".stripMargin)
 
-      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscriptionV2.url).withHeaders(authHeader).withBody(amendJson)
+      val amendRequest = FakeRequest(PUT, routes.SubscriptionController.amendSubscription.url).withHeaders(authHeader).withBody(amendJson)
       status(route(app, amendRequest).value) shouldBe OK
 
       val resetRequest = FakeRequest(POST, routes.SubscriptionController.resetDynamicSubscriptions.url)
       val resetResult  = route(app, resetRequest).value
       status(resetResult) shouldBe OK
 
-      val readRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2("XEPLR0000000012").url).withHeaders(authHeader)
+      val readRequest = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000012").url).withHeaders(authHeader)
       val readResult  = route(app, readRequest).value
 
       status(readResult) shouldBe OK
@@ -1199,7 +926,7 @@ class SubscriptionControllerSpec
 
     "must also serve dynamic IDs via the cache endpoint" in {
       val request =
-        FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionCacheV2("someId", "XEPLR0000000010").url).withHeaders(authHeader)
+        FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionCache("someId", "XEPLR0000000010").url).withHeaders(authHeader)
       val result = route(app, request).value
 
       status(result) shouldBe OK
@@ -1208,20 +935,15 @@ class SubscriptionControllerSpec
     }
   }
 
-  private def testBothVersions(plrReference: String, expectedStatus: Int, additionalAssertions: JsValue => Unit = _ => ()): Unit = {
+  private def testEndpoint(plrReference: String, expectedStatus: Int, additionalAssertions: JsValue => Unit = _ => ()): Unit = {
     val authHeader: (String, String) = HeaderNames.authorisation -> "token"
     val request = FakeRequest(GET, routes.SubscriptionController.retrieveSubscription(plrReference).url).withHeaders(authHeader)
     val result  = route(app, request).value
 
-    val requestV2 = FakeRequest(GET, routes.SubscriptionController.retrieveSubscriptionV2(plrReference).url).withHeaders(authHeader)
-    val resultV2  = route(app, requestV2).value
-
-    status(result)   shouldBe expectedStatus
-    status(resultV2) shouldBe expectedStatus
+    status(result) shouldBe expectedStatus
 
     if expectedStatus == OK then {
       additionalAssertions(contentAsJson(result))
-      additionalAssertions(contentAsJson(resultV2))
     }
   }
 }

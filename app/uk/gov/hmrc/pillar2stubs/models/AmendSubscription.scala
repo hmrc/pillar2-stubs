@@ -44,31 +44,6 @@ case class SubscriptionSuccess(
   accountStatus:            Option[AccountStatus]
 )
 
-case class AmendSubscriptionSuccess(
-  upeDetails:               UpeDetailsAmend,
-  accountingPeriod:         AccountingPeriod,
-  upeCorrespAddressDetails: UpeCorrespAddressDetails,
-  primaryContactDetails:    ContactDetailsType,
-  secondaryContactDetails:  Option[ContactDetailsType],
-  filingMemberDetails:      Option[FilingMemberAmendDetails]
-)
-
-object AmendSubscriptionSuccess {
-
-  given Reads[AmendSubscriptionSuccess] = Reads { js =>
-    if js.asInstanceOf[JsObject].value.contains("replaceFilingMember") then JsError("AdditionalProperty")
-    else JsSuccess(js)
-  }.andThen(Json.reads[AmendSubscriptionSuccess])
-
-  given OFormat[AmendSubscriptionSuccess] = Json.format[AmendSubscriptionSuccess]
-}
-
-case class AmendSubscriptionResponse(value: AmendSubscriptionSuccess)
-
-object AmendSubscriptionResponse {
-  given OFormat[AmendSubscriptionResponse] = Json.format[AmendSubscriptionResponse]
-}
-
 case class UpeDetails(
   plrReference:            String,
   customerIdentification1: String,
@@ -147,16 +122,6 @@ object FilingMemberDetails {
   given OFormat[FilingMemberDetails] = Json.format[FilingMemberDetails]
 }
 
-final case class AccountingPeriod(
-  startDate: LocalDate,
-  endDate:   LocalDate,
-  dueDate:   Option[LocalDate] = None
-)
-
-object AccountingPeriod {
-  given OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
-}
-
 final case class AccountStatus(
   inactive: Boolean
 )
@@ -200,25 +165,25 @@ object NewAccountingPeriodDetails {
   }
 }
 
-final case class AccountingPeriodV2(
+final case class AccountingPeriod(
   amendAccountingPeriod:     Boolean,
   originalAccountingPeriods: Option[Seq[OriginalAccountingPeriod]],
   newAccountingPeriod:       Option[NewAccountingPeriodDetails]
 )
 
-object AccountingPeriodV2 {
-  given OFormat[AccountingPeriodV2] = Json.format[AccountingPeriodV2]
+object AccountingPeriod {
+  given OFormat[AccountingPeriod] = Json.format[AccountingPeriod]
 }
 
-case class AmendSubscriptionSuccessV2(
+case class AmendSubscriptionSuccess(
   upeDetails:               UpeDetailsAmend,
-  accountingPeriod:         AccountingPeriodV2,
+  accountingPeriod:         AccountingPeriod,
   upeCorrespAddressDetails: UpeCorrespAddressDetails,
   primaryContactDetails:    ContactDetailsType,
   secondaryContactDetails:  Option[ContactDetailsType],
   filingMemberDetails:      Option[FilingMemberAmendDetails]
 )
 
-object AmendSubscriptionSuccessV2 {
-  given OFormat[AmendSubscriptionSuccessV2] = Json.format[AmendSubscriptionSuccessV2]
+object AmendSubscriptionSuccess {
+  given OFormat[AmendSubscriptionSuccess] = Json.format[AmendSubscriptionSuccess]
 }
