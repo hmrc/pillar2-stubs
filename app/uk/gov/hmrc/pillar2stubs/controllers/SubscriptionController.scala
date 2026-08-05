@@ -244,6 +244,7 @@ class SubscriptionController @Inject() (cc: ControllerComponents, authFilter: Au
     }
 
   def resetDynamicSubscriptions: Action[AnyContent] = Action {
+    pollCounters.clear()
     seedDynamicData()
     Ok("Dynamic subscriptions reset to initial state")
   }
