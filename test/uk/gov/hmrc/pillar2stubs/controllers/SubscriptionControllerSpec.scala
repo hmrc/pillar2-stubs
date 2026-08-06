@@ -43,6 +43,22 @@ class SubscriptionControllerSpec
   }
 
   "POST " - {
+    "resetDynamicSubscriptions" - {
+      "must reset subscription polling counters" in {
+        val pollingRequest =
+          FakeRequest(GET, routes.SubscriptionController.retrieveSubscription("XEPLR0000000002").url).withHeaders(authHeader)
+
+        (1 to 8).foreach { _ =>
+          status(route(app, pollingRequest).value) shouldBe UNPROCESSABLE_ENTITY
+        }
+        status(route(app, pollingRequest).value) shouldBe OK
+
+        val resetRequest = FakeRequest(POST, routes.SubscriptionController.resetDynamicSubscriptions.url)
+        status(route(app, resetRequest).value) shouldBe OK
+
+        status(route(app, pollingRequest).value) shouldBe UNPROCESSABLE_ENTITY
+      }
+    }
 
     "createSubscription" - {
       "must return FORBIDDEN response when 'Authorization' header is missing" in {

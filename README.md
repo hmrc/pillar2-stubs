@@ -44,7 +44,7 @@ The Pillar2 stubs service provides stubs for the GRS systems to mock the respons
       * [Happy Path](#happy-path-4)
     * [Amend Existing Subscription V2](#amend-existing-subscription-v2)
       * [Dynamic V2 Subscriptions](#dynamic-v2-subscriptions)
-    * [Reset Dynamic V2 Subscriptions](#reset-dynamic-v2-subscriptions)
+    * [Reset Dynamic Subscriptions](#reset-dynamic-subscriptions)
     * [Retrieve Enrolment Store Response](#retrieve-enrolment-store-response)
       * [Happy Path](#happy-path-5)
         * [Enrolment Store Response with groupID](#enrolment-store-response-with-groupid)
@@ -850,11 +850,11 @@ Error-triggering behaviour via `primaryContactDetails.name` (400, 422, etc.) sti
 
 ---
 
-### Reset Dynamic V2 Subscriptions
+### Reset Dynamic Subscriptions
 
-**Endpoint**: `POST /pillar2/subscription/v2/reset`
+**Endpoint**: `POST /pillar2/subscription/reset`
 
-**Description**: Resets all dynamic V2 subscription data back to its initial seeded state. Useful for test setup to ensure a clean starting point.
+**Description**: Resets all dynamic subscription data and subscription polling counters back to their initial state. Useful for test setup to ensure a clean starting point.
 
 - Response status: `200`
 - Response body: `Dynamic subscriptions reset to initial state`
