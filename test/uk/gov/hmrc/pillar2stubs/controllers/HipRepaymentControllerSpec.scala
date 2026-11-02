@@ -26,7 +26,7 @@ import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderNames
 import uk.gov.hmrc.pillar2stubs.models.*
 
-class HipRepaymentControllerSpec  extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
+class HipRepaymentControllerSpec extends AnyFreeSpec with Matchers with GuiceOneAppPerSuite with OptionValues {
   private val authHeader: (String, String)     = HeaderNames.authorisation -> "token"
   val validPayload:       SendRepaymentDetails = SendRepaymentDetails(
     repaymentDetails = RepaymentDetails(plrReference = "plrReference", name = "name", utr = None, reasonForRepayment = "???", refundAmount = 10000.1),
@@ -71,7 +71,7 @@ class HipRepaymentControllerSpec  extends AnyFreeSpec with Matchers with GuiceOn
     """must return forbidden when nameOnBankAccount is "forbidden" """ in {
       val badJson = Json.toJson(validPayload.copy(bankDetails = validPayload.bankDetails.copy(nameOnBankAccount = "forbidden")))
       val request = FakeRequest(POST, routes.HipRepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
       status(result) shouldBe FORBIDDEN
     }
@@ -79,7 +79,7 @@ class HipRepaymentControllerSpec  extends AnyFreeSpec with Matchers with GuiceOn
     """must return not found when nameOnBankAccount is "not found" """ in {
       val badJson = Json.toJson(validPayload.copy(bankDetails = validPayload.bankDetails.copy(nameOnBankAccount = "not found")))
       val request = FakeRequest(POST, routes.HipRepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
       status(result) shouldBe NOT_FOUND
     }
@@ -87,27 +87,27 @@ class HipRepaymentControllerSpec  extends AnyFreeSpec with Matchers with GuiceOn
     """must return Unprocessable Entity error with code 003 when nameOnBankAccount is "cannot process" """ in {
       val badJson = Json.toJson(validPayload.copy(bankDetails = validPayload.bankDetails.copy(nameOnBankAccount = "cannot process")))
       val request = FakeRequest(POST, routes.HipRepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
-      status(result) shouldBe UNPROCESSABLE_ENTITY
+      status(result)                                         shouldBe UNPROCESSABLE_ENTITY
       (contentAsJson(result) \ "errors" \ "code").as[String] shouldBe "003"
     }
 
     """must return Unprocessable Entity error with code 004 when nameOnBankAccount is "duplicate" """ in {
       val badJson = Json.toJson(validPayload.copy(bankDetails = validPayload.bankDetails.copy(nameOnBankAccount = "duplicate")))
       val request = FakeRequest(POST, routes.HipRepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
-      status(result) shouldBe UNPROCESSABLE_ENTITY
+      status(result)                                         shouldBe UNPROCESSABLE_ENTITY
       (contentAsJson(result) \ "errors" \ "code").as[String] shouldBe "004"
     }
 
     """must return Unprocessable Entity error with code 016 when nameOnBankAccount is "invalid id" """ in {
       val badJson = Json.toJson(validPayload.copy(bankDetails = validPayload.bankDetails.copy(nameOnBankAccount = "invalid id")))
       val request = FakeRequest(POST, routes.HipRepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
-      status(result) shouldBe UNPROCESSABLE_ENTITY
+      status(result)                                         shouldBe UNPROCESSABLE_ENTITY
       (contentAsJson(result) \ "errors" \ "code").as[String] shouldBe "016"
 
     }
@@ -115,7 +115,7 @@ class HipRepaymentControllerSpec  extends AnyFreeSpec with Matchers with GuiceOn
     """must return Internal Server error when nameOnBankAccount is "server error" """ in {
       val badJson = Json.toJson(validPayload.copy(bankDetails = validPayload.bankDetails.copy(nameOnBankAccount = "server error")))
       val request = FakeRequest(POST, routes.HipRepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
       status(result) shouldBe INTERNAL_SERVER_ERROR
     }
@@ -123,7 +123,7 @@ class HipRepaymentControllerSpec  extends AnyFreeSpec with Matchers with GuiceOn
     """must return Service Unavailable error when nameOnBankAccount is "service unavailable" """ in {
       val badJson = Json.toJson(validPayload.copy(bankDetails = validPayload.bankDetails.copy(nameOnBankAccount = "service unavailable")))
       val request = FakeRequest(POST, routes.HipRepaymentController.submitRepaymentDetails.url).withBody(badJson).withHeaders(authHeader)
-      val result = route(app, request).value
+      val result  = route(app, request).value
 
       status(result) shouldBe SERVICE_UNAVAILABLE
     }
@@ -138,4 +138,3 @@ class HipRepaymentControllerSpec  extends AnyFreeSpec with Matchers with GuiceOn
 
   }
 }
-
