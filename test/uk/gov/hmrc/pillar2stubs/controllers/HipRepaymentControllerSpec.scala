@@ -130,7 +130,7 @@ class HipRepaymentControllerSpec extends AnyFreeSpec with Matchers with GuiceOne
 
     "must return BAD_REQUEST for an invalid json payload" in {
       val json: JsValue = Json.obj("invalid" -> "payload")
-      val request = FakeRequest(POST, routes.RepaymentController.submitRepaymentDetails.url).withBody(json).withHeaders(authHeader)
+      val request = FakeRequest(POST, routes.HipRepaymentController.submitRepaymentDetails.url).withBody(json).withHeaders(authHeader)
       val result  = route(app, request).value
 
       status(result) shouldBe BAD_REQUEST
